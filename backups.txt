@@ -1,0 +1,2 @@
+        <meta property="og:site_name" content="Mira The Cat's Website">
+        <meta property="og:type" content="website">
