@@ -2,6 +2,7 @@ body {
     background-color: black;
     color: white;
     font-family: Papyrus;
+    text-align: center;
 }
 
 h1 {
@@ -13,6 +14,10 @@ h1 {
 
 .test {
     color: red;
+}
+
+.back {
+    text-align: left;
 }
 
 .bordered {
