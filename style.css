@@ -12,3 +12,9 @@ h1 {
 .test {
     color: red;
 }
+
+.bordered {
+    border-radius: 10px;
+    background-color: lightblue;
+    border: solid;
+}
