@@ -19,7 +19,7 @@ h1 {
     border: solid;
 }
 
-.round-img {
+img {
     height: 256px;
     width: 256px;
     border-radius: 128px;
