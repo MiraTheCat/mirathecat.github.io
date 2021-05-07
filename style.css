@@ -16,7 +16,7 @@ h1 {
 
 .bordered {
     height: 20px;
-    width: 150px;
+    width: 120px;
     background-color: lightblue;
     border: solid;
 }
@@ -26,4 +26,5 @@ img {
     width: 256px;
     border-radius: 64px;
     border: transparent;
+    margin: 15px;
 }
