@@ -24,6 +24,8 @@ h1 {
     background-color: lightblue;
     border: solid;
     padding: 10px 10px 10px 10px;
+    height: 10px;
+    width: 100px;
 }
 
 img {
