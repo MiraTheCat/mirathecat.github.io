@@ -23,7 +23,7 @@ h1 {
 .bordered {
     background-color: lightblue;
     border: solid;
-    height: 10px;
+    height: 20px;
     width: 100px;
 }
 
