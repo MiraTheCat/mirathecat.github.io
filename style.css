@@ -33,3 +33,7 @@ img {
     border: transparent;
     margin: 15px;
 }
+
+.button {
+    background-color: gold;
+}
