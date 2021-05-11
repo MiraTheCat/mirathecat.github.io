@@ -21,10 +21,9 @@ h1 {
 }
 
 .bordered {
-    height: 20px;
-    width: 120px;
     background-color: lightblue;
     border: solid;
+    padding: 10px 10px 10px 10px;
 }
 
 img {
