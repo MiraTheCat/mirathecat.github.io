@@ -8,10 +8,13 @@ body {
 .top {
     font-size: 25px;
     color: white;
-    padding: 10px 40px 10px 40px;
+    padding: 10px 10px 10px 10px;
     text-decoration: none;
     margin: 0 2px 0 2px;
     background-color: transparent;
+    display: flex;
+    flex: 0 1 120px;
+    justify-content: center;
 }
 
 .navigation-bar {
@@ -65,7 +68,7 @@ p {
 
 .bordered {
     border: 2px solid;
-    padding: 10px 38px 10px 38px;
+    padding: 10px 8px 10px 8px;
 }
 
 a {
@@ -83,13 +86,12 @@ a {
     border-radius: 20px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    margin: 0 10px 0 10px;
-    width: 50%;
+    justify-content: space-around;
+    width: 45%;
 }
 
 .project-img {
-    height: 256px;
+    width: 90%;
     border-radius: 16px;
     border: transparent;
     margin: 10px;
