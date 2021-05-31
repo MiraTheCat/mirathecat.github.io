@@ -1,0 +1,37 @@
+.pg-container {
+    display: grid;
+    grid-template-areas: "upgrade upgrade upgrade upgrade shop" "main main main main shop" "main main main main shop" "main main main main shop" "main main main main shop";
+    height: 600px;
+    margin: 0 40px 0 40px;
+    gap: 10px 10px;
+}
+
+.pg-upgrade {
+   grid-area: upgrade;
+   border: solid 2px;
+   border-radius: 20px;
+}
+
+.pg-main {
+    grid-area: main;
+    border: solid 2px;
+    border-radius: 20px;
+}
+
+.pg-shop {
+    grid-area: shop;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 10% 90%;
+    gap: 0 10px;
+}
+
+.pg-shop-title {
+    border: solid 2px;
+    border-radius: 20px 20px 0 0;
+}
+
+.pg-shop-row {
+    border: solid 2px;
+    border-radius: 0 0 20px 20px;
+}

@@ -29,27 +29,27 @@ body {
 }
 h1 {
     font-size: 50px;
-    margin: 20px;
+    margin: 20px 0 20px 0;
 }
 
 h2 {
     font-size: 35px;
-    margin: 15px;
+    margin: 15px 0 15px 0;
 }
 
 h3 {
     font-size: 25px;
-    margin: 10px;
+    margin: 10px 0 10px 0;
 }
 
 h4 {
     font-size: 20px;
-    margin: 8px;
+    margin: 8px 0 8px 0;
 }
 
 p {
     font-size: 15px;
-    margin: 5px;
+    margin: 5px 0 5px 0;
 }
 
 .main-img {
