@@ -60,7 +60,7 @@ var seed = new Item("Peanut Seed", 0, 0.01, 1, "A single seed, growing a single 
 var sapling = new Item("Peanut Sapling", 0, 0.08, 5, "A small tree, containing a few peanuts", "images/peanutgame/sapling.png", "sapling");
 
 //Creating farmer objects from classes
-var shnilli = new Farmer("Shnilli", 0, 0.005, 1, "Everyone's favorite chocolate potato", "images/peanutgame/sapling.png", "shnilli");
+var shnilli = new Farmer("Shnilli", 0, 0.005, 1, "Everyone's favorite chocolate potato", "images/peanutgame/shnilli.png", "shnilli");
 
 //Creating shop elements - Functions
 function createItemElement(name, amount, price, production, description, image, onclick, id) {
