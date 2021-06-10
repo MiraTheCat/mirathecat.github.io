@@ -1,9 +1,35 @@
 .pg-container {
     display: grid;
-    grid-template-areas: "upgrade upgrade upgrade upgrade shop" "main main main main shop" "main main main main shop" "main main main main shop" "main main main main shop";
+    grid-template-areas: "stats stats stats ." "upgrade upgrade upgrade shop" "main main main shop" "main main main shop" "main main main shop" "main main main shop";
     height: 600px;
     margin: 0 40px 0 40px;
     gap: 10px 10px;
+}
+
+.pg-stats-container {
+    border: 2px solid;
+    padding: 4px 3px 4px 3px;
+    text-align: left;
+    grid-area: stats;
+    display: flex;
+    border-radius: 15px;
+}
+
+.pg-stat-image {
+    height: 25px;
+    border: none;
+    margin: 0 2px 0 2px;
+    position: relative;
+    top: 1px;
+}
+
+.pg-stats {
+    font-size: 25px;
+    color: white;
+    margin: 0 2px 0 2px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .pg-upgrade {
@@ -16,13 +42,13 @@
     grid-area: main;
     border: solid 2px;
     border-radius: 20px;
+    background: linear-gradient(0deg, rgb(95, 54, 0), rgb(224, 127, 0));
 }
 
 .pg-shop {
     grid-area: shop;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 10% 90%;
+    grid-template-areas: "title1 title2" "sr sr" "sr sr" "sr sr" "sr sr" "sr sr" "sr sr" "sr sr" "sr sr" "sr sr";
     gap: 0 10px;
 }
 
@@ -35,17 +61,35 @@
     border: solid 2px;
     border-radius: 0 0 20px 20px;
     display: grid;
-    grid-template: repeat(5, 1fr) / 1fr 1fr;
+    grid-template: repeat(4, 1fr) / repeat(5, 1fr);
+    grid-area: sr;
+    background: linear-gradient(180deg, rgb(51, 51, 51), black);
 }
 
 .pg-shop-item {
     border: solid 2px;
     border-radius: 20px;
     margin: 5px;
+    grid-template-columns: 50% 10% 40%;
+    gap: 0 5px;
+    padding: 5px;
 }
 
 .pg-shop-image {
-    border-radius: 20px;
-    margin: 5px;
-    height: 80%;
+    height: 45px;
+    padding: 0;
+}
+
+.pg-item-name {
+    font-size: 15px;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.pg-item-description {
+    font-size: 12px;
+    margin: 0;
+    padding: 0;
+    text-align: center;
 }

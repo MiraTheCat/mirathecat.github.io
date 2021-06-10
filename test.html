@@ -5,8 +5,8 @@
         <link rel="icon" href="/images/pfp.png">
 
         <meta property="og:site_name" content="Mira The Cat's Website">
-        <meta property="og:title" content="Test Page">
-        <meta property="og:description" content="This page is currently just for testing!">
+        <meta property="og:title" content="GHP's Peanut Farm">
+        <meta property="og:description" content="A peanut clicker game">
         <meta property='og:image' content='/images/pfp.png'>
         <meta property="og:type" content="website">
         <meta name="theme-color" content="#60ff52">
@@ -17,6 +17,9 @@
     </head>
 
     <body>
+
+        <!–– Navigation Bar ––>
+
         <div class="navigation-bar">
             <img class="icon" src="/images/pfp.png">
             <a href="/index.html" class="top bordered">Home</a>
@@ -24,9 +27,19 @@
             <a href="/projects.html" class="top bordered">Projects</a>
         </div>
 
-        <h2>Testing...</h2>
+        <h2>GHP's Peanut Farm</h2>
 
         <div class="pg-container">
+
+            <div class="pg-stats-container">
+                <p class="pg-stats">Inventory:</p>
+                <img class="pg-stat-image" src="images/peanutgame/peanuts.png">
+                <p class="pg-stats" id="peanutAmount"></p>
+                <img class="pg-stat-image" src="images/peanutgame/coins.png">
+                <p class="pg-stats" id="moneyAmount"></p>
+                <p class="pg-stats" id="peanutsPerClick"></p>
+                <p class="pg-stats" id="peanutsPerSecond"></p>
+            </div>
 
             <!–– Upgrades ––>
 
@@ -36,47 +49,44 @@
 
             <!–– Main Area ––>
 
-            <div class="pg-main">
+            <div class="pg-main" style="filter: brightness(80%)">
 
             </div>
 
             <!–– Shop ––>
                 
             <div class="pg-shop">
-                <div class="pg-shop-title">
-                    <h3>Item Shop</h3>
-                </div>
+                <a href="#" style="text-decoration: none;">
+                    <div id="itemTitle" class="pg-shop-title" onclick="showItemShop()" style="grid-area: title1; background-color: rgb(51, 51, 51);">
+                        <h3>Item Shop</h3>
+                    </div>
+                </a>
 
-                <div class="pg-shop-title">
-                    <h3>Farmer Shop</h3>
-                </div>
+                <a href="#" style="text-decoration: none;">
+                    <div id="farmerTitle" class="pg-shop-title" onclick="showFarmerShop()" style="grid-area: title2; background-color: transparent;"">
+                        <h3>Farmer Shop</h3>
+                    </div>
+                </a>
 
                 <!–– Item Shop ––>
 
-                <div class="pg-shop-row">
-                    <div class="pg-shop-item">
-                        <img class="pg-shop-image" src="#">
-                    </div>
-
-                    <div class="pg-shop-item">
-
-                    </div>
-
-                    <div class="pg-shop-item">
-
-                    </div>
-
-                    <div class="pg-shop-item">
-
-                    </div>
+                <div id="itemShop" class="pg-shop-row" style="display: grid;">
+                    
                 </div>
 
                 <!–– Farmer Shop ––>
 
-                <div class="pg-shop-row">
-
+                <div id="farmerShop" class="pg-shop-row" style="display: none;">
+                    
                 </div>
+
             </div>
         </div>
+
+        <!–– JavaScript ––>
+
+        <script src="javascript/script.js">
+            
+        </script>
     </body>
 </html>
