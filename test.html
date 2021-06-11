@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Mira The Cat - Test</title>
+        <title>Mira The Cat - GHP's Peanut Farm</title>
         <link rel="icon" href="/images/pfp.png">
 
         <meta property="og:site_name" content="Mira The Cat's Website">
@@ -44,13 +44,17 @@
             <!–– Upgrades ––>
 
             <div class="pg-upgrade">
-
+                <p class="pg-upgradeText">
+                    Upgrades
+                </p>
             </div>
 
             <!–– Main Area ––>
 
-            <div class="pg-main" style="filter: brightness(80%)">
-
+            <div onclick="clickScreen()" class="pg-main" style="grid-area: main; filter: brightness(80%)">
+                <p class="pg-sell" onclick="sellPeanuts()">
+                    Sell Peanuts
+                </p>
             </div>
 
             <!–– Shop ––>
@@ -85,8 +89,6 @@
 
         <!–– JavaScript ––>
 
-        <script src="javascript/script.js">
-            
-        </script>
+        <script src="javascript/peanutgame.js"></script>
     </body>
 </html>

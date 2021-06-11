@@ -1,6 +1,6 @@
 .pg-container {
     display: grid;
-    grid-template-areas: "stats stats stats ." "upgrade upgrade upgrade shop" "main main main shop" "main main main shop" "main main main shop" "main main main shop";
+    grid-template-areas: "stats stats stats ." "upgrade upgrade upgrade shop" "main main main shop" "main main main shop" "main main main shop";
     height: 600px;
     margin: 0 40px 0 40px;
     gap: 10px 10px;
@@ -36,13 +36,49 @@
    grid-area: upgrade;
    border: solid 2px;
    border-radius: 20px;
+   display: grid;
+   grid-template: 1fr 1fr / repeat(5, 1fr);
+}
+
+.pg-upgradeText {
+    font-size: 25px;
+    color: white;
+    padding: 3px;
+    margin: 0;
+    justify-content: left;
+    align-items: center;
+    border: solid 2px white;
+    border-radius: 20px 0 0 0;
+    background-color: rgb(54, 54, 54);
+    position: relative;
+    right: 1px;
+    bottom: 1px;
 }
 
 .pg-main {
-    grid-area: main;
     border: solid 2px;
     border-radius: 20px;
     background: linear-gradient(0deg, rgb(95, 54, 0), rgb(224, 127, 0));
+    cursor: pointer;
+    display: grid;
+    grid-template: repeat(14, 1fr) / repeat(5, 1fr);
+}
+
+.pg-sell {
+    font-size: 25px;
+    color: white;
+    padding: 3px;
+    margin: 0;
+    justify-content: left;
+    align-items: center;
+    border: solid 2px white;
+    border-radius: 20px 0 0 0;
+    background-color: rgb(150, 85, 0);
+    position: relative;
+    right: 1px;
+    bottom: 1px;
+    z-index: 1;
+    cursor: pointer;
 }
 
 .pg-shop {

@@ -4,6 +4,7 @@ var money = 0.01;
 var currentItem = 0;
 var peanutsPerClick = 0;
 var peanutsPerSecond = 0;
+var peanutValue = 0.001;
 
 var itemTitle = document.querySelector("#itemTitle");
 var farmerTitle = document.querySelector("#farmerTitle");
@@ -22,17 +23,13 @@ class Item {
 		this.id = id
 	}
 
-	click() {
-		return this.production * this.amount
-	}
-
 	buy() {
 		if (money >= this.price) {
 			money -= this.price;
 			this.price = Math.round(this.price * 1150) / 1000;
 			this.amount += 1;
 			updateItem("#" + this.id + "Amount", this.amount, "#" + this.id + "Price", this.price, "#" + this.id + "Production", this.production);
-			peanutsPerClick += this.production
+			peanutsPerClick += this.production;
 			updateInventory(peanuts, money, peanutsPerClick, peanutsPerSecond);
 		}
 	}
@@ -45,22 +42,21 @@ class Farmer extends Item {
 			this.price = Math.round(this.price * 1150) / 1000;
 			this.amount += 1;
 			updateFarmer("#" + this.id + "Amount", this.amount, "#" + this.id + "Price", this.price, "#" + this.id + "Production", this.production);
-			peanutsPerSecond += this.production
+			peanutsPerSecond += this.production;
 			updateInventory(peanuts, money, peanutsPerClick, peanutsPerSecond);
 		}
-	}
-
-	farm() {
-		super.click;
 	}
 }
 
 //Creating item objects from classes
 var seed = new Item("Peanut Seed", 0, 0.01, 1, "A single seed, growing a single peanut", "images/peanutgame/seeds.png", "seed");
 var sapling = new Item("Peanut Sapling", 0, 0.08, 5, "A small tree, containing a few peanuts", "images/peanutgame/sapling.png", "sapling");
+var tree = new Item("Peanut Tree", 0, 0.6, 20, "A larger tree, containing a lot more peanuts", "images/peanutgame/tree.png", "tree");
+var field = new Item("Peanut Field", 0, 4.0, 100, "A field full of peanut trees", "images/peanutgame/field.png", "field");
+var farm = new Item("Peanut Farm", 0, 30, 450, "An actual peanut farm", "images/peanutgame/farm.png", "farm");
 
 //Creating farmer objects from classes
-var shnilli = new Farmer("Shnilli", 0, 0.005, 1, "Everyone's favorite chocolate potato", "images/peanutgame/shnilli.png", "shnilli");
+var shnilli = new Farmer("Shnilli", 0, 0.002, 1, "Everyone's favorite chocolate potato", "images/peanutgame/shnilli.png", "shnilli");
 
 //Creating shop elements - Functions
 function createItemElement(name, amount, price, production, description, image, onclick, id) {
@@ -198,14 +194,31 @@ function showFarmerShop() {
 //Updating inventory function
 function updateInventory(peanuts, money, peanutsPerClick, peanutsPerSecond) {
 	document.querySelector("#peanutAmount").innerHTML = peanuts + " peanuts, ";
-	document.querySelector("#moneyAmount").innerHTML = "$" + money + ", ";
+	document.querySelector("#moneyAmount").innerHTML = "$" + (Math.round(money * 1000) / 1000) + ", ";
 	document.querySelector("#peanutsPerClick").innerHTML = peanutsPerClick + " peanuts/click, ";
 	document.querySelector("#peanutsPerSecond").innerHTML = peanutsPerSecond + " peanuts/second";
+}
+
+//Clicking screen function
+function clickScreen() {
+	peanuts += peanutsPerClick;
+	console.log(peanuts);
+	updateInventory(peanuts, money, peanutsPerClick, peanutsPerSecond);
+}
+
+//Selling peanuts function
+function sellPeanuts() {
+	money += Math.round(peanuts * peanutValue * 1000) / 1000;
+	peanuts = 0;
 }
 
 //Running functions
 createItemElement(seed.name, seed.amount, seed.price, seed.production, seed.description, seed.image, "seed.buy()", seed.id);
 createItemElement(sapling.name, sapling.amount, sapling.price, sapling.production, sapling.description, sapling.image, "sapling.buy()", sapling.id);
+createItemElement(tree.name, tree.amount, tree.price, tree.production, tree.description, tree.image, "tree.buy()", tree.id);
+createItemElement(field.name, field.amount, field.price, field.production, field.description, field.image, "field.buy()", field.id);
+createItemElement(farm.name, farm.amount, farm.price, farm.production, farm.description, farm.image, "farm.buy()", farm.id);
+
 createFarmerElement(shnilli.name, shnilli.amount, shnilli.price, shnilli.production, shnilli.description, shnilli.image, "shnilli.buy()", shnilli.id);
 
 updateInventory(peanuts, money, peanutsPerClick, peanutsPerSecond);
