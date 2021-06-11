@@ -2,11 +2,13 @@
 var peanuts = 0;
 var money = 0.01;
 var currentItem = 0;
+var currentFarmer = 0;
 var peanutsPerClick = 0;
 var peanutsPerSecond = 0;
 var peanutValue = 0.001;
 
 var itemsList = ["seed", "sapling", "tree", "field", "farm"];
+var farmersList = ["shnilli", "littina", "bean", "honey", "farmer"];
 
 var itemTitle = document.querySelector("#itemTitle");
 var farmerTitle = document.querySelector("#farmerTitle");
@@ -55,6 +57,14 @@ class Farmer extends Item {
 			updateFarmer("#" + this.id + "Amount", this.amount, "#" + this.id + "Price", this.price, "#" + this.id + "Production", this.production);
 			peanutsPerSecond += this.production;
 			updateInventory(peanuts, money, peanutsPerClick, peanutsPerSecond);
+
+			if (this.amount >= this.requirementForNext) {
+				if (farmersList[currentFarmer] == this.id) {
+					if (farmersList.length > currentFarmer +1) {
+						addNewFarmer();
+					}
+				}
+			}	
 		}
 	}
 }
@@ -63,11 +73,15 @@ class Farmer extends Item {
 var seed = new Item("Peanut Seed", 0, 0.01, 1, "A single seed, growing a single peanut", "images/peanutgame/seeds.png", "seed", 5);
 var sapling = new Item("Peanut Sapling", 0, 0.08, 5, "A small tree, containing a few peanuts", "images/peanutgame/sapling.png", "sapling", 5);
 var tree = new Item("Peanut Tree", 0, 0.6, 20, "A larger tree, containing a lot more peanuts", "images/peanutgame/tree.png", "tree", 5);
-var field = new Item("Peanut Field", 0, 4.0, 100, "A field full of peanut trees", "images/peanutgame/field.png", "field", 5);
+var field = new Item("Peanut Field", 0, 4, 100, "A field full of peanut trees", "images/peanutgame/field.png", "field", 5);
 var farm = new Item("Peanut Farm", 0, 30, 450, "An actual peanut farm", "images/peanutgame/farm.png", "farm", 5);
 
 //Creating farmer objects from classes
-var shnilli = new Farmer("Shnilli", 0, 0.002, 1, "Everyone's favorite chocolate potato", "images/peanutgame/shnilli.png", "shnilli");
+var shnilli = new Farmer("Shnilli", 0, 0.003, 1, "Everyone's favorite chocolate potato", "images/peanutgame/shnilli.png", "shnilli", 3);
+var littina = new Farmer("Littina", 0, 0.008, 2, "Shnilli's sister, Littina", "images/peanutgame/littina.png", "littina", 5);
+var bean = new Farmer("The Bean", 0, 0.04, 8, "Smol boi and friend of Shnilli", "images/peanutgame/the bean.png", "bean", 5);
+var honey = new Farmer("Honey", 0, 0.2, 20, "Actual, living honey about half the size of a stickman", "images/peanutgame/honey.png", "honey", 5);
+var farmer = new Farmer("Peanut Farmer", 0, 1, 80, "Just a normal peanut farmer", "images/peanutgame/farmer.png", "farmer", 5);
 
 //Creating shop elements
 function createItemElement(name, amount, price, production, description, image, onclick, id) {
@@ -177,6 +191,19 @@ function addNewItem() {
 	currentItem += 1
 }
 
+function addNewFarmer() {
+	if (currentFarmer == 0) {
+		createFarmerElement(littina.name, littina.amount, littina.price, littina.production, littina.description, littina.image, "littina.buy()", littina.id);
+	} else if (currentFarmer == 1) {
+		createFarmerElement(bean.name, bean.amount, bean.price, bean.production, bean.description, bean.image, "bean.buy()", bean.id);
+	} else if (currentFarmer == 2) {
+		createFarmerElement(honey.name, honey.amount, honey.price, honey.production, honey.description, honey.image, "honey.buy()", honey.id);
+	} else if (currentFarmer == 3) {
+		createFarmerElement(farmer.name, farmer.amount, farmer.price, farmer.production, farmer.description, farmer.image, "farmer.buy()", farmer.id);
+	}
+	currentFarmer += 1
+}
+
 //Updating shop elements
 function updateItem(amountID, amount, priceID, price, productionID, production) {
 	var itemAmount = document.querySelector(amountID);
@@ -230,6 +257,22 @@ function clickScreen() {
 	peanuts += peanutsPerClick;
 	updateInventory(peanuts, money, peanutsPerClick, peanutsPerSecond);
 }
+
+//Auto-farming function
+var i = 1;
+
+function autoFarming() {
+  setTimeout(function() {
+    peanuts += peanutsPerSecond;
+	updateInventory(peanuts, money, peanutsPerClick, peanutsPerSecond);
+	
+    if (i < 10) {
+      autoFarming(); 
+    }
+  }, 1000)
+}
+
+autoFarming(); 
 
 //Selling peanuts function
 function sellPeanuts() {
