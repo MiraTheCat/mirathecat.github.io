@@ -6,6 +6,8 @@ var peanutsPerClick = 0;
 var peanutsPerSecond = 0;
 var peanutValue = 0.001;
 
+var itemsList = ["seed", "sapling", "tree", "field", "farm"];
+
 var itemTitle = document.querySelector("#itemTitle");
 var farmerTitle = document.querySelector("#farmerTitle");
 var itemShop = document.querySelector("#itemShop");
@@ -13,7 +15,7 @@ var farmerShop = document.querySelector("#farmerShop");
 
 //Creating classes
 class Item {
-	constructor(name, amount, price, production, description, image, id) {
+	constructor(name, amount, price, production, description, image, id, requirementForNext) {
 		this.name = name
 		this.amount = amount
 		this.price = price
@@ -21,16 +23,25 @@ class Item {
 		this.description = description
 		this.image = image
 		this.id = id
+		this.requirementForNext = requirementForNext
 	}
 
 	buy() {
 		if (money >= this.price) {
 			money -= this.price;
-			this.price = Math.round(this.price * 1150) / 1000;
+			this.price = Math.round(this.price * 1250) / 1000;
 			this.amount += 1;
 			updateItem("#" + this.id + "Amount", this.amount, "#" + this.id + "Price", this.price, "#" + this.id + "Production", this.production);
 			peanutsPerClick += this.production;
 			updateInventory(peanuts, money, peanutsPerClick, peanutsPerSecond);
+
+			if (this.amount >= this.requirementForNext) {
+				if (itemsList[currentItem] == this.id) {
+					if (itemsList.length > currentItem +1) {
+						addNewItem();
+					}
+				}
+			}		
 		}
 	}
 }
@@ -39,7 +50,7 @@ class Farmer extends Item {
 	buy() {
 		if (money >= this.price) {
 			money -= this.price;
-			this.price = Math.round(this.price * 1150) / 1000;
+			this.price = Math.round(this.price * 1250) / 1000;
 			this.amount += 1;
 			updateFarmer("#" + this.id + "Amount", this.amount, "#" + this.id + "Price", this.price, "#" + this.id + "Production", this.production);
 			peanutsPerSecond += this.production;
@@ -49,16 +60,16 @@ class Farmer extends Item {
 }
 
 //Creating item objects from classes
-var seed = new Item("Peanut Seed", 0, 0.01, 1, "A single seed, growing a single peanut", "images/peanutgame/seeds.png", "seed");
-var sapling = new Item("Peanut Sapling", 0, 0.08, 5, "A small tree, containing a few peanuts", "images/peanutgame/sapling.png", "sapling");
-var tree = new Item("Peanut Tree", 0, 0.6, 20, "A larger tree, containing a lot more peanuts", "images/peanutgame/tree.png", "tree");
-var field = new Item("Peanut Field", 0, 4.0, 100, "A field full of peanut trees", "images/peanutgame/field.png", "field");
-var farm = new Item("Peanut Farm", 0, 30, 450, "An actual peanut farm", "images/peanutgame/farm.png", "farm");
+var seed = new Item("Peanut Seed", 0, 0.01, 1, "A single seed, growing a single peanut", "images/peanutgame/seeds.png", "seed", 5);
+var sapling = new Item("Peanut Sapling", 0, 0.08, 5, "A small tree, containing a few peanuts", "images/peanutgame/sapling.png", "sapling", 5);
+var tree = new Item("Peanut Tree", 0, 0.6, 20, "A larger tree, containing a lot more peanuts", "images/peanutgame/tree.png", "tree", 5);
+var field = new Item("Peanut Field", 0, 4.0, 100, "A field full of peanut trees", "images/peanutgame/field.png", "field", 5);
+var farm = new Item("Peanut Farm", 0, 30, 450, "An actual peanut farm", "images/peanutgame/farm.png", "farm", 5);
 
 //Creating farmer objects from classes
 var shnilli = new Farmer("Shnilli", 0, 0.002, 1, "Everyone's favorite chocolate potato", "images/peanutgame/shnilli.png", "shnilli");
 
-//Creating shop elements - Functions
+//Creating shop elements
 function createItemElement(name, amount, price, production, description, image, onclick, id) {
 	var item = document.createElement("a");
 	itemShop.appendChild(item);
@@ -151,6 +162,21 @@ function createFarmerElement(name, amount, price, production, description, image
 	itemAmount.id = id + "Amount"
 }
 
+//Adding shop elements
+function addNewItem() {
+	if (currentItem == 0) {
+		createItemElement(sapling.name, sapling.amount, sapling.price, sapling.production, sapling.description, sapling.image, "sapling.buy()", sapling.id);
+	} else if (currentItem == 1) {
+		createItemElement(tree.name, tree.amount, tree.price, tree.production, tree.description, tree.image, "tree.buy()", tree.id);
+	} else if (currentItem == 2) {
+		createItemElement(field.name, field.amount, field.price, field.production, field.description, field.image, "field.buy()", field.id);
+	} else if (currentItem == 3) {
+		createItemElement(farm.name, farm.amount, farm.price, farm.production, farm.description, farm.image, "farm.buy()", farm.id);
+	}
+
+	currentItem += 1
+}
+
 //Updating shop elements
 function updateItem(amountID, amount, priceID, price, productionID, production) {
 	var itemAmount = document.querySelector(amountID);
@@ -202,7 +228,6 @@ function updateInventory(peanuts, money, peanutsPerClick, peanutsPerSecond) {
 //Clicking screen function
 function clickScreen() {
 	peanuts += peanutsPerClick;
-	console.log(peanuts);
 	updateInventory(peanuts, money, peanutsPerClick, peanutsPerSecond);
 }
 
@@ -214,10 +239,6 @@ function sellPeanuts() {
 
 //Running functions
 createItemElement(seed.name, seed.amount, seed.price, seed.production, seed.description, seed.image, "seed.buy()", seed.id);
-createItemElement(sapling.name, sapling.amount, sapling.price, sapling.production, sapling.description, sapling.image, "sapling.buy()", sapling.id);
-createItemElement(tree.name, tree.amount, tree.price, tree.production, tree.description, tree.image, "tree.buy()", tree.id);
-createItemElement(field.name, field.amount, field.price, field.production, field.description, field.image, "field.buy()", field.id);
-createItemElement(farm.name, farm.amount, farm.price, farm.production, farm.description, farm.image, "farm.buy()", farm.id);
 
 createFarmerElement(shnilli.name, shnilli.amount, shnilli.price, shnilli.production, shnilli.description, shnilli.image, "shnilli.buy()", shnilli.id);
 
