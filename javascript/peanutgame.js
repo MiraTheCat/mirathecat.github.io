@@ -6,9 +6,14 @@ var currentFarmer = 0;
 var peanutsPerClick = 0;
 var peanutsPerSecond = 0;
 var peanutValue = 0.001;
+var productionBonus = 1.0;
 
-var itemsList = ["seed", "sapling", "tree", "field", "farm"];
-var farmersList = ["shnilli", "littina", "bean", "honey", "farmer"];
+var itemsList = ["seed", "sapling", "tree", "field", "farm", "factory", "creationLab",
+"generatorFacility", "productionCenter", "forest", "island", "assemblyYard", "fusionReactor",
+"asteroid", "moon", "planet", "star", "galaxy", "universe", "multiverse", "omniverse", "box"];
+
+var farmersList = ["shnilli", "littina", "bean", "honey", "farmer", "bot", "cactus", "ghp",
+"overseer", "davz", "pea", "penut", "bread", "galaxy", "maggot", "abominodas"];
 
 var itemTitle = document.querySelector("#itemTitle");
 var farmerTitle = document.querySelector("#farmerTitle");
@@ -31,7 +36,19 @@ class Item {
 	buy() {
 		if (money >= this.price) {
 			money -= this.price;
-			this.price = Math.round(this.price * 1250) / 1000;
+
+			for (var i = 0; i < itemsList.length; i++) {
+				if (itemsList[i] == this.id) {
+					if (i < 3) {
+						this.price = Math.round(this.price * 1250) / 1000;
+					} else if (i < 5) {
+						this.price = Math.round(this.price * 12.5) / 10;
+					} else {
+						this.price = Math.round(this.price * 1.25);
+					}
+				}	
+			}
+			
 			this.amount += 1;
 			updateItem("#" + this.id + "Amount", this.amount, "#" + this.id + "Price", this.price, "#" + this.id + "Production", this.production);
 			peanutsPerClick += this.production;
@@ -39,9 +56,7 @@ class Item {
 
 			if (this.amount >= this.requirementForNext) {
 				if (itemsList[currentItem] == this.id) {
-					if (itemsList.length > currentItem +1) {
-						addNewItem();
-					}
+					addNewItem();
 				}
 			}		
 		}
@@ -52,7 +67,19 @@ class Farmer extends Item {
 	buy() {
 		if (money >= this.price) {
 			money -= this.price;
-			this.price = Math.round(this.price * 1250) / 1000;
+
+			for (var i = 0; i < farmersList.length; i++) {
+				if (farmersList[i] == this.id) {
+					if (i < 3) {
+						this.price = Math.round(this.price * 1250) / 1000;
+					} else if (i < 5) {
+						this.price = Math.round(this.price * 12.5) / 10;
+					} else {
+						this.price = Math.round(this.price * 1.25);
+					}
+				}	
+			}
+
 			this.amount += 1;
 			updateFarmer("#" + this.id + "Amount", this.amount, "#" + this.id + "Price", this.price, "#" + this.id + "Production", this.production);
 			peanutsPerSecond += this.production;
@@ -60,9 +87,7 @@ class Farmer extends Item {
 
 			if (this.amount >= this.requirementForNext) {
 				if (farmersList[currentFarmer] == this.id) {
-					if (farmersList.length > currentFarmer +1) {
-						addNewFarmer();
-					}
+					addNewFarmer();
 				}
 			}	
 		}
@@ -75,6 +100,13 @@ var sapling = new Item("Peanut Sapling", 0, 0.08, 5, "A small tree, containing a
 var tree = new Item("Peanut Tree", 0, 0.6, 20, "A larger tree, containing a lot more peanuts", "images/peanutgame/tree.png", "tree", 5);
 var field = new Item("Peanut Field", 0, 4, 100, "A field full of peanut trees", "images/peanutgame/field.png", "field", 5);
 var farm = new Item("Peanut Farm", 0, 30, 450, "An actual peanut farm", "images/peanutgame/farm.png", "farm", 5);
+var factory = new Item("Peanut Factory", 0, 180, 2000, "A factory producing peanuts", "images/peanutgame/factory.png", "factory", 5);
+var creationLab = new Item("Peanut Creation Lab", 0, 1000, 9000, "Peanuts are created chemically in this lab", "images/peanutgame/creationLab.png", "creationLab", 5);
+var generatorFacility = new Item("Peanut Generator Facility", 0, 6000, 45000, "Facility generating peanuts in the thousands", "images/peanutgame/generatorFacility.png", "generatorFacility", 5);
+var productionCenter = new Item("Underground Peanut Production Center", 0, 40000, 200000, "A giant production center, producing peanuts underground", "images/peanutgame/productionCenter.png", "productionCenter", 5);
+var forest = new Item("Peanut Forest", 0, 200000, 1000000, "A large forest growing millions of peanuts", "images/peanutgame/forest.png", "forest", 5);
+var island = new Item("Private Peanut Island", 0, 1200000, 4500000, "A private island for growing peanuts", "images/peanutgame/island.png", "island", 5);
+var assemblyYard = new Item("Giant Peanut Assembly Yard", 0, 7000000, 20000000, "A giant assembly yard, creating giant peanuts", "images/peanutgame/assemblyYard.png", "assemblyYard", 5);
 
 //Creating farmer objects from classes
 var shnilli = new Farmer("Shnilli", 0, 0.003, 1, "Everyone's favorite chocolate potato", "images/peanutgame/shnilli.png", "shnilli", 3);
@@ -82,6 +114,13 @@ var littina = new Farmer("Littina", 0, 0.008, 2, "Shnilli's sister, Littina", "i
 var bean = new Farmer("The Bean", 0, 0.04, 8, "Smol boi and friend of Shnilli", "images/peanutgame/the bean.png", "bean", 5);
 var honey = new Farmer("Honey", 0, 0.2, 20, "Actual, living honey about half the size of a stickman", "images/peanutgame/honey.png", "honey", 5);
 var farmer = new Farmer("Peanut Farmer", 0, 1, 80, "Just a normal peanut farmer", "images/peanutgame/farmer.png", "farmer", 5);
+var bot = new Farmer("AbominationBot", 0, 8.5, 400, "A bot desiged to <s>defend Abominations</s> farm peanuts", "images/peanutgame/abominationbot.png", "bot", 5);
+var cactus = new Farmer("The Cactus", 0, 50, 1800, "Who knows better how to survive in harsh environments than a cactus?", "images/peanutgame/cactus.png", "cactus", 5);
+var ghp = new Farmer("GHP", 0, 400, 10000, "Giant Humanoid Peanut himself, here to help take care of his farm", "images/peanutgame/ghp.png", "ghp", 5);
+var overseer = new Farmer("Abomination Overseer", 0, 2500, 55000, "The Abomination Overseer, watching over all Abominations", "images/peanutgame/overseer.png", "overseer", 5);
+var davz = new Farmer("The Davz", 0, 16000, 250000, "Davz himself joins in to farm peanuts", "images/peanutgame/davz.png", "davz", 15);
+var pea = new Farmer("The Pea", 0, 850000, 12000000, "A giant Abomination, even bigger than the Stickworld itself", "images/peanutgame/the pea.png", "pea", 30);
+var penut = new Farmer("Holy Penut", 0, 500000000, 2800000000, "The god of peanuts, chillness and peace", "images/peanutgame/holy penut.png", "penut", 20);
 
 //Creating shop elements
 function createItemElement(name, amount, price, production, description, image, onclick, id) {
@@ -119,7 +158,7 @@ function createItemElement(name, amount, price, production, description, image, 
 
 	var itemProduction = document.createElement("p");
 	item.appendChild(itemProduction);
-	itemProduction.innerHTML = "+" + production + " peanuts/click";
+	itemProduction.innerHTML = "+" + (production * productionBonus) + " peanuts/click";
 	itemProduction.className = "pg-item-description";
 	itemProduction.id = id + "Production"
 
@@ -165,7 +204,7 @@ function createFarmerElement(name, amount, price, production, description, image
 
 	var itemProduction = document.createElement("p");
 	item.appendChild(itemProduction);
-	itemProduction.innerHTML = "+" + production + " peanuts/second";
+	itemProduction.innerHTML = "+" + (production * productionBonus) + " peanuts/second";
 	itemProduction.className = "pg-item-description";
 	itemProduction.id = id + "Production"
 
@@ -186,7 +225,22 @@ function addNewItem() {
 		createItemElement(field.name, field.amount, field.price, field.production, field.description, field.image, "field.buy()", field.id);
 	} else if (currentItem == 3) {
 		createItemElement(farm.name, farm.amount, farm.price, farm.production, farm.description, farm.image, "farm.buy()", farm.id);
+	} else if (currentItem == 4) {
+		createItemElement(factory.name, factory.amount, factory.price, factory.production, factory.description, factory.image, "factory.buy()", factory.id);
+	} else if (currentItem == 5) {
+		createItemElement(creationLab.name, creationLab.amount, creationLab.price, creationLab.production, creationLab.description, creationLab.image, "creationLab.buy()", creationLab.id);
+	} else if (currentItem == 6) {
+		createItemElement(generatorFacility.name, generatorFacility.amount, generatorFacility.price, generatorFacility.production, generatorFacility.description, generatorFacility.image, "generatorFacility.buy()", generatorFacility.id);
+	} else if (currentItem == 7) {
+		createItemElement(productionCenter.name, productionCenter.amount, productionCenter.price, productionCenter.production, productionCenter.description, productionCenter.image, "productionCenter.buy()", productionCenter.id);
+	} else if (currentItem == 8) {
+		createItemElement(forest.name, forest.amount, forest.price, forest.production, forest.description, forest.image, "forest.buy()", forest.id);
+	} else if (currentItem == 9) {
+		createItemElement(island.name, island.amount, island.price, island.production, island.description, island.image, "island.buy()", island.id);
+	} else if (currentItem == 10) {
+		createItemElement(assemblyYard.name, assemblyYard.amount, assemblyYard.price, assemblyYard.production, assemblyYard.description, assemblyYard.image, "assemblyYard.buy()", assemblyYard.id);
 	}
+
 
 	currentItem += 1
 }
@@ -200,6 +254,20 @@ function addNewFarmer() {
 		createFarmerElement(honey.name, honey.amount, honey.price, honey.production, honey.description, honey.image, "honey.buy()", honey.id);
 	} else if (currentFarmer == 3) {
 		createFarmerElement(farmer.name, farmer.amount, farmer.price, farmer.production, farmer.description, farmer.image, "farmer.buy()", farmer.id);
+	} else if (currentFarmer == 4) {
+		createFarmerElement(bot.name, bot.amount, bot.price, bot.production, bot.description, bot.image, "bot.buy()", bot.id);
+	} else if (currentFarmer == 5) {
+		createFarmerElement(cactus.name, cactus.amount, cactus.price, cactus.production, cactus.description, cactus.image, "cactus.buy()", cactus.id);
+	} else if (currentFarmer == 6) {
+		createFarmerElement(ghp.name, ghp.amount, ghp.price, ghp.production, ghp.description, ghp.image, "ghp.buy()", ghp.id);
+	} else if (currentFarmer == 7) {
+		createFarmerElement(overseer.name, overseer.amount, overseer.price, overseer.production, overseer.description, overseer.image, "overseer.buy()", overseer.id);
+	} else if (currentFarmer == 8) {
+		createFarmerElement(davz.name, davz.amount, davz.price, davz.production, davz.description, davz.image, "davz.buy()", davz.id);
+	} else if (currentFarmer == 9) {
+		createFarmerElement(pea.name, pea.amount, pea.price, pea.production, pea.description, pea.image, "pea.buy()", pea.id);
+	} else if (currentFarmer == 10) {
+		createFarmerElement(penut.name, penut.amount, penut.price, penut.production, penut.description, penut.image, "penut.buy()", penut.id);
 	}
 	currentFarmer += 1
 }
@@ -213,7 +281,7 @@ function updateItem(amountID, amount, priceID, price, productionID, production) 
 	itemPrice.innerHTML = "$" + price;
 
 	var itemProduction = document.querySelector(productionID);
-	itemProduction.innerHTML = "+" + production + " peanuts/click";
+	itemProduction.innerHTML = "+" + (production * productionBonus) + " peanuts/click";
 }
 
 function updateFarmer(amountID, amount, priceID, price, productionID, production) {
@@ -224,7 +292,7 @@ function updateFarmer(amountID, amount, priceID, price, productionID, production
 	itemPrice.innerHTML = "$" + price;
 
 	var itemProduction = document.querySelector(productionID);
-	itemProduction.innerHTML = "+" + production + " peanuts/second";
+	itemProduction.innerHTML = "+" + (production * productionBonus) + " peanuts/second";
 }
 
 //Show shop functions
@@ -246,15 +314,22 @@ function showFarmerShop() {
 
 //Updating inventory function
 function updateInventory(peanuts, money, peanutsPerClick, peanutsPerSecond) {
-	document.querySelector("#peanutAmount").innerHTML = peanuts + " peanuts, ";
-	document.querySelector("#moneyAmount").innerHTML = "$" + (Math.round(money * 1000) / 1000) + ", ";
-	document.querySelector("#peanutsPerClick").innerHTML = peanutsPerClick + " peanuts/click, ";
-	document.querySelector("#peanutsPerSecond").innerHTML = peanutsPerSecond + " peanuts/second";
+	if (money < 1000) {
+		document.querySelector("#peanutAmount").innerHTML = peanuts + " peanuts, ";
+		document.querySelector("#moneyAmount").innerHTML = "$" + (Math.round(money * 1000) / 1000) + ", ";
+		document.querySelector("#peanutsPerClick").innerHTML = (peanutsPerClick * productionBonus) + " peanuts/click, ";
+		document.querySelector("#peanutsPerSecond").innerHTML = (peanutsPerSecond * productionBonus) + " peanuts/second";
+	} else {
+		document.querySelector("#peanutAmount").innerHTML = peanuts + " peanuts, ";
+		document.querySelector("#moneyAmount").innerHTML = "$" + Math.round(money) + ", ";
+		document.querySelector("#peanutsPerClick").innerHTML = (peanutsPerClick * productionBonus) + " peanuts/click, ";
+		document.querySelector("#peanutsPerSecond").innerHTML = (peanutsPerSecond * productionBonus) + " peanuts/second";
+	}
 }
 
 //Clicking screen function
 function clickScreen() {
-	peanuts += peanutsPerClick;
+	peanuts += peanutsPerClick * productionBonus;
 	updateInventory(peanuts, money, peanutsPerClick, peanutsPerSecond);
 }
 
@@ -263,7 +338,7 @@ var i = 1;
 
 function autoFarming() {
   setTimeout(function() {
-    peanuts += peanutsPerSecond;
+    peanuts += peanutsPerSecond * productionBonus;
 	updateInventory(peanuts, money, peanutsPerClick, peanutsPerSecond);
 	
     if (i < 10) {

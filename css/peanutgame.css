@@ -1,6 +1,6 @@
 .pg-container {
     display: grid;
-    grid-template-areas: "stats stats stats ." "upgrade upgrade upgrade shop" "main main main shop" "main main main shop" "main main main shop";
+    grid-template-areas: "stats stats ." "upgrade upgrade shop" "main main shop" "main main shop" "main main shop" ". . shop" ". . shop";
     height: 600px;
     margin: 0 40px 0 40px;
     gap: 10px 10px;
@@ -13,6 +13,7 @@
     grid-area: stats;
     display: flex;
     border-radius: 15px;
+    flex-wrap: wrap;
 }
 
 .pg-stat-image {
@@ -61,7 +62,7 @@
     background: linear-gradient(0deg, rgb(95, 54, 0), rgb(224, 127, 0));
     cursor: pointer;
     display: grid;
-    grid-template: repeat(14, 1fr) / repeat(5, 1fr);
+    grid-template: repeat(14, 1fr) / repeat(4, 1fr);
 }
 
 .pg-sell {
@@ -96,7 +97,7 @@
     border: solid 2px;
     border-radius: 0 0 20px 20px;
     display: grid;
-    grid-template: repeat(4, 1fr) / repeat(5, 1fr);
+    grid-template: repeat(4, 1fr) / repeat(6, 1fr);
     grid-area: sr;
     background: linear-gradient(180deg, rgb(51, 51, 51), black);
 }
@@ -111,19 +112,20 @@
 }
 
 .pg-shop-image {
-    height: 45px;
+    height: 35px;
+    margin: 0;
     padding: 0;
 }
 
 .pg-item-name {
-    font-size: 15px;
+    font-size: 12px;
     margin: 0;
     padding: 0;
     text-align: center;
 }
 
 .pg-item-description {
-    font-size: 12px;
+    font-size: 10px;
     margin: 0;
     padding: 0;
     text-align: center;
