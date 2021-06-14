@@ -10,10 +10,10 @@ var productionBonus = 1.0;
 
 var itemsList = ["seed", "sapling", "tree", "field", "farm", "factory", "creationLab",
 "generatorFacility", "productionCenter", "forest", "island", "assemblyYard", "fusionReactor",
-"asteroid", "moon", "planet", "star", "galaxy", "universe", "multiverse", "omniverse", "box"];
+"asteroid", "moon", "planet", "star", "galaxy", "universe", "multiverse", "omniverse", "box", "void"];
 
 var farmersList = ["shnilli", "littina", "bean", "honey", "farmer", "bot", "cactus", "ghp",
-"overseer", "davz", "pea", "penut", "bread", "galaxy", "maggot", "abominodas"];
+"overseer", "davz", "pea", "penut", "bread", "theGalaxy", "maggot", "abominodas", "creation"];
 
 var itemTitle = document.querySelector("#itemTitle");
 var farmerTitle = document.querySelector("#farmerTitle");
@@ -107,6 +107,12 @@ var productionCenter = new Item("Underground Peanut Production Center", 0, 40000
 var forest = new Item("Peanut Forest", 0, 200000, 1000000, "A large forest growing millions of peanuts", "images/peanutgame/forest.png", "forest", 5);
 var island = new Item("Private Peanut Island", 0, 1200000, 4500000, "A private island for growing peanuts", "images/peanutgame/island.png", "island", 5);
 var assemblyYard = new Item("Giant Peanut Assembly Yard", 0, 7000000, 20000000, "A giant assembly yard, creating giant peanuts", "images/peanutgame/assemblyYard.png", "assemblyYard", 5);
+var fusionReactor = new Item("Peanut Fusion Reactor", 0, 40000000, 100000000, "Fuse peanuts together to create more peanuts!", "images/peanutgame/fusionReactor.png", "fusionReactor", 5);
+var asteroid = new Item("Peanut Asteroid", 0, 250000000, 450000000, "An asteroid made out of peanuts", "images/peanutgame/asteroid.png", "asteroid", 5);
+var moon = new Item("Peanut Moon", 0, 1300000000, 2500000000, "Ever wanted to grow peanuts on the moon? Well now you can!", "images/peanutgame/moon.png", "moon", 5);
+var planet = new Item("Peanut Planet", 0, 7500000000, 10000000000, "An entire planet, just to grow peanuts?", "images/peanutgame/planet.png", "planet", 5);
+var star = new Item("Peanut Star", 0, 45000000000, 45000000000, "Works like a fusion reactor, but a lot bigger", "images/peanutgame/star.png", "star", 5);
+var galaxy = new Item("Peanut Galaxy", 0, 260000000000, 230000000000, "A galaxy full of peanut-growing planets", "images/peanutgame/galaxy.png", "galaxy", 5);
 
 //Creating farmer objects from classes
 var shnilli = new Farmer("Shnilli", 0, 0.003, 1, "Everyone's favorite chocolate potato", "images/peanutgame/shnilli.png", "shnilli", 3);
@@ -119,8 +125,12 @@ var cactus = new Farmer("The Cactus", 0, 50, 1800, "Who knows better how to surv
 var ghp = new Farmer("GHP", 0, 400, 10000, "Giant Humanoid Peanut himself, here to help take care of his farm", "images/peanutgame/ghp.png", "ghp", 5);
 var overseer = new Farmer("Abomination Overseer", 0, 2500, 55000, "The Abomination Overseer, watching over all Abominations", "images/peanutgame/overseer.png", "overseer", 5);
 var davz = new Farmer("The Davz", 0, 16000, 250000, "Davz himself joins in to farm peanuts", "images/peanutgame/davz.png", "davz", 15);
-var pea = new Farmer("The Pea", 0, 850000, 12000000, "A giant Abomination, even bigger than the Stickworld itself", "images/peanutgame/the pea.png", "pea", 30);
+var pea = new Farmer("The Pea", 0, 850000, 12000000, "A giant Abomination, even bigger than the Stickworld itself", "images/peanutgame/the pea.png", "pea", 25);
 var penut = new Farmer("Holy Penut", 0, 500000000, 2800000000, "The god of peanuts, chillness and peace", "images/peanutgame/holy penut.png", "penut", 20);
+var bread = new Farmer("The Bread", 0, 73000000000, 200000000000, "An Abomination the size of the sun", "images/peanutgame/bread.png", "bread", 5);
+var theGalaxy = new Farmer("The Galaxy", 0, 500000000000, 1500000000000, "A living galaxy, twice the size of the Milky Way", "images/peanutgame/theGalaxy.png", "theGalaxy", 20);
+var maggot = new Farmer("The Maggot", 0, 140000000000000, 150000000000000, "A completely normal maggot, 200 times the size of the Omniverse", "images/peanutgame/maggot.png", "maggot", 5);
+var abominodas = new Farmer("Abominodas", 0, 700000000000000, 650000000000000, "One of the most powerful Abomination Gods", "images/peanutgame/abominodas.png", "abominodas", 5);
 
 //Creating shop elements
 function createItemElement(name, amount, price, production, description, image, onclick, id) {
@@ -239,8 +249,19 @@ function addNewItem() {
 		createItemElement(island.name, island.amount, island.price, island.production, island.description, island.image, "island.buy()", island.id);
 	} else if (currentItem == 10) {
 		createItemElement(assemblyYard.name, assemblyYard.amount, assemblyYard.price, assemblyYard.production, assemblyYard.description, assemblyYard.image, "assemblyYard.buy()", assemblyYard.id);
+	} else if (currentItem == 11) {
+		createItemElement(fusionReactor.name, fusionReactor.amount, fusionReactor.price, fusionReactor.production, fusionReactor.description, fusionReactor.image, "fusionReactor.buy()", fusionReactor.id);
+	} else if (currentItem == 12) {
+		createItemElement(asteroid.name, asteroid.amount, asteroid.price, asteroid.production, asteroid.description, asteroid.image, "asteroid.buy()", asteroid.id);
+	} else if (currentItem == 13) {
+		createItemElement(moon.name, moon.amount, moon.price, moon.production, moon.description, moon.image, "moon.buy()", moon.id);
+	} else if (currentItem == 14) {
+		createItemElement(planet.name, planet.amount, planet.price, planet.production, planet.description, planet.image, "planet.buy()", planet.id);
+	} else if (currentItem == 15) {
+		createItemElement(star.name, star.amount, star.price, star.production, star.description, star.image, "star.buy()", star.id);
+	} else if (currentItem == 16) {
+		createItemElement(galaxy.name, galaxy.amount, galaxy.price, galaxy.production, galaxy.description, galaxy.image, "galaxy.buy()", galaxy.id);
 	}
-
 
 	currentItem += 1
 }
@@ -268,6 +289,14 @@ function addNewFarmer() {
 		createFarmerElement(pea.name, pea.amount, pea.price, pea.production, pea.description, pea.image, "pea.buy()", pea.id);
 	} else if (currentFarmer == 10) {
 		createFarmerElement(penut.name, penut.amount, penut.price, penut.production, penut.description, penut.image, "penut.buy()", penut.id);
+	} else if (currentFarmer == 11) {
+		createFarmerElement(bread.name, bread.amount, bread.price, bread.production, bread.description, bread.image, "bread.buy()", bread.id);
+	} else if (currentFarmer == 12) {
+		createFarmerElement(theGalaxy.name, theGalaxy.amount, theGalaxy.price, theGalaxy.production, theGalaxy.description, theGalaxy.image, "theGalaxy.buy()", theGalaxy.id);
+	} else if (currentFarmer == 13) {
+		createFarmerElement(maggot.name, maggot.amount, maggot.price, maggot.production, maggot.description, maggot.image, "maggot.buy()", maggot.id);
+	} else if (currentFarmer == 14) {
+		createFarmerElement(abominodas.name, abominodas.amount, abominodas.price, abominodas.production, abominodas.description, abominodas.image, "abominodas.buy()", abominodas.id);
 	}
 	currentFarmer += 1
 }
