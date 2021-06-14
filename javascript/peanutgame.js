@@ -7,6 +7,8 @@ var peanutsPerClick = 0;
 var peanutsPerSecond = 0;
 var peanutValue = 0.001;
 var productionBonus = 1.0;
+var unlockedVoid = false;
+var unlockedCreation = false;
 
 var itemsList = ["seed", "sapling", "tree", "field", "farm", "factory", "creationLab",
 "generatorFacility", "productionCenter", "forest", "island", "assemblyYard", "fusionReactor",
