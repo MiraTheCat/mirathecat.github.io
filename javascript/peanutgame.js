@@ -115,6 +115,10 @@ var moon = new Item("Peanut Moon", 0, 1300000000, 2500000000, "Ever wanted to gr
 var planet = new Item("Peanut Planet", 0, 7500000000, 10000000000, "An entire planet, just to grow peanuts?", "images/peanutgame/planet.png", "planet", 5);
 var star = new Item("Peanut Star", 0, 45000000000, 45000000000, "Works like a fusion reactor, but a lot bigger", "images/peanutgame/star.png", "star", 5);
 var galaxy = new Item("Peanut Galaxy", 0, 260000000000, 230000000000, "A galaxy full of peanut-growing planets", "images/peanutgame/galaxy.png", "galaxy", 5);
+var universe = new Item("Peanut Universe", 0, 1500000000000, 1350000000000, "How did you even manage to buy this?", "images/peanutgame/universe.png", "universe", 5);
+var multiverse = new Item("Peanut Multiverse", 0, 9000000000000, 6000000000000, "When the universe isn't big enough to grow peanuts", "images/peanutgame/multiverse.png", "multiverse", 5);
+var omniverse = new Item("Peanut Omniverse", 0, 55000000000000, 25000000000000, "Could it get even bigger than this?", "images/peanutgame/omniverse.png", "omniverse", 5);
+var box = new Item("The Box", 0, 280000000000000, 100000000000000, "The Box, containing everything in existence, now filled with peantuts. Is this the true limit of your production?", "images/peanutgame/the box.png", "box", 5);
 
 //Creating farmer objects from classes
 var shnilli = new Farmer("Shnilli", 0, 0.003, 1, "Everyone's favorite chocolate potato", "images/peanutgame/shnilli.png", "shnilli", 3);
@@ -263,6 +267,14 @@ function addNewItem() {
 		createItemElement(star.name, star.amount, star.price, star.production, star.description, star.image, "star.buy()", star.id);
 	} else if (currentItem == 16) {
 		createItemElement(galaxy.name, galaxy.amount, galaxy.price, galaxy.production, galaxy.description, galaxy.image, "galaxy.buy()", galaxy.id);
+	} else if (currentItem == 17) {
+		createItemElement(universe.name, universe.amount, universe.price, universe.production, universe.description, universe.image, "universe.buy()", universe.id);
+	} else if (currentItem == 18) {
+		createItemElement(multiverse.name, multiverse.amount, multiverse.price, multiverse.production, multiverse.description, multiverse.image, "multiverse.buy()", multiverse.id);
+	} else if (currentItem == 19) {
+		createItemElement(omniverse.name, omniverse.amount, omniverse.price, omniverse.production, omniverse.description, omniverse.image, "omniverse.buy()", omniverse.id);
+	} else if (currentItem == 20) {
+		createItemElement(box.name, box.amount, box.price, box.production, box.description, box.image, "box.buy()", box.id);
 	}
 
 	currentItem += 1
