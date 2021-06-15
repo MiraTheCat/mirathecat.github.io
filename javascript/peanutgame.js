@@ -96,6 +96,22 @@ class Farmer extends Item {
 	}
 }
 
+class Upgrade {
+	constructor(name, level, maxLevel, price, description, image, id) {
+		this.name = name;
+		this.level = level;
+		this.maxLevel = maxLevel;
+		this.price = price;
+		this.description = description;
+		this.image = image;
+		this.id = id;
+	}
+
+	buy() {
+		
+	}
+}
+
 //Creating item objects from classes
 var seed = new Item("Peanut Seed", 0, 0.01, 1, "A single seed, growing a single peanut", "images/peanutgame/seeds.png", "seed", 5);
 var sapling = new Item("Peanut Sapling", 0, 0.08, 5, "A small tree, containing a few peanuts", "images/peanutgame/sapling.png", "sapling", 5);
@@ -397,6 +413,16 @@ function sellPeanuts() {
 	money += Math.round(peanuts * peanutValue * 1000) / 1000;
 	peanuts = 0;
 }
+
+//Show upgrades function
+function showInfo(id) {
+	document.getElementById(id).style.display = "block";
+}
+
+function hideInfo(id) {
+	document.getElementById(id).style.display = "none";
+}
+
 
 //Running functions
 createItemElement(seed.name, seed.amount, seed.price, seed.production, seed.description, seed.image, "seed.buy()", seed.id);

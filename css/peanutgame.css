@@ -32,12 +32,13 @@
     align-items: center;
 }
 
-.pg-upgrade {
+.pg-upgrade-container {
    grid-area: upgrade;
    border: solid 2px;
    border-radius: 20px;
    display: grid;
-   grid-template: 1fr 1fr / repeat(5, 1fr);
+   grid-template: 1fr 1fr / repeat(8, 1fr);
+   gap: 5px 5px;
 }
 
 .pg-upgradeText {
@@ -53,6 +54,38 @@
     position: relative;
     right: 1px;
     bottom: 1px;
+    grid-column: span 2;
+}
+
+.pg-upgrade {
+    border: solid 2px;
+    border-radius: 10px;
+}
+
+.pg-info {
+    border: solid 2px;
+    border-radius: 10px;
+    background-color: black;
+    width: 100px;
+    display: none;
+    position: absolute;
+    overflow: auto;
+    z-index: 2;
+    padding: 5px;
+}
+
+.pg-upgrade-name {
+    font-size: 15px;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.pg-upgrade-description {
+    font-size: 12px;
+    margin: 0;
+    padding: 0;
+    text-align: center;
 }
 
 .pg-main {
