@@ -17,10 +17,18 @@ var itemsList = ["seed", "sapling", "tree", "field", "farm", "factory", "creatio
 var farmersList = ["shnilli", "littina", "bean", "honey", "farmer", "bot", "cactus", "ghp",
 "overseer", "davz", "pea", "penut", "bread", "theGalaxy", "maggot", "abominodas", "creation"];
 
+var peanutValueNames = ["Bigger Peanuts", "Improved Peanuts", "Nutritious Peanuts", "Tasty Peanuts",
+"Valuable Peanuts", "Refined Peanuts", "Tranformed Peanuts", "Giant Peanuts", "Epic Peanuts",
+"Golden Peanuts", "Mythic Peanuts", "Supreme Peanuts", "Divine Peanuts", "Godly Peanuts", "Perfect Peanuts"]
+
+var peanutValues = [0.001, 0.0011, 0.0012, 0.00135, 0.0015, 0.00165, 0.0018, 0.002, 0.0022, 0.0024, 0.0026,
+	0.0028, 0.003, 0.0033, 0.0036, 0.004];
+
 var itemTitle = document.querySelector("#itemTitle");
 var farmerTitle = document.querySelector("#farmerTitle");
 var itemShop = document.querySelector("#itemShop");
 var farmerShop = document.querySelector("#farmerShop");
+var upgradeShop = document.querySelector("#upgradeShop");
 
 //Creating classes
 class Item {
@@ -97,7 +105,7 @@ class Farmer extends Item {
 }
 
 class Upgrade {
-	constructor(name, level, maxLevel, price, description, image, id) {
+	constructor(name, level, maxLevel, price, description, image, id, type) {
 		this.name = name;
 		this.level = level;
 		this.maxLevel = maxLevel;
@@ -105,10 +113,37 @@ class Upgrade {
 		this.description = description;
 		this.image = image;
 		this.id = id;
+		this.type = type;
 	}
 
-	buy() {
-		
+	upgrade() {
+		if (money >= this.price) {
+			money -= this.price;
+			this.level += 1;
+
+			//Peanut value upgrade
+			if (this.type == "peanutValue") {
+				this.name = peanutValueNames[this.level];
+				this.price *= 10;
+				peanutValue = peanutValues[this.level];
+				this.description = "Increases the value of peanuts from $" + peanutValue + " to $" + peanutValues[this.level +1];
+			}
+
+			//Peanut Production upgrade
+
+			//Item upgrade
+
+			//Farmer upgrade
+
+			if (this.maxLevel > this.level) {
+
+				updateUpgrade("#" + this.id + "Title", this.name, "#" + this.id + "Level", this.level, this.maxLevel, "#" + this.id + "Price", this.price, "#" + this.id + "Description", this.description)
+			} else {
+				removeUgrade("#" + this.id);
+			}
+
+			updateInventory(peanuts, money, peanutsPerClick, peanutsPerSecond);
+		}
 	}
 }
 
@@ -153,6 +188,9 @@ var bread = new Farmer("The Bread", 0, 73000000000, 200000000000, "An Abominatio
 var theGalaxy = new Farmer("The Galaxy", 0, 500000000000, 1500000000000, "A living galaxy, twice the size of the Milky Way", "images/peanutgame/theGalaxy.png", "theGalaxy", 20);
 var maggot = new Farmer("The Maggot", 0, 140000000000000, 150000000000000, "A completely normal maggot, 200 times the size of the Omniverse", "images/peanutgame/maggot.png", "maggot", 5);
 var abominodas = new Farmer("Abominodas", 0, 700000000000000, 650000000000000, "One of the most powerful Abomination Gods", "images/peanutgame/abominodas.png", "abominodas", 5);
+
+//Creating upgrade objects from classes
+var peanutPrice = new Upgrade("Bigger Peanuts", 0, 15, 0.25, "Increases the value of peanuts from $0.001 to $0.0011", "images/peanutgame/upgrades/peanut.png", "peanutPrice", "peanutValue");
 
 //Creating shop elements
 function createItemElement(name, amount, price, production, description, image, onclick, id) {
@@ -232,19 +270,67 @@ function createFarmerElement(name, amount, price, production, description, image
 	item.appendChild(itemPrice);
 	itemPrice.innerHTML = "$" + price;
 	itemPrice.className = "pg-item-description";
-	itemPrice.id = id + "Price"
+	itemPrice.id = id + "Price";
 
 	var itemProduction = document.createElement("p");
 	item.appendChild(itemProduction);
 	itemProduction.innerHTML = "+" + (production * productionBonus) + " peanuts/second";
 	itemProduction.className = "pg-item-description";
-	itemProduction.id = id + "Production"
+	itemProduction.id = id + "Production";
 
 	var itemAmount = document.createElement("p");
 	item.appendChild(itemAmount);
 	itemAmount.innerHTML = "Amount: " + amount;
 	itemAmount.className = "pg-item-description";
-	itemAmount.id = id + "Amount"
+	itemAmount.id = id + "Amount";
+}
+
+//Creating upgrade elements
+function createUpgradeElement(name, level, maxLevel, price, description, image, onclick, id) {
+	var item = document.createElement("a");
+	upgradeShop.appendChild(item);
+	item.setAttribute('onclick', onclick)
+	item.href = "#";
+	item.className = "pg-upgrade";
+	item.id = id;
+
+	var itemImage = document.createElement("img");
+	item.appendChild(itemImage);
+	itemImage.src = image;
+	itemImage.className = "pg-shop-image";
+	itemImage.id = id + "Image";
+
+	var itemInfo = document.createElement("div");
+	item.appendChild(itemInfo);
+	itemInfo.className = "pg-info";
+	itemInfo.id = id + "Info";
+
+	var itemTitle = document.createElement("h5");
+	itemInfo.appendChild(itemTitle);
+	itemTitle.innerHTML = name;
+	itemTitle.className = "pg-upgrade-name";
+	itemTitle.id = id + "Title"
+
+	var itemDescription = document.createElement("p");
+	itemInfo.appendChild(itemDescription);
+	itemDescription.innerHTML = description;
+	itemDescription.className = "pg-upgrade-description";
+	itemDescription.id = id + "Description"
+
+	var itemPrice = document.createElement("p");
+	itemInfo.appendChild(itemPrice);
+	itemPrice.innerHTML = "Price: $" + price;
+	itemPrice.className = "pg-upgrade-description";
+	itemPrice.id = id + "Price";
+
+	var itemLevel = document.createElement("p");
+	itemInfo.appendChild(itemLevel);
+	itemLevel.innerHTML = "Level " + level + "/" + maxLevel;
+	itemLevel.className = "pg-upgrade-description";
+	itemLevel.id = id + "Level";
+
+	item.addEventListener("mouseover", function() {showInfo(id + "Info")});
+	item.addEventListener("mouseout", function() {hideInfo(id + "Info")});
 }
 
 //Adding shop elements
@@ -354,6 +440,27 @@ function updateFarmer(amountID, amount, priceID, price, productionID, production
 	itemProduction.innerHTML = "+" + (production * productionBonus) + " peanuts/second";
 }
 
+//Updating upgrade elements
+function updateUpgrade(nameID, newName, levelID, level, maxLevel, priceID, price, descriptionID, newDescription) {
+	var itemTitle = document.querySelector(nameID);
+	itemTitle.innerHTML = newName;
+
+	var itemLevel = document.querySelector(levelID);
+	itemLevel.innerHTML = "Level " + level + "/" + maxLevel;
+
+	var itemPrice = document.querySelector(priceID);
+	itemPrice.innerHTML = "Price: $" + price;
+
+	var itemDescription = document.querySelector(descriptionID);
+	itemDescription.innerHTML = newDescription;
+}
+
+//Removing upgrade elements
+function removeUgrade(id) {
+	var item = document.querySelector(id);
+	upgradeShop.removeChild(item);
+}
+
 //Show shop functions
 function showItemShop() {
 	itemTitle.style.backgroundColor = "rgb(51, 51, 51)";
@@ -428,5 +535,7 @@ function hideInfo(id) {
 createItemElement(seed.name, seed.amount, seed.price, seed.production, seed.description, seed.image, "seed.buy()", seed.id);
 
 createFarmerElement(shnilli.name, shnilli.amount, shnilli.price, shnilli.production, shnilli.description, shnilli.image, "shnilli.buy()", shnilli.id);
+
+createUpgradeElement(peanutPrice.name, peanutPrice.level, peanutPrice.maxLevel, peanutPrice.price, peanutPrice.description, peanutPrice.image, "peanutPrice.upgrade()", peanutPrice.id);
 
 updateInventory(peanuts, money, peanutsPerClick, peanutsPerSecond);
