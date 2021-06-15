@@ -203,7 +203,7 @@ var abominodas = new Farmer("Abominodas", 0, 700000000000000, 650000000000000, "
 
 //Creating upgrade objects from classes
 var peanutPrice = new Upgrade("Bigger Peanuts", 0, 15, 0.25, "Increases the value of peanuts from $0.001 to $0.0011", "images/peanutgame/upgrades/peanut.png", "peanutPrice", "peanutValue");
-var peanutProduction = new Upgrade("Increased Production", 0, 12, 0.5, "Increases the amount of peanuts produced by everything by a total of 10%", "images/peanutgame/upgrades/peanut.png", "peanutProduction", "peanutProduction");
+var peanutProduction = new Upgrade("Increased Production", 0, 12, 0.5, "Increases the amount of peanuts produced by everything by a total of 10%", "images/peanutgame/upgrades/production.png", "peanutProduction", "peanutProduction");
 
 //Creating shop elements
 function createItemElement(name, amount, price, production, description, image, onclick, id) {
