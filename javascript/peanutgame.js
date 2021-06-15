@@ -24,6 +24,12 @@ var peanutValueNames = ["Bigger Peanuts", "Improved Peanuts", "Nutritious Peanut
 var peanutValues = [0.001, 0.0011, 0.0012, 0.00135, 0.0015, 0.00165, 0.0018, 0.002, 0.0022, 0.0024, 0.0026,
 	0.0028, 0.003, 0.0033, 0.0036, 0.004];
 
+var peanutProductionNames = ["Increased Production", "Skilled Farmers", "Improved Storage", "Enchanted Tools",
+"Strengthened Production", "Professional Farmers", "Enlarged Storage", "Reinfroced Tools", "Godly Production",
+"Expert Farmers", "Colossal Storage", "Supreme Tools"];
+
+var peanutProductionBonuses = [0, 0.1, 0.2, 0.3, 0.45, 0.6, 0.75, 0.9, 1.1, 1.3, 1.5, 1.75, 2];
+
 var itemTitle = document.querySelector("#itemTitle");
 var farmerTitle = document.querySelector("#farmerTitle");
 var itemShop = document.querySelector("#itemShop");
@@ -130,6 +136,12 @@ class Upgrade {
 			}
 
 			//Peanut Production upgrade
+			if (this.type == "peanutProduction") {
+				this.name = peanutProductionNames[this.level];
+				this.price *= 20;
+				productionBonus = 1 + peanutProductionBonuses[this.level];
+				this.description = "Increases the amount of peanuts produced by everything by a total of " + Math.round(peanutProductionBonuses[this.level +1] * 100) + "%";
+			}
 
 			//Item upgrade
 
@@ -191,6 +203,7 @@ var abominodas = new Farmer("Abominodas", 0, 700000000000000, 650000000000000, "
 
 //Creating upgrade objects from classes
 var peanutPrice = new Upgrade("Bigger Peanuts", 0, 15, 0.25, "Increases the value of peanuts from $0.001 to $0.0011", "images/peanutgame/upgrades/peanut.png", "peanutPrice", "peanutValue");
+var peanutProduction = new Upgrade("Increased Production", 0, 12, 0.5, "Increases the amount of peanuts produced by everything by a total of 10%", "images/peanutgame/upgrades/peanut.png", "peanutProduction", "peanutProduction");
 
 //Creating shop elements
 function createItemElement(name, amount, price, production, description, image, onclick, id) {
@@ -537,5 +550,6 @@ createItemElement(seed.name, seed.amount, seed.price, seed.production, seed.desc
 createFarmerElement(shnilli.name, shnilli.amount, shnilli.price, shnilli.production, shnilli.description, shnilli.image, "shnilli.buy()", shnilli.id);
 
 createUpgradeElement(peanutPrice.name, peanutPrice.level, peanutPrice.maxLevel, peanutPrice.price, peanutPrice.description, peanutPrice.image, "peanutPrice.upgrade()", peanutPrice.id);
+createUpgradeElement(peanutProduction.name, peanutProduction.level, peanutProduction.maxLevel, peanutProduction.price, peanutProduction.description, peanutProduction.image, "peanutProduction.upgrade()", peanutProduction.id);
 
 updateInventory(peanuts, money, peanutsPerClick, peanutsPerSecond);
