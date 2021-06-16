@@ -30,6 +30,12 @@ var peanutProductionNames = ["Increased Production", "Skilled Farmers", "Improve
 
 var peanutProductionBonuses = [0, 0.1, 0.2, 0.3, 0.45, 0.6, 0.75, 0.9, 1.1, 1.3, 1.5, 1.75, 2];
 
+var itemUpgradeList = ["Enchanted Seeds", "Faster-Growing Saplings", "Taller Trees", "Larger Fields",
+"Farm Expansion", "Improved Machines", "New Technology", "Faster Generation", "Larger Production Space",
+"Strengthened Branches", "Private Peanut Yatch", "Extra Large Peanuts", "Stronger Fusion", "Stable Orbit",
+"Arificial Lighting", "Improved Soil", "Fire-Proof Peanuts", "Inter-Galactic Trade", "Universe-Sized Peanuts",
+"Omni-Peanut", "Expert Farming", "Darkness"];
+
 var itemTitle = document.querySelector("#itemTitle");
 var farmerTitle = document.querySelector("#farmerTitle");
 var itemShop = document.querySelector("#itemShop");
@@ -53,20 +59,20 @@ class Item {
 		if (money >= this.price) {
 			money -= this.price;
 
-			for (var i = 0; i < itemsList.length; i++) {
-				if (itemsList[i] == this.id) {
-					if (i < 3) {
-						this.price = Math.round(this.price * 1250) / 1000;
-					} else if (i < 5) {
-						this.price = Math.round(this.price * 12.5) / 10;
-					} else {
-						this.price = Math.round(this.price * 1.25);
-					}
-				}	
+			if (this.price < 1) {
+				this.price = Math.round(this.price * 1250) / 1000;
+			} else if (this.price < 100) {
+				this.price = Math.round(this.price * 12.5) / 10;
+			} else {
+				this.price = Math.round(this.price * 1.25);
 			}
-			
+
+			if (this.amount == 0) {
+				unlockItemUpgrade();
+			}
+
 			this.amount += 1;
-			updateItem("#" + this.id + "Amount", this.amount, "#" + this.id + "Price", this.price, "#" + this.id + "Production", this.production);
+			updateItem("#" + this.id + "Amount", this.amount, "#" + this.id + "Price", this.price, "#" + this.id + "Production", this.production, "#" + this.id + "Image", this.image);
 			peanutsPerClick += this.production;
 			updateInventory(peanuts, money, peanutsPerClick, peanutsPerSecond);
 
@@ -77,6 +83,13 @@ class Item {
 			}		
 		}
 	}
+
+	upgrade(bonus, newImage) {
+		this.production *= bonus;
+		this.image = newImage;
+
+		updateItem("#" + this.id + "Amount", this.amount, "#" + this.id + "Price", this.price, "#" + this.id + "Production", this.production, "#" + this.id + "Image", this.image);
+	}
 }
 
 class Farmer extends Item {
@@ -84,20 +97,16 @@ class Farmer extends Item {
 		if (money >= this.price) {
 			money -= this.price;
 
-			for (var i = 0; i < farmersList.length; i++) {
-				if (farmersList[i] == this.id) {
-					if (i < 3) {
-						this.price = Math.round(this.price * 1250) / 1000;
-					} else if (i < 5) {
-						this.price = Math.round(this.price * 12.5) / 10;
-					} else {
-						this.price = Math.round(this.price * 1.25);
-					}
-				}	
+			if (this.price < 1) {
+				this.price = Math.round(this.price * 1250) / 1000;
+			} else if (this.price < 100) {
+				this.price = Math.round(this.price * 12.5) / 10;
+			} else {
+				this.price = Math.round(this.price * 1.25);
 			}
 
 			this.amount += 1;
-			updateFarmer("#" + this.id + "Amount", this.amount, "#" + this.id + "Price", this.price, "#" + this.id + "Production", this.production);
+			updateFarmer("#" + this.id + "Amount", this.amount, "#" + this.id + "Price", this.price, "#" + this.id + "Production", this.production, "#" + this.id + "Image", this.image);
 			peanutsPerSecond += this.production;
 			updateInventory(peanuts, money, peanutsPerClick, peanutsPerSecond);
 
@@ -107,6 +116,12 @@ class Farmer extends Item {
 				}
 			}	
 		}
+	}
+
+	upgrade(bonus) {
+		this.production *= bonus
+
+		updateFarmer("#" + this.id + "Amount", this.amount, "#" + this.id + "Price", this.price, "#" + this.id + "Production", this.production, "#" + this.id + "Image", this.image);
 	}
 }
 
@@ -144,6 +159,13 @@ class Upgrade {
 			}
 
 			//Item upgrade
+			if (this.type == "itemUpgrade") {
+				for (var i = 0; i < itemUpgradeList.length; i++) {
+					if (this.name == itemUpgradeList[i]) {
+						itemUpgrade(i);
+					}
+				}
+			}
 
 			//Farmer upgrade
 
@@ -204,6 +226,14 @@ var abominodas = new Farmer("Abominodas", 0, 700000000000000, 650000000000000, "
 //Creating upgrade objects from classes
 var peanutPrice = new Upgrade("Bigger Peanuts", 0, 15, 0.25, "Increases the value of peanuts from $0.001 to $0.0011", "images/peanutgame/upgrades/peanut.png", "peanutPrice", "peanutValue");
 var peanutProduction = new Upgrade("Increased Production", 0, 12, 0.5, "Increases the amount of peanuts produced by everything by a total of 10%", "images/peanutgame/upgrades/production.png", "peanutProduction", "peanutProduction");
+
+var enchantedSeeds = new Upgrade("Enchanted Seeds", 0, 1, 0.1, "Doubles the peanut production of Peanut Seeds", "images/peanutgame/upgrades/enchantedSeeds.png", "enchantedSeeds", "itemUpgrade");
+var fasterGrowingSaplings = new Upgrade("Faster-Growing Saplings", 0, 1, 0.8, "Doubles the peanut production of Peanut Saplings", "images/peanutgame/sapling.png", "fasterGrowingSaplings", "itemUpgrade");
+var tallerTrees = new Upgrade("Taller Trees", 0, 1, 6, "Doubles the peanut production of Peanut Trees", "images/peanutgame/tree.png", "tallerTrees", "itemUpgrade");
+var largerFields = new Upgrade("Larger Fields", 0, 1, 40, "Doubles the peanut production of Peanut Fields", "images/peanutgame/field.png", "largerFields", "itemUpgrade");
+var farmExpansion = new Upgrade("Farm Expansion", 0, 1, 300, "Doubles the peanut production of Peanut Farms", "images/peanutgame/farm.png", "farmExpansion", "itemUpgrade");
+var improvedMachines = new Upgrade("Improved Machines", 0, 1, 1800, "Doubles the peanut production of Peanut Factories", "images/peanutgame/factory.png", "improvedMachines", "itemUpgrade");
+var newTechnology = new Upgrade("New Technology", 0, 1, 10000, "Doubles the peanut production of Peanut Creation Labs", "images/peanutgame/creationLab.png", "newTechnology", "itemUpgrade");
 
 //Creating shop elements
 function createItemElement(name, amount, price, production, description, image, onclick, id) {
@@ -430,8 +460,46 @@ function addNewFarmer() {
 	currentFarmer += 1
 }
 
+//Upgrading items
+function itemUpgrade(upgradeNumber) {
+	if (upgradeNumber == 0) {
+		seed.upgrade(2, enchantedSeeds.image);
+	} else if (upgradeNumber == 1) {
+		sapling.upgrade(2, fasterGrowingSaplings.image);
+	} else if (upgradeNumber == 2) {
+		tree.upgrade(2, tallerTrees.image);
+	} else if (upgradeNumber == 3) {
+		field.upgrade(2, largerFields.image);
+	} else if (upgradeNumber == 4) {
+		farm.upgrade(2, farmExpansion.image);
+	} else if (upgradeNumber == 5) {
+		factory.upgrade(2, improvedMachines.image);
+	} else if (upgradeNumber == 6) {
+		creationLab.upgrade(2, newTechnology.image);
+	}
+}
+
+//Unlocking item upgrades
+function unlockItemUpgrade() {
+	if (currentItem == 0) {
+		createUpgradeElement(enchantedSeeds.name, enchantedSeeds.level, enchantedSeeds.maxLevel, enchantedSeeds.price, enchantedSeeds.description, enchantedSeeds.image, "enchantedSeeds.upgrade()", enchantedSeeds.id);
+	} else if (currentItem == 1) {
+		createUpgradeElement(fasterGrowingSaplings.name, fasterGrowingSaplings.level, fasterGrowingSaplings.maxLevel, fasterGrowingSaplings.price, fasterGrowingSaplings.description, fasterGrowingSaplings.image, "fasterGrowingSaplings.upgrade()", fasterGrowingSaplings.id);
+	} else if (currentItem == 2) {
+		createUpgradeElement(tallerTrees.name, tallerTrees.level, tallerTrees.maxLevel, tallerTrees.price, tallerTrees.description, tallerTrees.image, "tallerTrees.upgrade()", tallerTrees.id);
+	} else if (currentItem == 3) {
+		createUpgradeElement(largerFields.name, largerFields.level, largerFields.maxLevel, largerFields.price, largerFields.description, largerFields.image, "largerFields.upgrade()", largerFields.id);
+	} else if (currentItem == 4) {
+		createUpgradeElement(farmExpansion.name, farmExpansion.level, farmExpansion.maxLevel, farmExpansion.price, farmExpansion.description, farmExpansion.image, "farmExpansion.upgrade()", farmExpansion.id);
+	} else if (currentItem == 5) {
+		createUpgradeElement(improvedMachines.name, improvedMachines.level, improvedMachines.maxLevel, improvedMachines.price, improvedMachines.description, improvedMachines.image, "improvedMachines.upgrade()", improvedMachines.id);
+	} else if (currentItem == 6) {
+		createUpgradeElement(newTechnology.name, newTechnology.level, newTechnology.maxLevel, newTechnology.price, newTechnology.description, newTechnology.image, "newTechnology.upgrade()", newTechnology.id);
+	}
+}
+
 //Updating shop elements
-function updateItem(amountID, amount, priceID, price, productionID, production) {
+function updateItem(amountID, amount, priceID, price, productionID, production, imageID, image) {
 	var itemAmount = document.querySelector(amountID);
 	itemAmount.innerHTML = "Amount: " + amount;
 
@@ -440,9 +508,12 @@ function updateItem(amountID, amount, priceID, price, productionID, production) 
 
 	var itemProduction = document.querySelector(productionID);
 	itemProduction.innerHTML = "+" + (production * productionBonus) + " peanuts/click";
+
+	var itemImage = document.querySelector(imageID);
+	itemImage.src = image;
 }
 
-function updateFarmer(amountID, amount, priceID, price, productionID, production) {
+function updateFarmer(amountID, amount, priceID, price, productionID, production, imageID, image) {
 	var itemAmount = document.querySelector(amountID);
 	itemAmount.innerHTML = "Amount: " + amount;
 
@@ -451,6 +522,9 @@ function updateFarmer(amountID, amount, priceID, price, productionID, production
 
 	var itemProduction = document.querySelector(productionID);
 	itemProduction.innerHTML = "+" + (production * productionBonus) + " peanuts/second";
+
+	var itemImage = document.querySelector(imageID);
+	itemImage.src = image;
 }
 
 //Updating upgrade elements
@@ -493,7 +567,7 @@ function showFarmerShop() {
 
 //Updating inventory function
 function updateInventory(peanuts, money, peanutsPerClick, peanutsPerSecond) {
-	if (money < 1000) {
+	if (money < 100) {
 		document.querySelector("#peanutAmount").innerHTML = peanuts + " peanuts, ";
 		document.querySelector("#moneyAmount").innerHTML = "$" + (Math.round(money * 1000) / 1000) + ", ";
 		document.querySelector("#peanutsPerClick").innerHTML = (peanutsPerClick * productionBonus) + " peanuts/click, ";
