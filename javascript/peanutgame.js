@@ -32,8 +32,8 @@ var peanutProductionBonuses = [0, 0.1, 0.2, 0.3, 0.45, 0.6, 0.75, 0.9, 1.1, 1.3,
 
 var itemUpgradeList = ["Enchanted Seeds", "Faster-Growing Saplings", "Taller Trees", "Larger Fields",
 "Farm Expansion", "Improved Machines", "New Technology", "Faster Generation", "Larger Production Space",
-"Strengthened Branches", "Private Peanut Yatch", "Extra Large Peanuts", "Stronger Fusion", "Stable Orbit",
-"Arificial Lighting", "Improved Soil", "Fire-Proof Peanuts", "Inter-Galactic Trade", "Universe-Sized Peanuts",
+"Strengthened Branches", "Private Peanut Yatch", "XL Peanuts", "Stronger Fusion", "Stable Orbit",
+"Artificial Lighting", "Improved Soil", "Fire-Proof Peanuts", "Peanut Black Hole", "Inter-Galactic Trade", "Universe-Sized Peanuts",
 "Omni-Peanut", "Expert Farming", "Darkness"];
 
 var itemTitle = document.querySelector("#itemTitle");
@@ -196,7 +196,7 @@ var island = new Item("Private Peanut Island", 0, 1200000, 4500000, "A private i
 var assemblyYard = new Item("Giant Peanut Assembly Yard", 0, 7000000, 20000000, "A giant assembly yard, creating giant peanuts", "images/peanutgame/assemblyYard.png", "assemblyYard", 5);
 var fusionReactor = new Item("Peanut Fusion Reactor", 0, 40000000, 100000000, "Fuse peanuts together to create more peanuts!", "images/peanutgame/fusionReactor.png", "fusionReactor", 5);
 var asteroid = new Item("Peanut Asteroid", 0, 250000000, 450000000, "An asteroid made out of peanuts", "images/peanutgame/asteroid.png", "asteroid", 5);
-var moon = new Item("Peanut Moon", 0, 1300000000, 2500000000, "Ever wanted to grow peanuts on the moon? Well now you can!", "images/peanutgame/moon.png", "moon", 5);
+var moon = new Item("Peanut Moon", 0, 1300000000, 2500000000, "Ever wanted to grow peanuts on the moon? Well, now you can!", "images/peanutgame/moon.png", "moon", 5);
 var planet = new Item("Peanut Planet", 0, 7500000000, 10000000000, "An entire planet, just to grow peanuts?", "images/peanutgame/planet.png", "planet", 5);
 var star = new Item("Peanut Star", 0, 45000000000, 45000000000, "Works like a fusion reactor, but a lot bigger", "images/peanutgame/star.png", "star", 5);
 var galaxy = new Item("Peanut Galaxy", 0, 260000000000, 230000000000, "A galaxy full of peanut-growing planets", "images/peanutgame/galaxy.png", "galaxy", 5);
@@ -234,6 +234,17 @@ var largerFields = new Upgrade("Larger Fields", 0, 1, 40, "Doubles the peanut pr
 var farmExpansion = new Upgrade("Farm Expansion", 0, 1, 300, "Doubles the peanut production of Peanut Farms", "images/peanutgame/farm.png", "farmExpansion", "itemUpgrade");
 var improvedMachines = new Upgrade("Improved Machines", 0, 1, 1800, "Doubles the peanut production of Peanut Factories", "images/peanutgame/factory.png", "improvedMachines", "itemUpgrade");
 var newTechnology = new Upgrade("New Technology", 0, 1, 10000, "Doubles the peanut production of Peanut Creation Labs", "images/peanutgame/creationLab.png", "newTechnology", "itemUpgrade");
+var fasterGeneration = new Upgrade("Faster Generation", 0, 1, 60000, "Doubles the peanut production of Peanut Generator Facilities", "images/peanutgame/generatorFacility.png", "fasterGeneration", "itemUpgrade");
+var largerProductionSpace = new Upgrade("Larger Production Space", 0, 1, 400000, "Doubles the peanut production of Underground Peanut Production Centers", "images/peanutgame/productionCenter.png", "largerProductionSpace", "itemUpgrade");
+var strengthenedBranches = new Upgrade("Strengthened Branches", 0, 1, 2000000, "Doubles the peanut production of Peanut Forests", "images/peanutgame/forest.png", "strengthenedBranches", "itemUpgrade");
+var privatePeanutYatch = new Upgrade("Private Peanut Yatch", 0, 1, 12000000, "Doubles the peanut production of Private Peanut Islands", "images/peanutgame/island.png", "privatePeanutYatch", "itemUpgrade");
+var xlPeanuts = new Upgrade("XL Peanuts", 0, 1, 70000000, "Doubles the peanut production of Giant Peanut Assembly Yards", "images/peanutgame/assemblyYard.png", "xlPeanuts", "itemUpgrade");
+var strongerFusion = new Upgrade("Stronger Fusion", 0, 1, 400000000, "Doubles the peanut production of Peanut Fusion Reactos", "images/peanutgame/fusionReactor.png", "strongerFusion", "itemUpgrade");
+var stableOrbit = new Upgrade("Stable Orbit", 0, 1, 2500000000, "Doubles the peanut production of Peanut Asteroids", "images/peanutgame/asteroid.png", "stableOrbit", "itemUpgrade");
+var artificialLighting = new Upgrade("Artificial Lighting", 0, 1, 13000000000, "Doubles the peanut production of Peanut Moons", "images/peanutgame/moon.png", "artificialLighting", "itemUpgrade");
+var improvedSoil = new Upgrade("Improved Soil", 0, 1, 75000000000, "Doubles the peanut production of Peanut Planets", "images/peanutgame/planet.png", "improvedSoil", "itemUpgrade");
+var fireProofPeanuts = new Upgrade("Fire-Proof Peanuts", 0, 1, 450000000000, "Doubles the peanut production of Peanut Stars", "images/peanutgame/star.png", "fireProofPeanuts", "itemUpgrade");
+var peanutBlackHole = new Upgrade("Peanut Black Hole", 0, 1, 2600000000000, "Doubles the peanut production of Peanut Galaxies", "images/peanutgame/galaxy.png", "peanutBlackHole", "itemUpgrade");
 
 //Creating shop elements
 function createItemElement(name, amount, price, production, description, image, onclick, id) {
@@ -476,6 +487,28 @@ function itemUpgrade(upgradeNumber) {
 		factory.upgrade(2, improvedMachines.image);
 	} else if (upgradeNumber == 6) {
 		creationLab.upgrade(2, newTechnology.image);
+	} else if (upgradeNumber == 7) {
+		generatorFacility.upgrade(2, fasterGeneration.image);
+	} else if (upgradeNumber == 8) {
+		productionCenter.upgrade(2, largerProductionSpace.image);
+	} else if (upgradeNumber == 9) {
+		forest.upgrade(2, strengthenedBranches.image);
+	} else if (upgradeNumber == 10) {
+		island.upgrade(2, privatePeanutYatch.image);
+	} else if (upgradeNumber == 11) {
+		assemblyYard.upgrade(2, xlPeanuts.image);
+	} else if (upgradeNumber == 12) {
+		fusionReactor.upgrade(2, strongerFusion.image);
+	} else if (upgradeNumber == 13) {
+		asteroid.upgrade(2, stableOrbit.image);
+	} else if (upgradeNumber == 14) {
+		moon.upgrade(2, artificialLighting.image);
+	} else if (upgradeNumber == 15) {
+		planet.upgrade(2, improvedSoil.image);
+	} else if (upgradeNumber == 16) {
+		star.upgrade(2, fireProofPeanuts.image);
+	} else if (upgradeNumber == 17) {
+		galaxy.upgrade(2, peanutBlackHole.image);
 	}
 }
 
@@ -495,6 +528,28 @@ function unlockItemUpgrade() {
 		createUpgradeElement(improvedMachines.name, improvedMachines.level, improvedMachines.maxLevel, improvedMachines.price, improvedMachines.description, improvedMachines.image, "improvedMachines.upgrade()", improvedMachines.id);
 	} else if (currentItem == 6) {
 		createUpgradeElement(newTechnology.name, newTechnology.level, newTechnology.maxLevel, newTechnology.price, newTechnology.description, newTechnology.image, "newTechnology.upgrade()", newTechnology.id);
+	} else if (currentItem == 7) {
+		createUpgradeElement(fasterGeneration.name, fasterGeneration.level, fasterGeneration.maxLevel, fasterGeneration.price, fasterGeneration.description, fasterGeneration.image, "fasterGeneration.upgrade()", fasterGeneration.id);
+	} else if (currentItem == 8) {
+		createUpgradeElement(largerProductionSpace.name, largerProductionSpace.level, largerProductionSpace.maxLevel, largerProductionSpace.price, largerProductionSpace.description, largerProductionSpace.image, "largerProductionSpace.upgrade()", largerProductionSpace.id);
+	} else if (currentItem == 9) {
+		createUpgradeElement(strengthenedBranches.name, strengthenedBranches.level, strengthenedBranches.maxLevel, strengthenedBranches.price, strengthenedBranches.description, strengthenedBranches.image, "strengthenedBranches.upgrade()", strengthenedBranches.id);
+	} else if (currentItem == 10) {
+		createUpgradeElement(privatePeanutYatch.name, privatePeanutYatch.level, privatePeanutYatch.maxLevel, privatePeanutYatch.price, privatePeanutYatch.description, privatePeanutYatch.image, "privatePeanutYatch.upgrade()", privatePeanutYatch.id);
+	} else if (currentItem == 11) {
+		createUpgradeElement(xlPeanuts.name, xlPeanuts.level, xlPeanuts.maxLevel, xlPeanuts.price, xlPeanuts.description, xlPeanuts.image, "xlPeanuts.upgrade()", xlPeanuts.id);
+	} else if (currentItem == 12) {
+		createUpgradeElement(strongerFusion.name, strongerFusion.level, strongerFusion.maxLevel, strongerFusion.price, strongerFusion.description, strongerFusion.image, "strongerFusion.upgrade()", strongerFusion.id);
+	} else if (currentItem == 13) {
+		createUpgradeElement(stableOrbit.name, stableOrbit.level, stableOrbit.maxLevel, stableOrbit.price, stableOrbit.description, stableOrbit.image, "stableOrbit.upgrade()", stableOrbit.id);
+	} else if (currentItem == 14) {
+		createUpgradeElement(artificialLighting.name, artificialLighting.level, artificialLighting.maxLevel, artificialLighting.price, artificialLighting.description, artificialLighting.image, "artificialLighting.upgrade()", artificialLighting.id);
+	} else if (currentItem == 15) {
+		createUpgradeElement(improvedSoil.name, improvedSoil.level, improvedSoil.maxLevel, improvedSoil.price, improvedSoil.description, improvedSoil.image, "improvedSoil.upgrade()", improvedSoil.id);
+	} else if (currentItem == 16) {
+		createUpgradeElement(fireProofPeanuts.name, fireProofPeanuts.level, fireProofPeanuts.maxLevel, fireProofPeanuts.price, fireProofPeanuts.description, fireProofPeanuts.image, "fireProofPeanuts.upgrade()", fireProofPeanuts.id);
+	} else if (currentItem == 17) {
+		createUpgradeElement(peanutBlackHole.name, peanutBlackHole.level, peanutBlackHole.maxLevel, peanutBlackHole.price, peanutBlackHole.description, peanutBlackHole.image, "peanutBlackHole.upgrade()", peanutBlackHole.id);
 	}
 }
 
@@ -507,7 +562,7 @@ function updateItem(amountID, amount, priceID, price, productionID, production, 
 	itemPrice.innerHTML = "$" + price;
 
 	var itemProduction = document.querySelector(productionID);
-	itemProduction.innerHTML = "+" + (production * productionBonus) + " peanuts/click";
+	itemProduction.innerHTML = "+" + Math.round(production * productionBonus) + " peanuts/click";
 
 	var itemImage = document.querySelector(imageID);
 	itemImage.src = image;
@@ -521,7 +576,7 @@ function updateFarmer(amountID, amount, priceID, price, productionID, production
 	itemPrice.innerHTML = "$" + price;
 
 	var itemProduction = document.querySelector(productionID);
-	itemProduction.innerHTML = "+" + (production * productionBonus) + " peanuts/second";
+	itemProduction.innerHTML = "+" + Math.round(production * productionBonus) + " peanuts/second";
 
 	var itemImage = document.querySelector(imageID);
 	itemImage.src = image;
