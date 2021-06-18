@@ -33,8 +33,8 @@ var peanutProductionBonuses = [0, 0.1, 0.2, 0.3, 0.45, 0.6, 0.75, 0.9, 1.1, 1.3,
 var itemUpgradeList = ["Enchanted Seeds", "Faster-Growing Saplings", "Taller Trees", "Larger Fields",
 "Farm Expansion", "Improved Machines", "New Technology", "Faster Generation", "Larger Production Space",
 "Strengthened Branches", "Private Peanut Yatch", "XL Peanuts", "Stronger Fusion", "Stable Orbit",
-"Artificial Lighting", "Improved Soil", "Fire-Proof Peanuts", "Peanut Black Hole", "Inter-Galactic Trade", "Universe-Sized Peanuts",
-"Omni-Peanut", "Expert Farming", "Darkness"];
+"Artificial Lighting", "Improved Soil", "Fire-Proof Peanuts", "Peanut Black Hole", "Inter-Galactic Trade",
+"Universe-Sized Peanuts", "Omni-Peanut", "Expert Farming", "Darkness"];
 
 var itemTitle = document.querySelector("#itemTitle");
 var farmerTitle = document.querySelector("#farmerTitle");
@@ -59,20 +59,14 @@ class Item {
 		if (money >= this.price) {
 			money -= this.price;
 
-			if (this.price < 1) {
-				this.price = Math.round(this.price * 1250) / 1000;
-			} else if (this.price < 100) {
-				this.price = Math.round(this.price * 12.5) / 10;
-			} else {
-				this.price = Math.round(this.price * 1.25);
-			}
+			this.price *=1.25;
 
 			if (this.amount == 0) {
 				unlockItemUpgrade();
 			}
 
 			this.amount += 1;
-			updateItem("#" + this.id + "Amount", this.amount, "#" + this.id + "Price", this.price, "#" + this.id + "Production", this.production, "#" + this.id + "Image", this.image);
+			updateItem("#" + this.id + "Amount", this.amount, "#" + this.id + "Price", roundNumber(this.price), "#" + this.id + "Production", roundNumber(this.production * productionBonus), "#" + this.id + "Image", this.image);
 			peanutsPerClick += this.production;
 			updateInventory(peanuts, money, peanutsPerClick, peanutsPerSecond);
 
@@ -85,10 +79,12 @@ class Item {
 	}
 
 	upgrade(bonus, newImage) {
+		peanutsPerClick -= this.production * this.amount;
 		this.production *= bonus;
+		peanutsPerClick += this.production * this.amount;
 		this.image = newImage;
 
-		updateItem("#" + this.id + "Amount", this.amount, "#" + this.id + "Price", this.price, "#" + this.id + "Production", this.production, "#" + this.id + "Image", this.image);
+		updateItem("#" + this.id + "Amount", this.amount, "#" + this.id + "Price", roundNumber(this.price), "#" + this.id + "Production", roundNumber(this.production * productionBonus), "#" + this.id + "Image", this.image);
 	}
 }
 
@@ -97,16 +93,10 @@ class Farmer extends Item {
 		if (money >= this.price) {
 			money -= this.price;
 
-			if (this.price < 1) {
-				this.price = Math.round(this.price * 1250) / 1000;
-			} else if (this.price < 100) {
-				this.price = Math.round(this.price * 12.5) / 10;
-			} else {
-				this.price = Math.round(this.price * 1.25);
-			}
+			this.price *= 1.25;
 
 			this.amount += 1;
-			updateFarmer("#" + this.id + "Amount", this.amount, "#" + this.id + "Price", this.price, "#" + this.id + "Production", this.production, "#" + this.id + "Image", this.image);
+			updateFarmer("#" + this.id + "Amount", this.amount, "#" + this.id + "Price", roundNumber(this.price), "#" + this.id + "Production", roundNumber(this.production * productionBonus), "#" + this.id + "Image", this.image);
 			peanutsPerSecond += this.production;
 			updateInventory(peanuts, money, peanutsPerClick, peanutsPerSecond);
 
@@ -118,10 +108,11 @@ class Farmer extends Item {
 		}
 	}
 
-	upgrade(bonus) {
-		this.production *= bonus
+	upgrade(bonus, newImage) {
+		this.production *= bonus;
+		this.image = newImage;
 
-		updateFarmer("#" + this.id + "Amount", this.amount, "#" + this.id + "Price", this.price, "#" + this.id + "Production", this.production, "#" + this.id + "Image", this.image);
+		updateFarmer("#" + this.id + "Amount", this.amount, "#" + this.id + "Price", roundNumber(this.price), "#" + this.id + "Production", roundNumber(this.production * productionBonus), "#" + this.id + "Image", this.image);
 	}
 }
 
@@ -162,7 +153,20 @@ class Upgrade {
 			if (this.type == "itemUpgrade") {
 				for (var i = 0; i < itemUpgradeList.length; i++) {
 					if (this.name == itemUpgradeList[i]) {
-						itemUpgrade(i);
+
+						if (this.name == "Darkness") {
+							productionBonus *= 1.5;
+						}
+
+						itemUpgrade(i);							
+					}
+				}
+
+				if (this.name == "Void") {
+					if (box.amount >= 5) {
+						currentItem = 21;
+						unlockedVoid = true;
+						addNewItem();
 					}
 				}
 			}
@@ -171,7 +175,7 @@ class Upgrade {
 
 			if (this.maxLevel > this.level) {
 
-				updateUpgrade("#" + this.id + "Title", this.name, "#" + this.id + "Level", this.level, this.maxLevel, "#" + this.id + "Price", this.price, "#" + this.id + "Description", this.description)
+				updateUpgrade("#" + this.id + "Title", this.name, "#" + this.id + "Level", this.level, this.maxLevel, "#" + this.id + "Price", roundNumber(this.price), "#" + this.id + "Description", this.description)
 			} else {
 				removeUgrade("#" + this.id);
 			}
@@ -204,6 +208,7 @@ var universe = new Item("Peanut Universe", 0, 1500000000000, 1350000000000, "How
 var multiverse = new Item("Peanut Multiverse", 0, 9000000000000, 6000000000000, "When the universe isn't big enough to grow peanuts", "images/peanutgame/multiverse.png", "multiverse", 5);
 var omniverse = new Item("Peanut Omniverse", 0, 55000000000000, 25000000000000, "Could it get even bigger than this?", "images/peanutgame/omniverse.png", "omniverse", 5);
 var box = new Item("The Box", 0, 280000000000000, 100000000000000, "The Box, containing everything in existence, now filled with peantuts. Is this the true limit of your production?", "images/peanutgame/the box.png", "box", 5);
+var theVoid = new Item("The Void", 0, 3500000000000000, 1000000000000000, "An infinitely large, empty space", "images/peanutgame/void.png", "void", 1);
 
 //Creating farmer objects from classes
 var shnilli = new Farmer("Shnilli", 0, 0.003, 1, "Everyone's favorite chocolate potato", "images/peanutgame/shnilli.png", "shnilli", 3);
@@ -222,6 +227,7 @@ var bread = new Farmer("The Bread", 0, 73000000000, 200000000000, "An Abominatio
 var theGalaxy = new Farmer("The Galaxy", 0, 500000000000, 1500000000000, "A living galaxy, twice the size of the Milky Way", "images/peanutgame/theGalaxy.png", "theGalaxy", 20);
 var maggot = new Farmer("The Maggot", 0, 140000000000000, 150000000000000, "A completely normal maggot, 200 times the size of the Omniverse", "images/peanutgame/maggot.png", "maggot", 5);
 var abominodas = new Farmer("Abominodas", 0, 700000000000000, 650000000000000, "One of the most powerful Abomination Gods", "images/peanutgame/abominodas.png", "abominodas", 5);
+var theInception = new Farmer("The Inception", 0, 5800000000000000, 5000000000000000, "The first, the last, the strongest", "images/peanutgame/inception.png", "creation", 5);
 
 //Creating upgrade objects from classes
 var peanutPrice = new Upgrade("Bigger Peanuts", 0, 15, 0.25, "Increases the value of peanuts from $0.001 to $0.0011", "images/peanutgame/upgrades/peanut.png", "peanutPrice", "peanutValue");
@@ -245,6 +251,13 @@ var artificialLighting = new Upgrade("Artificial Lighting", 0, 1, 13000000000, "
 var improvedSoil = new Upgrade("Improved Soil", 0, 1, 75000000000, "Doubles the peanut production of Peanut Planets", "images/peanutgame/planet.png", "improvedSoil", "itemUpgrade");
 var fireProofPeanuts = new Upgrade("Fire-Proof Peanuts", 0, 1, 450000000000, "Doubles the peanut production of Peanut Stars", "images/peanutgame/star.png", "fireProofPeanuts", "itemUpgrade");
 var peanutBlackHole = new Upgrade("Peanut Black Hole", 0, 1, 2600000000000, "Doubles the peanut production of Peanut Galaxies", "images/peanutgame/galaxy.png", "peanutBlackHole", "itemUpgrade");
+var galacticTrade = new Upgrade("Inter-Galactic Trade", 0, 1, 15000000000000, "Doubles the peanut production of Peanut Universes", "images/peanutgame/universe.png", "galacticTrade", "itemUpgrade");
+var universePeanuts = new Upgrade("Universe-Sized Peanuts", 0, 1, 90000000000000, "Doubles the peanut production of Peanut Multiverses", "images/peanutgame/multiverse.png", "universePeanuts", "itemUpgrade");
+var omniPeanut = new Upgrade("Omni-Peanut", 0, 1, 550000000000000, "Doubles the peanut production of Peanut Omniverses", "images/peanutgame/omniverse.png", "omniPeanut", "itemUpgrade");
+var expertFarming = new Upgrade("Expert Farming", 0, 1, 2800000000000000, "The Expert helps farming peanuts, doubling the peanut production of The Box", "images/peanutgame/the box.png", "expertFarming", "itemUpgrade");
+
+var unlockVoid = new Upgrade("Void", 0, 1, 1000000000000000, "Void", "images/peanutgame/void.png", "unlockVoid", "itemUpgrade");
+var darkness = new Upgrade("Darkness", 0, 1, 35000000000000000, "The Void gets filled by darkness...", "images/peanutgame/void.png", "darkness", "itemUpgrade");
 
 //Creating shop elements
 function createItemElement(name, amount, price, production, description, image, onclick, id) {
@@ -276,13 +289,13 @@ function createItemElement(name, amount, price, production, description, image, 
 
 	var itemPrice = document.createElement("p");
 	item.appendChild(itemPrice);
-	itemPrice.innerHTML = "$" + price;
+	itemPrice.innerHTML = "$" + roundNumber(price);
 	itemPrice.className = "pg-item-description";
 	itemPrice.id = id + "Price"
 
 	var itemProduction = document.createElement("p");
 	item.appendChild(itemProduction);
-	itemProduction.innerHTML = "+" + (production * productionBonus) + " peanuts/click";
+	itemProduction.innerHTML = "+" + roundNumber(production * productionBonus) + " peanuts/click";
 	itemProduction.className = "pg-item-description";
 	itemProduction.id = id + "Production"
 
@@ -322,13 +335,13 @@ function createFarmerElement(name, amount, price, production, description, image
 
 	var itemPrice = document.createElement("p");
 	item.appendChild(itemPrice);
-	itemPrice.innerHTML = "$" + price;
+	itemPrice.innerHTML = "$" + roundNumber(price);
 	itemPrice.className = "pg-item-description";
 	itemPrice.id = id + "Price";
 
 	var itemProduction = document.createElement("p");
 	item.appendChild(itemProduction);
-	itemProduction.innerHTML = "+" + (production * productionBonus) + " peanuts/second";
+	itemProduction.innerHTML = "+" + roundNumber(production * productionBonus) + " peanuts/second";
 	itemProduction.className = "pg-item-description";
 	itemProduction.id = id + "Production";
 
@@ -373,7 +386,7 @@ function createUpgradeElement(name, level, maxLevel, price, description, image, 
 
 	var itemPrice = document.createElement("p");
 	itemInfo.appendChild(itemPrice);
-	itemPrice.innerHTML = "Price: $" + price;
+	itemPrice.innerHTML = "Price: $" + roundNumber(price);
 	itemPrice.className = "pg-upgrade-description";
 	itemPrice.id = id + "Price";
 
@@ -431,6 +444,10 @@ function addNewItem() {
 		createItemElement(omniverse.name, omniverse.amount, omniverse.price, omniverse.production, omniverse.description, omniverse.image, "omniverse.buy()", omniverse.id);
 	} else if (currentItem == 20) {
 		createItemElement(box.name, box.amount, box.price, box.production, box.description, box.image, "box.buy()", box.id);
+	} else if (currentItem == 21) {
+		if (unlockedVoid) {
+			createItemElement(theVoid.name, theVoid.amount, theVoid.price, theVoid.production, theVoid.description, theVoid.image, "theVoid.buy()", theVoid.id);
+		}
 	}
 
 	currentItem += 1
@@ -467,6 +484,10 @@ function addNewFarmer() {
 		createFarmerElement(maggot.name, maggot.amount, maggot.price, maggot.production, maggot.description, maggot.image, "maggot.buy()", maggot.id);
 	} else if (currentFarmer == 14) {
 		createFarmerElement(abominodas.name, abominodas.amount, abominodas.price, abominodas.production, abominodas.description, abominodas.image, "abominodas.buy()", abominodas.id);
+	} else if (currentFarmer == 15) {
+		if (unlockedCreation) {
+			createItemElement(theInception.name, theInception.amount, theInception.price, theInception.production, theInception.description, theInception.image, "theInception.buy()", theInception.id);
+		}
 	}
 	currentFarmer += 1
 }
@@ -509,6 +530,16 @@ function itemUpgrade(upgradeNumber) {
 		star.upgrade(2, fireProofPeanuts.image);
 	} else if (upgradeNumber == 17) {
 		galaxy.upgrade(2, peanutBlackHole.image);
+	} else if (upgradeNumber == 18) {
+		universe.upgrade(2, galacticTrade.image);
+	} else if (upgradeNumber == 19) {
+		multiverse.upgrade(2, universePeanuts.image);
+	} else if (upgradeNumber == 20) {
+		omniverse.upgrade(2, omniPeanut.image);
+	} else if (upgradeNumber == 21) {
+		box.upgrade(2, expertFarming.image);
+	} else if (upgradeNumber == 22) {
+		theVoid.upgrade(2, darkness.image);
 	}
 }
 
@@ -550,6 +581,17 @@ function unlockItemUpgrade() {
 		createUpgradeElement(fireProofPeanuts.name, fireProofPeanuts.level, fireProofPeanuts.maxLevel, fireProofPeanuts.price, fireProofPeanuts.description, fireProofPeanuts.image, "fireProofPeanuts.upgrade()", fireProofPeanuts.id);
 	} else if (currentItem == 17) {
 		createUpgradeElement(peanutBlackHole.name, peanutBlackHole.level, peanutBlackHole.maxLevel, peanutBlackHole.price, peanutBlackHole.description, peanutBlackHole.image, "peanutBlackHole.upgrade()", peanutBlackHole.id);
+	} else if (currentItem == 18) {
+		createUpgradeElement(galacticTrade.name, galacticTrade.level, galacticTrade.maxLevel, galacticTrade.price, galacticTrade.description, galacticTrade.image, "galacticTrade.upgrade()", galacticTrade.id);
+	} else if (currentItem == 19) {
+		createUpgradeElement(universePeanuts.name, universePeanuts.level, universePeanuts.maxLevel, universePeanuts.price, universePeanuts.description, universePeanuts.image, "universePeanuts.upgrade()", universePeanuts.id);
+	} else if (currentItem == 20) {
+		createUpgradeElement(omniPeanut.name, omniPeanut.level, omniPeanut.maxLevel, omniPeanut.price, omniPeanut.description, omniPeanut.image, "omniPeanut.upgrade()", omniPeanut.id);
+	} else if (currentItem == 21) {
+		createUpgradeElement(expertFarming.name, expertFarming.level, expertFarming.maxLevel, expertFarming.price, expertFarming.description, expertFarming.image, "expertFarming.upgrade()", expertFarming.id);
+		createUpgradeElement(unlockVoid.name, unlockVoid.level, unlockVoid.maxLevel, unlockVoid.price, unlockVoid.description, unlockVoid.image, "unlockVoid.upgrade()", unlockVoid.id);
+	} else if (currentItem == 22) {
+		createUpgradeElement(darkness.name, darkness.level, darkness.maxLevel, darkness.price, darkness.description, darkness.image, "darkness.upgrade()", darkness.id);
 	}
 }
 
@@ -562,7 +604,7 @@ function updateItem(amountID, amount, priceID, price, productionID, production, 
 	itemPrice.innerHTML = "$" + price;
 
 	var itemProduction = document.querySelector(productionID);
-	itemProduction.innerHTML = "+" + Math.round(production * productionBonus) + " peanuts/click";
+	itemProduction.innerHTML = "+" + production + " peanuts/click";
 
 	var itemImage = document.querySelector(imageID);
 	itemImage.src = image;
@@ -576,7 +618,7 @@ function updateFarmer(amountID, amount, priceID, price, productionID, production
 	itemPrice.innerHTML = "$" + price;
 
 	var itemProduction = document.querySelector(productionID);
-	itemProduction.innerHTML = "+" + Math.round(production * productionBonus) + " peanuts/second";
+	itemProduction.innerHTML = "+" + production + " peanuts/second";
 
 	var itemImage = document.querySelector(imageID);
 	itemImage.src = image;
@@ -621,18 +663,16 @@ function showFarmerShop() {
 }
 
 //Updating inventory function
-function updateInventory(peanuts, money, peanutsPerClick, peanutsPerSecond) {
-	if (money < 100) {
-		document.querySelector("#peanutAmount").innerHTML = peanuts + " peanuts, ";
-		document.querySelector("#moneyAmount").innerHTML = "$" + (Math.round(money * 1000) / 1000) + ", ";
-		document.querySelector("#peanutsPerClick").innerHTML = (peanutsPerClick * productionBonus) + " peanuts/click, ";
-		document.querySelector("#peanutsPerSecond").innerHTML = (peanutsPerSecond * productionBonus) + " peanuts/second";
-	} else {
-		document.querySelector("#peanutAmount").innerHTML = peanuts + " peanuts, ";
-		document.querySelector("#moneyAmount").innerHTML = "$" + Math.round(money) + ", ";
-		document.querySelector("#peanutsPerClick").innerHTML = (peanutsPerClick * productionBonus) + " peanuts/click, ";
-		document.querySelector("#peanutsPerSecond").innerHTML = (peanutsPerSecond * productionBonus) + " peanuts/second";
-	}
+function updateInventory(peanuts1, money1, peanutsPerClick1, peanutsPerSecond1) {
+	money1 = roundNumber(money1);
+	peanuts1 = roundNumber(peanuts1);
+	peanutsPerClick1 = roundNumber(peanutsPerClick1 * productionBonus);
+	peanutsPerSecond1 = roundNumber(peanutsPerSecond1 * productionBonus);
+
+	document.querySelector("#peanutAmount").innerHTML = peanuts1 + " peanuts, ";
+	document.querySelector("#moneyAmount").innerHTML = "$" + money1 + ", ";
+	document.querySelector("#peanutsPerClick").innerHTML = peanutsPerClick1 + " peanuts/click, ";
+	document.querySelector("#peanutsPerSecond").innerHTML = peanutsPerSecond1 + " peanuts/second";
 }
 
 //Clicking screen function
@@ -672,6 +712,26 @@ function hideInfo(id) {
 	document.getElementById(id).style.display = "none";
 }
 
+//Rounding numbers function
+function roundNumber(number) {
+	if (number < 1) {
+		return Math.round(number * 1000) / 1000;
+	} else if (number < 100) {
+		return Math.round(number * 10) / 10;
+	} else if (number < 1000000) {
+		return Math.round(number);
+	} else if (number < 1000000000) {
+		return (Math.round(number / 100000) / 10) + " million";
+	} else if (number < 1000000000000) {
+		return (Math.round(number / 100000000) / 10) + " billion";
+	} else if (number < 1000000000000000) {
+		return (Math.round(number / 100000000000) / 10) + " trillion";
+	} else if (number < 1000000000000000000) {
+		return (Math.round(number / 100000000000000) / 10) + " quadrillion";
+	} else {
+		return (Math.round(number / 100000000000000000) / 10) + " quintillion";
+	}
+}
 
 //Running functions
 createItemElement(seed.name, seed.amount, seed.price, seed.production, seed.description, seed.image, "seed.buy()", seed.id);
