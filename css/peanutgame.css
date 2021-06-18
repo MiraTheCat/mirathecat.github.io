@@ -30,6 +30,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    max-height: 58px;
 }
 
 .pg-upgrade-container {

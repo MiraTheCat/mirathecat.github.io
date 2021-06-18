@@ -163,9 +163,9 @@ class Upgrade {
 				}
 
 				if (this.name == "Void") {
+					currentItem = 21;
+					unlockedVoid = true;
 					if (box.amount >= 5) {
-						currentItem = 21;
-						unlockedVoid = true;
 						addNewItem();
 					}
 				}
