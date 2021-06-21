@@ -9,6 +9,8 @@ var peanutValue = 0.001;
 var productionBonus = 1.0;
 var unlockedVoid = false;
 var unlockedCreation = false;
+var darknessBonus = 1;
+var lightBonus = 1;
 
 var itemsList = ["seed", "sapling", "tree", "field", "farm", "factory", "creationLab",
 "generatorFacility", "productionCenter", "forest", "island", "assemblyYard", "fusionReactor",
@@ -36,6 +38,11 @@ var itemUpgradeList = ["Enchanted Seeds", "Faster-Growing Saplings", "Taller Tre
 "Artificial Lighting", "Improved Soil", "Fire-Proof Peanuts", "Peanut Black Hole", "Inter-Galactic Trade",
 "Universe-Sized Peanuts", "Omni-Peanut", "Expert Farming", "Darkness"];
 
+var farmerUpgradeList = ["Tiny Armor", "Day of Reckoning", "Vines from Below", "Metallic Limbs",
+"Peanut Pitchfork", "Bot Upgrade", "Desert Flowers", "GRP", "Farming Magic", "Peanut Stabber",
+"Height Increase", "Penut Aura", "Arrival of the Flesh-Blobs", "Lightspeed Farming", "Maggot Duplication", "Unlimited Power",
+"Light of Creation"];
+
 var itemTitle = document.querySelector("#itemTitle");
 var farmerTitle = document.querySelector("#farmerTitle");
 var itemShop = document.querySelector("#itemShop");
@@ -53,6 +60,10 @@ class Item {
 		this.image = image
 		this.id = id
 		this.requirementForNext = requirementForNext
+	}
+
+	createItem(onclick) {
+		createItemElement(this.name, this.amount, this.price, this.production, this.description, this.image, onclick, this.id);
 	}
 
 	buy() {
@@ -89,11 +100,20 @@ class Item {
 }
 
 class Farmer extends Item {
+
+	createFarmer(onclick) {
+		createFarmerElement(this.name, this.amount, this.price, this.production, this.description, this.image, onclick, this.id);
+	}
+
 	buy() {
 		if (money >= this.price) {
 			money -= this.price;
 
 			this.price *= 1.25;
+
+			if (this.amount == 0) {
+				unlockFarmerUpgrade();
+			}
 
 			this.amount += 1;
 			updateFarmer("#" + this.id + "Amount", this.amount, "#" + this.id + "Price", roundNumber(this.price), "#" + this.id + "Production", roundNumber(this.production * productionBonus), "#" + this.id + "Image", this.image);
@@ -109,7 +129,9 @@ class Farmer extends Item {
 	}
 
 	upgrade(bonus, newImage) {
+		peanutsPerSecond -= this.production * this.amount;
 		this.production *= bonus;
+		peanutsPerSecond += this.production * this.amount;
 		this.image = newImage;
 
 		updateFarmer("#" + this.id + "Amount", this.amount, "#" + this.id + "Price", roundNumber(this.price), "#" + this.id + "Production", roundNumber(this.production * productionBonus), "#" + this.id + "Image", this.image);
@@ -128,6 +150,10 @@ class Upgrade {
 		this.type = type;
 	}
 
+	createUpgrade(onclick) {
+		createUpgradeElement(this.name, this.level, this.maxLevel, this.price, this.description, this.image, onclick, this.id);
+	}
+
 	upgrade() {
 		if (money >= this.price) {
 			money -= this.price;
@@ -137,7 +163,7 @@ class Upgrade {
 			if (this.type == "peanutValue") {
 				this.name = peanutValueNames[this.level];
 				this.price *= 10;
-				peanutValue = peanutValues[this.level];
+				peanutValue = peanutValues[this.level] * lightBonus;
 				this.description = "Increases the value of peanuts from $" + peanutValue + " to $" + peanutValues[this.level +1];
 			}
 
@@ -145,7 +171,7 @@ class Upgrade {
 			if (this.type == "peanutProduction") {
 				this.name = peanutProductionNames[this.level];
 				this.price *= 20;
-				productionBonus = 1 + peanutProductionBonuses[this.level];
+				productionBonus = 1 + peanutProductionBonuses[this.level] * darknessBonus;
 				this.description = "Increases the amount of peanuts produced by everything by a total of " + Math.round(peanutProductionBonuses[this.level +1] * 100) + "%";
 			}
 
@@ -155,7 +181,7 @@ class Upgrade {
 					if (this.name == itemUpgradeList[i]) {
 
 						if (this.name == "Darkness") {
-							productionBonus *= 1.5;
+							darknessBonus = 1.5;
 						}
 
 						itemUpgrade(i);							
@@ -172,6 +198,37 @@ class Upgrade {
 			}
 
 			//Farmer upgrade
+
+			if (this.type == "farmerUpgrade") {
+				for (var i = 0; i < farmerUpgradeList.length; i++) {
+					if (this.name == farmerUpgradeList[i]) {
+
+						if (this.name == "Light") {
+							lightBonus = 1.5;
+						}
+
+						if (this.name == "Tiny Armor") {
+							createUpgradeElement(divineBlood.name, divineBlood.level, divineBlood.maxLevel, divineBlood.price, divineBlood.description, divineBlood.image, "divineBlood.upgrade()", divineBlood.id);
+						}
+
+						farmerUpgrade(i);
+					}
+				}
+
+				if (this.name == "Divine Blood") {
+					farmerUpgrade("s");
+				}
+
+				if (this.name == "Creation") {
+					currentFarmer = 21;
+					unlockedCreation = true;
+					if (abominodas.amount >= 5) {
+						addNewFarmer();
+					}
+				}
+			}
+
+			//Updating or removing upgrades
 
 			if (this.maxLevel > this.level) {
 
@@ -254,10 +311,28 @@ var peanutBlackHole = new Upgrade("Peanut Black Hole", 0, 1, 2600000000000, "Dou
 var galacticTrade = new Upgrade("Inter-Galactic Trade", 0, 1, 15000000000000, "Doubles the peanut production of Peanut Universes", "images/peanutgame/universe.png", "galacticTrade", "itemUpgrade");
 var universePeanuts = new Upgrade("Universe-Sized Peanuts", 0, 1, 90000000000000, "Doubles the peanut production of Peanut Multiverses", "images/peanutgame/multiverse.png", "universePeanuts", "itemUpgrade");
 var omniPeanut = new Upgrade("Omni-Peanut", 0, 1, 550000000000000, "Doubles the peanut production of Peanut Omniverses", "images/peanutgame/omniverse.png", "omniPeanut", "itemUpgrade");
-var expertFarming = new Upgrade("Expert Farming", 0, 1, 2800000000000000, "The Expert helps farming peanuts, doubling the peanut production of The Box", "images/peanutgame/the box.png", "expertFarming", "itemUpgrade");
+var expertFarming = new Upgrade("Expert Farming", 0, 1, 2800000000000000, "The Expert helps farming peanuts, doubling the peanut production of The Box", "images/peanutgame/upgrades/expert.png", "expertFarming", "itemUpgrade");
+
+var tinyArmor = new Upgrade("Tiny Armor", 0, 1, 0.03, "Shnilli gets armor, doubling his peanut production", "images/peanutgame/upgrades/armorShnilli.png", "tinyArmor", "farmerUpgrade");
+var reckoning = new Upgrade("Day of Reckoning", 0, 1, 0.4, "Littina grows dark blades, tripling her peanut production", "images/peanutgame/upgrades/reckoning.png", "reckoning", "farmerUpgrade");
+var vines = new Upgrade("Vines from Below", 0, 1, 0.4, "The Bean transforms into its Inner Bean form, doubling its peanut production", "images/peanutgame/upgrades/innerBean.png", "vines", "farmerUpgrade");
+var metallicLimbs = new Upgrade("Metallic Limbs", 0, 1, 2, "Honey uses its stickbot suit to double its peanut production", "images/peanutgame/upgrades/honeybot.png", "metallicLimbs", "farmerUpgrade");
+var pitchfork = new Upgrade("Peanut Pitchfork", 0, 1, 10, "The Peanut Farmer uses a peanut pitchfork to double its peanut production", "images/peanutgame/upgrades/farmer.png", "pitchfork", "farmerUpgrade");
+var botUpgrade = new Upgrade("Bot Upgrade", 0, 1, 85, "The AbominationBot gets upgraded, doubling its peanut production", "images/peanutgame/upgrades/bot v2.png", "botUpgrade", "farmerUpgrade");
+var flowers = new Upgrade("Desert Flowers", 0, 1, 500, "The Cactus grows flowers, somehow doubling its peanut production", "images/peanutgame/upgrades/cactus.png", "flowers", "farmerUpgrade");
+var grp = new Upgrade("GRP", 0, 1, 4000, "GHP becomes a robot, doubling his peanut production", "images/peanutgame/upgrades/grp.png", "grp", "farmerUpgrade");
+var farmingMagic = new Upgrade("Farming Magic", 0, 1, 25000, "The Abomination Overseer learns farming magic, doubling its peanut production", "images/peanutgame/overseer.png", "farmingMagic", "farmerUpgrade");
+var peanutStabber = new Upgrade("Peanut Stabber", 0, 1, 160000, "The Davz stabs the peantuts to farm them twice as fast", "images/peanutgame/davz.png", "peanutStabber", "farmerUpgrade");
+var heightIncrease = new Upgrade("Height Increase", 0, 1, 8500000, "The Pea grows even taller, doubling its peanut production", "images/peanutgame/the pea.png", "heightIncrease", "farmerUpgrade");
+var penutAura = new Upgrade("Penut Aura", 0, 1, 5000000000, "The Holy Penut gets a Penut Aura, doubling its peanut production", "images/peanutgame/upgrades/holy penut.png", "heightIncrease", "farmerUpgrade");
+var fleshBlobs = new Upgrade("Arrival of the Flesh-Blobs", 0, 1, 730000000000, "The Flesh-Blobs help The Bread farming, doubling its production", "images/peanutgame/bread.png", "fleshBlobs", "farmerUpgrade");
+var lightspeed = new Upgrade("Lightspeed Farming", 0, 1, 5000000000000, "The Galaxy's speed increases dramatically, doubling its peanut production", "images/peanutgame/theGalaxy.png", "lightspeed", "farmerUpgrade");
+var duplication = new Upgrade("Maggot Duplication", 0, 1, 1400000000000000, "The Maggot duplicates, doubling its peanut production", "images/peanutgame/maggot.png", "duplication", "farmerUpgrade");
 
 var unlockVoid = new Upgrade("Void", 0, 1, 1000000000000000, "Void", "images/peanutgame/void.png", "unlockVoid", "itemUpgrade");
 var darkness = new Upgrade("Darkness", 0, 1, 35000000000000000, "The Void gets filled by darkness...", "images/peanutgame/void.png", "darkness", "itemUpgrade");
+
+var divineBlood = new Upgrade("Divine Blood", 0, 1, 0.3, "Shnilli transforms into Divine Shnilli, doubling his peanut production further", "images/peanutgame/upgrades/divine shnilli.png", "divineBlood", "farmerUpgrade");
 
 //Creating shop elements
 function createItemElement(name, amount, price, production, description, image, onclick, id) {
@@ -403,50 +478,50 @@ function createUpgradeElement(name, level, maxLevel, price, description, image, 
 //Adding shop elements
 function addNewItem() {
 	if (currentItem == 0) {
-		createItemElement(sapling.name, sapling.amount, sapling.price, sapling.production, sapling.description, sapling.image, "sapling.buy()", sapling.id);
+		sapling.createItem("sapling.buy()");
 	} else if (currentItem == 1) {
-		createItemElement(tree.name, tree.amount, tree.price, tree.production, tree.description, tree.image, "tree.buy()", tree.id);
+		tree.createItem("tree.buy()");
 	} else if (currentItem == 2) {
-		createItemElement(field.name, field.amount, field.price, field.production, field.description, field.image, "field.buy()", field.id);
+		field.createItem("field.buy()");
 	} else if (currentItem == 3) {
-		createItemElement(farm.name, farm.amount, farm.price, farm.production, farm.description, farm.image, "farm.buy()", farm.id);
+		farm.createItem("farm.buy()");
 	} else if (currentItem == 4) {
-		createItemElement(factory.name, factory.amount, factory.price, factory.production, factory.description, factory.image, "factory.buy()", factory.id);
+		factory.createItem("factory.buy()");
 	} else if (currentItem == 5) {
-		createItemElement(creationLab.name, creationLab.amount, creationLab.price, creationLab.production, creationLab.description, creationLab.image, "creationLab.buy()", creationLab.id);
+		creationLab.createItem("creationLab.buy()");
 	} else if (currentItem == 6) {
-		createItemElement(generatorFacility.name, generatorFacility.amount, generatorFacility.price, generatorFacility.production, generatorFacility.description, generatorFacility.image, "generatorFacility.buy()", generatorFacility.id);
+		generatorFacility.createItem("generatorFacility.buy()");
 	} else if (currentItem == 7) {
-		createItemElement(productionCenter.name, productionCenter.amount, productionCenter.price, productionCenter.production, productionCenter.description, productionCenter.image, "productionCenter.buy()", productionCenter.id);
+		productionCenter.createItem("productionCenter.buy()");
 	} else if (currentItem == 8) {
-		createItemElement(forest.name, forest.amount, forest.price, forest.production, forest.description, forest.image, "forest.buy()", forest.id);
+		forest.createItem("forest.buy()");
 	} else if (currentItem == 9) {
-		createItemElement(island.name, island.amount, island.price, island.production, island.description, island.image, "island.buy()", island.id);
+		island.createItem("island.buy()");
 	} else if (currentItem == 10) {
-		createItemElement(assemblyYard.name, assemblyYard.amount, assemblyYard.price, assemblyYard.production, assemblyYard.description, assemblyYard.image, "assemblyYard.buy()", assemblyYard.id);
+		assemblyYard.createItem("assemblyYard.buy()");
 	} else if (currentItem == 11) {
-		createItemElement(fusionReactor.name, fusionReactor.amount, fusionReactor.price, fusionReactor.production, fusionReactor.description, fusionReactor.image, "fusionReactor.buy()", fusionReactor.id);
+		fusionReactor.createItem("fusionReactor.buy()");
 	} else if (currentItem == 12) {
-		createItemElement(asteroid.name, asteroid.amount, asteroid.price, asteroid.production, asteroid.description, asteroid.image, "asteroid.buy()", asteroid.id);
+		asteroid.createItem("asteroid.buy()");
 	} else if (currentItem == 13) {
-		createItemElement(moon.name, moon.amount, moon.price, moon.production, moon.description, moon.image, "moon.buy()", moon.id);
+		moon.createItem("moon.buy()");
 	} else if (currentItem == 14) {
-		createItemElement(planet.name, planet.amount, planet.price, planet.production, planet.description, planet.image, "planet.buy()", planet.id);
+		planet.createItem("planet.buy()");
 	} else if (currentItem == 15) {
-		createItemElement(star.name, star.amount, star.price, star.production, star.description, star.image, "star.buy()", star.id);
+		star.createItem("star.buy()");
 	} else if (currentItem == 16) {
-		createItemElement(galaxy.name, galaxy.amount, galaxy.price, galaxy.production, galaxy.description, galaxy.image, "galaxy.buy()", galaxy.id);
+		galaxy.createItem("galaxy.buy()");
 	} else if (currentItem == 17) {
-		createItemElement(universe.name, universe.amount, universe.price, universe.production, universe.description, universe.image, "universe.buy()", universe.id);
+		universe.createItem("universe.buy()");
 	} else if (currentItem == 18) {
-		createItemElement(multiverse.name, multiverse.amount, multiverse.price, multiverse.production, multiverse.description, multiverse.image, "multiverse.buy()", multiverse.id);
+		multiverse.createItem("multiverse.buy()");
 	} else if (currentItem == 19) {
-		createItemElement(omniverse.name, omniverse.amount, omniverse.price, omniverse.production, omniverse.description, omniverse.image, "omniverse.buy()", omniverse.id);
+		omniverse.createItem("omniverse.buy()");
 	} else if (currentItem == 20) {
-		createItemElement(box.name, box.amount, box.price, box.production, box.description, box.image, "box.buy()", box.id);
+		box.createItem("box.buy()");
 	} else if (currentItem == 21) {
 		if (unlockedVoid) {
-			createItemElement(theVoid.name, theVoid.amount, theVoid.price, theVoid.production, theVoid.description, theVoid.image, "theVoid.buy()", theVoid.id);
+			theVoid.createItem("theVoid.buy()");
 		}
 	}
 
@@ -455,38 +530,38 @@ function addNewItem() {
 
 function addNewFarmer() {
 	if (currentFarmer == 0) {
-		createFarmerElement(littina.name, littina.amount, littina.price, littina.production, littina.description, littina.image, "littina.buy()", littina.id);
+		littina.createFarmer("littina.buy()");
 	} else if (currentFarmer == 1) {
-		createFarmerElement(bean.name, bean.amount, bean.price, bean.production, bean.description, bean.image, "bean.buy()", bean.id);
+		bean.createFarmer("bean.buy()");
 	} else if (currentFarmer == 2) {
-		createFarmerElement(honey.name, honey.amount, honey.price, honey.production, honey.description, honey.image, "honey.buy()", honey.id);
+		honey.createFarmer("honey.buy()");
 	} else if (currentFarmer == 3) {
-		createFarmerElement(farmer.name, farmer.amount, farmer.price, farmer.production, farmer.description, farmer.image, "farmer.buy()", farmer.id);
+		farmer.createFarmer("farmer.buy()");
 	} else if (currentFarmer == 4) {
-		createFarmerElement(bot.name, bot.amount, bot.price, bot.production, bot.description, bot.image, "bot.buy()", bot.id);
+		bot.createFarmer("bot.buy()");
 	} else if (currentFarmer == 5) {
-		createFarmerElement(cactus.name, cactus.amount, cactus.price, cactus.production, cactus.description, cactus.image, "cactus.buy()", cactus.id);
+		cactus.createFarmer("cactus.buy()");
 	} else if (currentFarmer == 6) {
-		createFarmerElement(ghp.name, ghp.amount, ghp.price, ghp.production, ghp.description, ghp.image, "ghp.buy()", ghp.id);
+		ghp.createFarmer("ghp.buy()");
 	} else if (currentFarmer == 7) {
-		createFarmerElement(overseer.name, overseer.amount, overseer.price, overseer.production, overseer.description, overseer.image, "overseer.buy()", overseer.id);
+		overseer.createFarmer("overseer.buy()");
 	} else if (currentFarmer == 8) {
-		createFarmerElement(davz.name, davz.amount, davz.price, davz.production, davz.description, davz.image, "davz.buy()", davz.id);
+		davz.createFarmer("davz.buy()");
 	} else if (currentFarmer == 9) {
-		createFarmerElement(pea.name, pea.amount, pea.price, pea.production, pea.description, pea.image, "pea.buy()", pea.id);
+		pea.createFarmer("pea.buy()");
 	} else if (currentFarmer == 10) {
-		createFarmerElement(penut.name, penut.amount, penut.price, penut.production, penut.description, penut.image, "penut.buy()", penut.id);
+		penut.createFarmer("penut.buy()");
 	} else if (currentFarmer == 11) {
-		createFarmerElement(bread.name, bread.amount, bread.price, bread.production, bread.description, bread.image, "bread.buy()", bread.id);
+		bread.createFarmer("bread.buy()");
 	} else if (currentFarmer == 12) {
-		createFarmerElement(theGalaxy.name, theGalaxy.amount, theGalaxy.price, theGalaxy.production, theGalaxy.description, theGalaxy.image, "theGalaxy.buy()", theGalaxy.id);
+		theGalaxy.createFarmer("theGalaxy.buy()");
 	} else if (currentFarmer == 13) {
-		createFarmerElement(maggot.name, maggot.amount, maggot.price, maggot.production, maggot.description, maggot.image, "maggot.buy()", maggot.id);
+		maggot.createFarmer("maggot.buy()");
 	} else if (currentFarmer == 14) {
-		createFarmerElement(abominodas.name, abominodas.amount, abominodas.price, abominodas.production, abominodas.description, abominodas.image, "abominodas.buy()", abominodas.id);
+		abominodas.createFarmer("abominodas.buy()");
 	} else if (currentFarmer == 15) {
 		if (unlockedCreation) {
-			createItemElement(theInception.name, theInception.amount, theInception.price, theInception.production, theInception.description, theInception.image, "theInception.buy()", theInception.id);
+			theInception.createFarmer("theInception.buy()");
 		}
 	}
 	currentFarmer += 1
@@ -537,7 +612,7 @@ function itemUpgrade(upgradeNumber) {
 	} else if (upgradeNumber == 20) {
 		omniverse.upgrade(2, omniPeanut.image);
 	} else if (upgradeNumber == 21) {
-		box.upgrade(2, expertFarming.image);
+		box.upgrade(2, "images/peanutgame/upgrades/upgradedBox.png");
 	} else if (upgradeNumber == 22) {
 		theVoid.upgrade(2, darkness.image);
 	}
@@ -546,52 +621,124 @@ function itemUpgrade(upgradeNumber) {
 //Unlocking item upgrades
 function unlockItemUpgrade() {
 	if (currentItem == 0) {
-		createUpgradeElement(enchantedSeeds.name, enchantedSeeds.level, enchantedSeeds.maxLevel, enchantedSeeds.price, enchantedSeeds.description, enchantedSeeds.image, "enchantedSeeds.upgrade()", enchantedSeeds.id);
+		enchantedSeeds.createUpgrade("enchantedSeeds.upgrade()");
 	} else if (currentItem == 1) {
-		createUpgradeElement(fasterGrowingSaplings.name, fasterGrowingSaplings.level, fasterGrowingSaplings.maxLevel, fasterGrowingSaplings.price, fasterGrowingSaplings.description, fasterGrowingSaplings.image, "fasterGrowingSaplings.upgrade()", fasterGrowingSaplings.id);
+		fasterGrowingSaplings.createUpgrade("fasterGrowingSaplings.upgrade()");
 	} else if (currentItem == 2) {
-		createUpgradeElement(tallerTrees.name, tallerTrees.level, tallerTrees.maxLevel, tallerTrees.price, tallerTrees.description, tallerTrees.image, "tallerTrees.upgrade()", tallerTrees.id);
+		tallerTrees.createUpgrade("tallerTrees.upgrade()");
 	} else if (currentItem == 3) {
-		createUpgradeElement(largerFields.name, largerFields.level, largerFields.maxLevel, largerFields.price, largerFields.description, largerFields.image, "largerFields.upgrade()", largerFields.id);
+		largerFields.createUpgrade("largerFields.upgrade()");
 	} else if (currentItem == 4) {
-		createUpgradeElement(farmExpansion.name, farmExpansion.level, farmExpansion.maxLevel, farmExpansion.price, farmExpansion.description, farmExpansion.image, "farmExpansion.upgrade()", farmExpansion.id);
+		farmExpansion.createUpgrade("farmExpansion.upgrade()");
 	} else if (currentItem == 5) {
-		createUpgradeElement(improvedMachines.name, improvedMachines.level, improvedMachines.maxLevel, improvedMachines.price, improvedMachines.description, improvedMachines.image, "improvedMachines.upgrade()", improvedMachines.id);
+		improvedMachines.createUpgrade("improvedMachines.upgrade()");
 	} else if (currentItem == 6) {
-		createUpgradeElement(newTechnology.name, newTechnology.level, newTechnology.maxLevel, newTechnology.price, newTechnology.description, newTechnology.image, "newTechnology.upgrade()", newTechnology.id);
+		newTechnology.createUpgrade("newTechnology.upgrade()");
 	} else if (currentItem == 7) {
-		createUpgradeElement(fasterGeneration.name, fasterGeneration.level, fasterGeneration.maxLevel, fasterGeneration.price, fasterGeneration.description, fasterGeneration.image, "fasterGeneration.upgrade()", fasterGeneration.id);
+		fasterGeneration.createUpgrade("fasterGeneration.upgrade()");
 	} else if (currentItem == 8) {
-		createUpgradeElement(largerProductionSpace.name, largerProductionSpace.level, largerProductionSpace.maxLevel, largerProductionSpace.price, largerProductionSpace.description, largerProductionSpace.image, "largerProductionSpace.upgrade()", largerProductionSpace.id);
+		largerProductionSpace.createUpgrade("largerProductionSpace.upgrade()");
 	} else if (currentItem == 9) {
-		createUpgradeElement(strengthenedBranches.name, strengthenedBranches.level, strengthenedBranches.maxLevel, strengthenedBranches.price, strengthenedBranches.description, strengthenedBranches.image, "strengthenedBranches.upgrade()", strengthenedBranches.id);
+		strengthenedBranches.createUpgrade("strengthenedBranches.upgrade()");
 	} else if (currentItem == 10) {
-		createUpgradeElement(privatePeanutYatch.name, privatePeanutYatch.level, privatePeanutYatch.maxLevel, privatePeanutYatch.price, privatePeanutYatch.description, privatePeanutYatch.image, "privatePeanutYatch.upgrade()", privatePeanutYatch.id);
+		privatePeanutYatch.createUpgrade("privatePeanutYatch.upgrade()");
 	} else if (currentItem == 11) {
-		createUpgradeElement(xlPeanuts.name, xlPeanuts.level, xlPeanuts.maxLevel, xlPeanuts.price, xlPeanuts.description, xlPeanuts.image, "xlPeanuts.upgrade()", xlPeanuts.id);
+		xlPeanuts.createUpgrade("xlPeanuts.upgrade()");
 	} else if (currentItem == 12) {
-		createUpgradeElement(strongerFusion.name, strongerFusion.level, strongerFusion.maxLevel, strongerFusion.price, strongerFusion.description, strongerFusion.image, "strongerFusion.upgrade()", strongerFusion.id);
+		strongerFusion.createUpgrade("strongerFusion.upgrade()");
 	} else if (currentItem == 13) {
-		createUpgradeElement(stableOrbit.name, stableOrbit.level, stableOrbit.maxLevel, stableOrbit.price, stableOrbit.description, stableOrbit.image, "stableOrbit.upgrade()", stableOrbit.id);
+		stableOrbit.createUpgrade("stableOrbit.upgrade()");
 	} else if (currentItem == 14) {
-		createUpgradeElement(artificialLighting.name, artificialLighting.level, artificialLighting.maxLevel, artificialLighting.price, artificialLighting.description, artificialLighting.image, "artificialLighting.upgrade()", artificialLighting.id);
+		artificialLighting.createUpgrade("artificialLighting.upgrade()");
 	} else if (currentItem == 15) {
-		createUpgradeElement(improvedSoil.name, improvedSoil.level, improvedSoil.maxLevel, improvedSoil.price, improvedSoil.description, improvedSoil.image, "improvedSoil.upgrade()", improvedSoil.id);
+		improvedSoil.createUpgrade("improvedSoil.upgrade()");
 	} else if (currentItem == 16) {
-		createUpgradeElement(fireProofPeanuts.name, fireProofPeanuts.level, fireProofPeanuts.maxLevel, fireProofPeanuts.price, fireProofPeanuts.description, fireProofPeanuts.image, "fireProofPeanuts.upgrade()", fireProofPeanuts.id);
+		fireProofPeanuts.createUpgrade("fireProofPeanuts.upgrade()");
 	} else if (currentItem == 17) {
-		createUpgradeElement(peanutBlackHole.name, peanutBlackHole.level, peanutBlackHole.maxLevel, peanutBlackHole.price, peanutBlackHole.description, peanutBlackHole.image, "peanutBlackHole.upgrade()", peanutBlackHole.id);
+		peanutBlackHole.createUpgrade("peanutBlackHole.upgrade()");
 	} else if (currentItem == 18) {
-		createUpgradeElement(galacticTrade.name, galacticTrade.level, galacticTrade.maxLevel, galacticTrade.price, galacticTrade.description, galacticTrade.image, "galacticTrade.upgrade()", galacticTrade.id);
+		galacticTrade.createUpgrade("galacticTrade.upgrade()");
 	} else if (currentItem == 19) {
-		createUpgradeElement(universePeanuts.name, universePeanuts.level, universePeanuts.maxLevel, universePeanuts.price, universePeanuts.description, universePeanuts.image, "universePeanuts.upgrade()", universePeanuts.id);
+		universePeanuts.createUpgrade("universePeanuts.upgrade()");
 	} else if (currentItem == 20) {
-		createUpgradeElement(omniPeanut.name, omniPeanut.level, omniPeanut.maxLevel, omniPeanut.price, omniPeanut.description, omniPeanut.image, "omniPeanut.upgrade()", omniPeanut.id);
+		omniPeanut.createUpgrade("omniPeanut.upgrade()");
 	} else if (currentItem == 21) {
-		createUpgradeElement(expertFarming.name, expertFarming.level, expertFarming.maxLevel, expertFarming.price, expertFarming.description, expertFarming.image, "expertFarming.upgrade()", expertFarming.id);
-		createUpgradeElement(unlockVoid.name, unlockVoid.level, unlockVoid.maxLevel, unlockVoid.price, unlockVoid.description, unlockVoid.image, "unlockVoid.upgrade()", unlockVoid.id);
+		expertFarming.createUpgrade("expertFarming.upgrade()");
+		unlockVoid.createUpgrade("unlockVoid.upgrade()");
 	} else if (currentItem == 22) {
-		createUpgradeElement(darkness.name, darkness.level, darkness.maxLevel, darkness.price, darkness.description, darkness.image, "darkness.upgrade()", darkness.id);
+		darkness.createUpgrade("darkness.upgrade()");
+	}
+}
+
+//Upgrading farmers
+function farmerUpgrade(upgradeNumber) {
+	if (upgradeNumber == 0) {
+		shnilli.upgrade(2, tinyArmor.image);
+	} else if (upgradeNumber == "s") {
+		shnilli.upgrade(2, divineBlood.image);
+	} else if (upgradeNumber == 1) {
+		littina.upgrade(3, reckoning.image);
+	} else if (upgradeNumber == 2) {
+		bean.upgrade(2, vines.image);
+	} else if (upgradeNumber == 3) {
+		honey.upgrade(2, metallicLimbs.image);
+	} else if (upgradeNumber == 4) {
+		farmer.upgrade(2, pitchfork.image);
+	} else if (upgradeNumber == 5) {
+		bot.upgrade(2, botUpgrade.image);
+	} else if (upgradeNumber == 6) {
+		cactus.upgrade(2, flowers.image);
+	} else if (upgradeNumber == 7) {
+		ghp.upgrade(2, grp.image);
+	} else if (upgradeNumber == 8) {
+		overseer.upgrade(2, farmingMagic.image);
+	} else if (upgradeNumber == 9) {
+		davz.upgrade(2, peanutStabber.image);
+	} else if (upgradeNumber == 10) {
+		pea.upgrade(2, heightIncrease.image);
+	} else if (upgradeNumber == 11) {
+		penut.upgrade(2, penutAura.image);
+	} else if (upgradeNumber == 12) {
+		bread.upgrade(2, fleshBlobs.image);
+	} else if (upgradeNumber == 13) {
+		theGalaxy.upgrade(2, lightspeed.image);
+	} else if (upgradeNumber == 14) {
+		maggot.upgrade(2, duplication.image);
+	}
+}
+
+//Unlocking item upgrades
+function unlockFarmerUpgrade() {
+	if (currentFarmer == 0) {
+		tinyArmor.createUpgrade("tinyArmor.upgrade()");
+	} else if (currentFarmer == 1) {
+		reckoning.createUpgrade("reckoning.upgrade()");
+	} else if (currentFarmer == 2) {
+		vines.createUpgrade("vines.upgrade()");
+	} else if (currentFarmer == 3) {
+		metallicLimbs.createUpgrade("metallicLimbs.upgrade()");
+	} else if (currentFarmer == 4) {
+		pitchfork.createUpgrade("pitchfork.upgrade()");
+	} else if (currentFarmer == 5) {
+		botUpgrade.createUpgrade("botUpgrade.upgrade()");
+	} else if (currentFarmer == 6) {
+		flowers.createUpgrade("flowers.upgrade()");
+	} else if (currentFarmer == 7) {
+		grp.createUpgrade("grp.upgrade()");
+	} else if (currentFarmer == 8) {
+		farmingMagic.createUpgrade("farmingMagic.upgrade()");
+	} else if (currentFarmer == 9) {
+		peanutStabber.createUpgrade("peanutStabber.upgrade()");
+	} else if (currentFarmer == 10) {
+		heightIncrease.createUpgrade("heightIncrease.upgrade()");
+	} else if (currentFarmer == 11) {
+		penutAura.createUpgrade("penutAura.upgrade()");
+	} else if (currentFarmer == 12) {
+		fleshBlobs.createUpgrade("fleshBlobs.upgrade()");
+	} else if (currentFarmer == 13) {
+		lightspeed.createUpgrade("lightspeed.upgrade()");
+	} else if (currentFarmer == 14) {
+		duplication.createUpgrade("duplication.upgrade()");
 	}
 }
 
