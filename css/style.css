@@ -104,3 +104,7 @@ a {
     border: transparent;
     margin: 10px;
 }
+
+.project {
+    padding: 0 10px 0 10px;
+}
