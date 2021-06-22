@@ -40,6 +40,7 @@
    display: flex;
    flex-wrap: wrap;
    padding: 0 5px 0 0;
+   min-height: 60px;
 }
 
 .pg-upgradeText {
@@ -64,7 +65,7 @@
     border-radius: 10px;
     padding: 5px 10px 5px 10px;
     margin: 5px 0 5px 5px;
-    max-height: 45px;
+    max-height: 40px;
 }
 
 .pg-info {
@@ -96,8 +97,6 @@
 .pg-main {
     border: solid 2px;
     border-radius: 20px;
-    background: linear-gradient(0deg, rgb(95, 54, 0), rgb(224, 127, 0));
-    cursor: pointer;
     display: grid;
     grid-template: repeat(14, 1fr) / repeat(4, 1fr);
 }
@@ -105,17 +104,17 @@
 .pg-sell {
     font-size: 25px;
     color: white;
-    padding: 3px;
+    padding: 3px 5px 3px 5px;
     margin: 0;
     justify-content: left;
     align-items: center;
     border: solid 2px white;
     border-radius: 20px 0 0 0;
-    background-color: rgb(150, 85, 0);
+    background-color: rgb(54, 54, 54);
     position: relative;
     right: 1px;
     bottom: 1px;
-    z-index: 1;
+    cursor: pointer;
 }
 
 .pg-shop {

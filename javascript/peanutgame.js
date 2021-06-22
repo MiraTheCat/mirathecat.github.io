@@ -40,8 +40,8 @@ var itemUpgradeList = ["Enchanted Seeds", "Faster-Growing Saplings", "Taller Tre
 
 var farmerUpgradeList = ["Tiny Armor", "Day of Reckoning", "Vines from Below", "Metallic Limbs",
 "Peanut Pitchfork", "Bot Upgrade", "Desert Flowers", "GRP", "Farming Magic", "Peanut Stabber",
-"Height Increase", "Penut Aura", "Arrival of the Flesh-Blobs", "Lightspeed Farming", "Maggot Duplication", "Unlimited Power",
-"Light of Creation"];
+"Height Increase", "Penut Aura", "Arrival of the Flesh-Blobs", "Lightspeed Farming", "Maggot Duplication",
+"Unlimited Power", "Light of Creation"];
 
 var itemTitle = document.querySelector("#itemTitle");
 var farmerTitle = document.querySelector("#farmerTitle");
@@ -203,7 +203,7 @@ class Upgrade {
 				for (var i = 0; i < farmerUpgradeList.length; i++) {
 					if (this.name == farmerUpgradeList[i]) {
 
-						if (this.name == "Light") {
+						if (this.name == "Light of Creation") {
 							lightBonus = 1.5;
 						}
 
@@ -220,7 +220,7 @@ class Upgrade {
 				}
 
 				if (this.name == "Creation") {
-					currentFarmer = 21;
+					currentFarmer = 15;
 					unlockedCreation = true;
 					if (abominodas.amount >= 5) {
 						addNewFarmer();
@@ -265,7 +265,7 @@ var universe = new Item("Peanut Universe", 0, 1500000000000, 1350000000000, "How
 var multiverse = new Item("Peanut Multiverse", 0, 9000000000000, 6000000000000, "When the universe isn't big enough to grow peanuts", "images/peanutgame/multiverse.png", "multiverse", 5);
 var omniverse = new Item("Peanut Omniverse", 0, 55000000000000, 25000000000000, "Could it get even bigger than this?", "images/peanutgame/omniverse.png", "omniverse", 5);
 var box = new Item("The Box", 0, 280000000000000, 100000000000000, "The Box, containing everything in existence, now filled with peantuts. Is this the true limit of your production?", "images/peanutgame/the box.png", "box", 5);
-var theVoid = new Item("The Void", 0, 3500000000000000, 1000000000000000, "An infinitely large, empty space", "images/peanutgame/void.png", "void", 1);
+var theVoid = new Item("The Void", 0, 3500000000000000, 1000000000000000, "An infinitely large, empty space", "images/peanutgame/void.png", "void", 5);
 
 //Creating farmer objects from classes
 var shnilli = new Farmer("Shnilli", 0, 0.003, 1, "Everyone's favorite chocolate potato", "images/peanutgame/shnilli.png", "shnilli", 3);
@@ -328,11 +328,15 @@ var penutAura = new Upgrade("Penut Aura", 0, 1, 5000000000, "The Holy Penut gets
 var fleshBlobs = new Upgrade("Arrival of the Flesh-Blobs", 0, 1, 730000000000, "The Flesh-Blobs help The Bread farming, doubling its production", "images/peanutgame/bread.png", "fleshBlobs", "farmerUpgrade");
 var lightspeed = new Upgrade("Lightspeed Farming", 0, 1, 5000000000000, "The Galaxy's speed increases dramatically, doubling its peanut production", "images/peanutgame/theGalaxy.png", "lightspeed", "farmerUpgrade");
 var duplication = new Upgrade("Maggot Duplication", 0, 1, 1400000000000000, "The Maggot duplicates, doubling its peanut production", "images/peanutgame/maggot.png", "duplication", "farmerUpgrade");
+var power = new Upgrade("Unlimited Power", 0, 1, 7000000000000000, "Abominodas transforms into The Abominodas, gaining near unlimited power and doubling his peanut production", "images/peanutgame/upgrades/the abominodas.png", "power", "farmerUpgrade");
 
 var unlockVoid = new Upgrade("Void", 0, 1, 1000000000000000, "Void", "images/peanutgame/void.png", "unlockVoid", "itemUpgrade");
 var darkness = new Upgrade("Darkness", 0, 1, 35000000000000000, "The Void gets filled by darkness...", "images/peanutgame/void.png", "darkness", "itemUpgrade");
 
 var divineBlood = new Upgrade("Divine Blood", 0, 1, 0.3, "Shnilli transforms into Divine Shnilli, doubling his peanut production further", "images/peanutgame/upgrades/divine shnilli.png", "divineBlood", "farmerUpgrade");
+var unlockCreation = new Upgrade("Creation", 0, 1, 1500000000000000, "Creation", "images/peanutgame/upgrades/light.png", "unlockCreation", "farmerUpgrade");
+var light = new Upgrade("Light of Creation", 0, 1, 58000000000000000, "An immense light surrounds The Inception...", "images/peanutgame/upgrades/inception.png", "power", "farmerUpgrade");
+
 
 //Creating shop elements
 function createItemElement(name, amount, price, production, description, image, onclick, id) {
@@ -704,6 +708,10 @@ function farmerUpgrade(upgradeNumber) {
 		theGalaxy.upgrade(2, lightspeed.image);
 	} else if (upgradeNumber == 14) {
 		maggot.upgrade(2, duplication.image);
+	} else if (upgradeNumber == 15) {
+		abominodas.upgrade(2, power.image);
+	} else if (upgradeNumber == 16) {
+		theInception.upgrade(2, light.image);
 	}
 }
 
@@ -739,6 +747,11 @@ function unlockFarmerUpgrade() {
 		lightspeed.createUpgrade("lightspeed.upgrade()");
 	} else if (currentFarmer == 14) {
 		duplication.createUpgrade("duplication.upgrade()");
+	} else if (currentFarmer == 15) {
+		power.createUpgrade("power.upgrade()");
+		unlockCreation.createUpgrade("unlockCreation.upgrade()");
+	} else if (currentFarmer == 16) {
+		light.createUpgrade("light.upgrade()");
 	}
 }
 
