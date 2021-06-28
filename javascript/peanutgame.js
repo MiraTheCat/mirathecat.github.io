@@ -1,16 +1,22 @@
+//Checking for saved stats
+if (!localStorage.peanuts) {localStorage.peanuts = 0;}
+if (!localStorage.money) {localStorage.money = 0.01;}
+if (!localStorage.darknessBonus) {localStorage.darknessBonus = 1;}
+if (!localStorage.lightBonus) {localStorage.lightBonus = 1;}
+
 //Setting variables
-var peanuts = 0;
-var money = 0.01;
-var currentItem = 0;
-var currentFarmer = 0;
+var peanuts = Number(localStorage.peanuts);
+var money = Number(localStorage.money);
+var currentItem = -1;
+var currentFarmer = -1;
 var peanutsPerClick = 0;
 var peanutsPerSecond = 0;
 var peanutValue = 0.001;
-var productionBonus = 1.0;
+var productionBonus = 1;
 var unlockedVoid = false;
 var unlockedCreation = false;
-var darknessBonus = 1;
-var lightBonus = 1;
+var darknessBonus = Number(localStorage.darknessBonus);
+var lightBonus = Number(localStorage.darknessBonus);
 
 var itemsList = ["seed", "sapling", "tree", "field", "farm", "factory", "creationLab",
 "generatorFacility", "productionCenter", "forest", "island", "assemblyYard", "fusionReactor",
@@ -63,14 +69,28 @@ class Item {
 	}
 
 	createItem(onclick) {
+		this.price *= Math.pow(1.25, this.amount);
+
 		createItemElement(this.name, this.amount, this.price, this.production, this.description, this.image, onclick, this.id);
+
+		currentItem += 1;
+
+		if (this.amount > 0) {
+			unlockItemUpgrade();
+		}
+
+		if (this.amount >= this.requirementForNext) {
+			if (itemsList[currentItem] == this.id) {
+				addNewItem();
+			}
+		}	
 	}
 
 	buy() {
 		if (money >= this.price) {
 			money -= this.price;
 
-			this.price *=1.25;
+			this.price *= 1.25;
 
 			if (this.amount == 0) {
 				unlockItemUpgrade();
@@ -78,31 +98,55 @@ class Item {
 
 			this.amount += 1;
 			updateItem("#" + this.id + "Amount", this.amount, "#" + this.id + "Price", roundNumber(this.price), "#" + this.id + "Production", roundNumber(this.production * productionBonus), "#" + this.id + "Image", this.image);
-			peanutsPerClick += this.production;
+			updatePPCS()
 			updateInventory(peanuts, money, peanutsPerClick, peanutsPerSecond);
 
 			if (this.amount >= this.requirementForNext) {
 				if (itemsList[currentItem] == this.id) {
 					addNewItem();
 				}
-			}		
+			}
+
+			for (var i = 0; i < itemsList.length; i++) {
+				if (this.id == itemsList[i]) {
+					localStorage.setItem(itemsList[i], this.amount);					
+				}
+			}
 		}
 	}
 
 	upgrade(bonus, newImage) {
-		peanutsPerClick -= this.production * this.amount;
 		this.production *= bonus;
-		peanutsPerClick += this.production * this.amount;
 		this.image = newImage;
 
+		updatePPCS()
+
 		updateItem("#" + this.id + "Amount", this.amount, "#" + this.id + "Price", roundNumber(this.price), "#" + this.id + "Production", roundNumber(this.production * productionBonus), "#" + this.id + "Image", this.image);
+	}
+
+	p() {
+		return this.amount * this.production;
 	}
 }
 
 class Farmer extends Item {
 
 	createFarmer(onclick) {
+		this.price *= Math.pow(1.25, this.amount);
+
 		createFarmerElement(this.name, this.amount, this.price, this.production, this.description, this.image, onclick, this.id);
+		
+		currentFarmer += 1
+
+		if (this.amount > 0) {
+			unlockFarmerUpgrade();
+		}
+
+		if (this.amount >= this.requirementForNext) {
+			if (farmersList[currentFarmer] == this.id) {
+				addNewFarmer();
+			}
+		}
 	}
 
 	buy() {
@@ -117,24 +161,34 @@ class Farmer extends Item {
 
 			this.amount += 1;
 			updateFarmer("#" + this.id + "Amount", this.amount, "#" + this.id + "Price", roundNumber(this.price), "#" + this.id + "Production", roundNumber(this.production * productionBonus), "#" + this.id + "Image", this.image);
-			peanutsPerSecond += this.production;
+			updatePPCS()
 			updateInventory(peanuts, money, peanutsPerClick, peanutsPerSecond);
 
 			if (this.amount >= this.requirementForNext) {
 				if (farmersList[currentFarmer] == this.id) {
 					addNewFarmer();
 				}
-			}	
+			}
+
+			for (var i = 0; i < farmersList.length; i++) {
+				if (this.id == farmersList[i]) {
+					localStorage.setItem(farmersList[i], this.amount);					
+				}
+			}
 		}
 	}
 
 	upgrade(bonus, newImage) {
-		peanutsPerSecond -= this.production * this.amount;
 		this.production *= bonus;
-		peanutsPerSecond += this.production * this.amount;
 		this.image = newImage;
 
+		updatePPCS()
+
 		updateFarmer("#" + this.id + "Amount", this.amount, "#" + this.id + "Price", roundNumber(this.price), "#" + this.id + "Production", roundNumber(this.production * productionBonus), "#" + this.id + "Image", this.image);
+	}
+
+	p() {
+		return this.amount * this.production;
 	}
 }
 
@@ -151,31 +205,26 @@ class Upgrade {
 	}
 
 	createUpgrade(onclick) {
-		createUpgradeElement(this.name, this.level, this.maxLevel, this.price, this.description, this.image, onclick, this.id);
-	}
-
-	upgrade() {
-		if (money >= this.price) {
-			money -= this.price;
-			this.level += 1;
-
-			//Peanut value upgrade
+		if (this.maxLevel > this.level) {
 			if (this.type == "peanutValue") {
 				this.name = peanutValueNames[this.level];
-				this.price *= 10;
 				peanutValue = peanutValues[this.level] * lightBonus;
-				this.description = "Increases the value of peanuts from $" + peanutValue + " to $" + peanutValues[this.level +1];
+				this.price = this.price * Math.pow(10, this.level);
+				this.description = "Increases the value of peanuts from $" + Math.round(peanutValue * 10000) / 10000 + " to $" + Math.round(peanutValues[this.level +1] * lightBonus * 10000) / 10000;
 			}
 
-			//Peanut Production upgrade
 			if (this.type == "peanutProduction") {
 				this.name = peanutProductionNames[this.level];
-				this.price *= 20;
 				productionBonus = 1 + peanutProductionBonuses[this.level] * darknessBonus;
+				this.price = this.price * Math.pow(20, this.level);
 				this.description = "Increases the amount of peanuts produced by everything by a total of " + Math.round(peanutProductionBonuses[this.level +1] * 100) + "%";
 			}
 
-			//Item upgrade
+			createUpgradeElement(this.name, this.level, this.maxLevel, this.price, this.description, this.image, onclick, this.id);
+		} else {
+			if (this.type == "peanutValue") {peanutValue = peanutValues[this.maxLevel] * lightBonus}
+			if (this.type == "peanutProduction") {productionBonus = peanutProductionBonuses[this.maxLevel] * darknessBonus}
+
 			if (this.type == "itemUpgrade") {
 				for (var i = 0; i < itemUpgradeList.length; i++) {
 					if (this.name == itemUpgradeList[i]) {
@@ -184,7 +233,7 @@ class Upgrade {
 							darknessBonus = 1.5;
 						}
 
-						itemUpgrade(i);							
+						itemUpgrade(i);						
 					}
 				}
 
@@ -197,8 +246,6 @@ class Upgrade {
 				}
 			}
 
-			//Farmer upgrade
-
 			if (this.type == "farmerUpgrade") {
 				for (var i = 0; i < farmerUpgradeList.length; i++) {
 					if (this.name == farmerUpgradeList[i]) {
@@ -208,7 +255,98 @@ class Upgrade {
 						}
 
 						if (this.name == "Tiny Armor") {
-							createUpgradeElement(divineBlood.name, divineBlood.level, divineBlood.maxLevel, divineBlood.price, divineBlood.description, divineBlood.image, "divineBlood.upgrade()", divineBlood.id);
+							divineBlood.createUpgrade("divineBlood.upgrade()");
+						}
+
+						farmerUpgrade(i);
+					}
+				}
+
+				if (this.name == "Divine Blood") {
+					setTimeout(function() {farmerUpgrade("s")}, 100);
+				}
+
+				if (this.name == "Creation") {
+					currentFarmer = 15;
+					unlockedCreation = true;
+					if (abominodas.amount >= 5) {
+						addNewFarmer();
+					}
+				}
+			}
+		}
+
+		updateInventory(peanuts, money, peanutsPerClick, peanutsPerSecond);
+	}
+
+	upgrade() {
+		if (money >= this.price) {
+			money -= this.price;
+			this.level += 1;
+
+			//Peanut value upgrade
+			if (this.type == "peanutValue") {
+				this.name = peanutValueNames[this.level];
+				this.price *= 10;
+				peanutValue = peanutValues[this.level] * lightBonus;
+				this.description = "Increases the value of peanuts from $" + Math.round(peanutValue * 10000) / 10000 + " to $" + Math.round(peanutValues[this.level +1] * lightBonus * 10000) / 10000;
+
+				localStorage.setItem("peanutPrice", this.level);
+			}
+
+			//Peanut Production upgrade
+			if (this.type == "peanutProduction") {
+				this.name = peanutProductionNames[this.level];
+				this.price *= 20;
+				productionBonus = 1 + peanutProductionBonuses[this.level] * darknessBonus;
+				this.description = "Increases the amount of peanuts produced by everything by a total of " + Math.round(peanutProductionBonuses[this.level +1] * 100) + "%";
+				
+				localStorage.setItem("peanutProduction", this.level);
+			}
+
+			//Item upgrade
+			if (this.type == "itemUpgrade") {
+				for (var i = 0; i < itemUpgradeList.length; i++) {
+					if (this.name == itemUpgradeList[i]) {
+
+						if (this.name == "Darkness") {
+							darknessBonus = 1.5;
+							localStorage.setItem("darknessBonus", darknessBonus);
+						}
+
+						itemUpgrade(i);						
+					}
+				}
+
+				if (this.name == "Void") {
+					currentItem = 21;
+					unlockedVoid = true;
+					localStorage.unlockVoid = this.level;
+					if (box.amount >= 5) {
+						addNewItem();
+					}
+				}
+
+				for (var i = 0; i < itemUpgradeList.length; i++) {
+					if (this.name == itemUpgradeList[i]) {
+						localStorage.setItem(itemUpgradeList[i], this.level);					
+					}
+				}
+			}
+
+			//Farmer upgrade
+
+			if (this.type == "farmerUpgrade") {
+				for (var i = 0; i < farmerUpgradeList.length; i++) {
+					if (this.name == farmerUpgradeList[i]) {
+
+						if (this.name == "Light of Creation") {
+							lightBonus = 1.5;
+							localStorage.setItem("lightBonus", lightBonus);
+						}
+
+						if (this.name == "Tiny Armor") {
+							divineBlood.createUpgrade("divineBlood.upgrade()");
 						}
 
 						farmerUpgrade(i);
@@ -217,13 +355,22 @@ class Upgrade {
 
 				if (this.name == "Divine Blood") {
 					farmerUpgrade("s");
+
+					localStorage.setItem("Divine Blood", this.level);
 				}
 
 				if (this.name == "Creation") {
 					currentFarmer = 15;
 					unlockedCreation = true;
+					localStorage.unlockCreation = this.level;
 					if (abominodas.amount >= 5) {
 						addNewFarmer();
+					}
+				}
+
+				for (var i = 0; i < farmerUpgradeList.length; i++) {
+					if (this.name == farmerUpgradeList[i]) {
+						localStorage.setItem(farmerUpgradeList[i], this.level);					
 					}
 				}
 			}
@@ -242,100 +389,136 @@ class Upgrade {
 	}
 }
 
+//Checking for item/farmer amount
+for (var i = 0; i < itemsList.length; i++) {
+	if (!localStorage.getItem(itemsList[i])) {
+		localStorage.setItem(itemsList[i], 0);
+	}
+}
+
+for (var i = 0; i < farmersList.length; i++) {
+	if (!localStorage.getItem(farmersList[i])) {
+		localStorage.setItem(farmersList[i], 0);
+	}
+}
+
 //Creating item objects from classes
-var seed = new Item("Peanut Seed", 0, 0.01, 1, "A single seed, growing a single peanut", "images/peanutgame/seeds.png", "seed", 5);
-var sapling = new Item("Peanut Sapling", 0, 0.08, 5, "A small tree, containing a few peanuts", "images/peanutgame/sapling.png", "sapling", 5);
-var tree = new Item("Peanut Tree", 0, 0.6, 20, "A larger tree, containing a lot more peanuts", "images/peanutgame/tree.png", "tree", 5);
-var field = new Item("Peanut Field", 0, 4, 100, "A field full of peanut trees", "images/peanutgame/field.png", "field", 5);
-var farm = new Item("Peanut Farm", 0, 30, 450, "An actual peanut farm", "images/peanutgame/farm.png", "farm", 5);
-var factory = new Item("Peanut Factory", 0, 180, 2000, "A factory producing peanuts", "images/peanutgame/factory.png", "factory", 5);
-var creationLab = new Item("Peanut Creation Lab", 0, 1000, 9000, "Peanuts are created chemically in this lab", "images/peanutgame/creationLab.png", "creationLab", 5);
-var generatorFacility = new Item("Peanut Generator Facility", 0, 6000, 45000, "Facility generating peanuts in the thousands", "images/peanutgame/generatorFacility.png", "generatorFacility", 5);
-var productionCenter = new Item("Underground Peanut Production Center", 0, 40000, 200000, "A giant production center, producing peanuts underground", "images/peanutgame/productionCenter.png", "productionCenter", 5);
-var forest = new Item("Peanut Forest", 0, 200000, 1000000, "A large forest growing millions of peanuts", "images/peanutgame/forest.png", "forest", 5);
-var island = new Item("Private Peanut Island", 0, 1200000, 4500000, "A private island for growing peanuts", "images/peanutgame/island.png", "island", 5);
-var assemblyYard = new Item("Giant Peanut Assembly Yard", 0, 7000000, 20000000, "A giant assembly yard, creating giant peanuts", "images/peanutgame/assemblyYard.png", "assemblyYard", 5);
-var fusionReactor = new Item("Peanut Fusion Reactor", 0, 40000000, 100000000, "Fuse peanuts together to create more peanuts!", "images/peanutgame/fusionReactor.png", "fusionReactor", 5);
-var asteroid = new Item("Peanut Asteroid", 0, 250000000, 450000000, "An asteroid made out of peanuts", "images/peanutgame/asteroid.png", "asteroid", 5);
-var moon = new Item("Peanut Moon", 0, 1300000000, 2500000000, "Ever wanted to grow peanuts on the moon? Well, now you can!", "images/peanutgame/moon.png", "moon", 5);
-var planet = new Item("Peanut Planet", 0, 7500000000, 10000000000, "An entire planet, just to grow peanuts?", "images/peanutgame/planet.png", "planet", 5);
-var star = new Item("Peanut Star", 0, 45000000000, 45000000000, "Works like a fusion reactor, but a lot bigger", "images/peanutgame/star.png", "star", 5);
-var galaxy = new Item("Peanut Galaxy", 0, 260000000000, 230000000000, "A galaxy full of peanut-growing planets", "images/peanutgame/galaxy.png", "galaxy", 5);
-var universe = new Item("Peanut Universe", 0, 1500000000000, 1350000000000, "How did you even manage to buy this?", "images/peanutgame/universe.png", "universe", 5);
-var multiverse = new Item("Peanut Multiverse", 0, 9000000000000, 6000000000000, "When the universe isn't big enough to grow peanuts", "images/peanutgame/multiverse.png", "multiverse", 5);
-var omniverse = new Item("Peanut Omniverse", 0, 55000000000000, 25000000000000, "Could it get even bigger than this?", "images/peanutgame/omniverse.png", "omniverse", 5);
-var box = new Item("The Box", 0, 280000000000000, 100000000000000, "The Box, containing everything in existence, now filled with peantuts. Is this the true limit of your production?", "images/peanutgame/the box.png", "box", 5);
-var theVoid = new Item("The Void", 0, 3500000000000000, 1000000000000000, "An infinitely large, empty space", "images/peanutgame/void.png", "void", 5);
+var seed = new Item("Peanut Seed", Number(localStorage.getItem(itemsList[0])), 0.01, 1, "A single seed, growing a single peanut", "images/peanutgame/seeds.png", "seed", 5);
+var sapling = new Item("Peanut Sapling", Number(localStorage.getItem(itemsList[1])), 0.08, 5, "A small tree, containing a few peanuts", "images/peanutgame/sapling.png", "sapling", 5);
+var tree = new Item("Peanut Tree", Number(localStorage.getItem(itemsList[2])), 0.6, 20, "A larger tree, containing a lot more peanuts", "images/peanutgame/tree.png", "tree", 5);
+var field = new Item("Peanut Field", Number(localStorage.getItem(itemsList[3])), 4, 100, "A field full of peanut trees", "images/peanutgame/field.png", "field", 5);
+var farm = new Item("Peanut Farm", Number(localStorage.getItem(itemsList[4])), 30, 450, "An actual peanut farm", "images/peanutgame/farm.png", "farm", 5);
+var factory = new Item("Peanut Factory", Number(localStorage.getItem(itemsList[5])), 180, 2000, "A factory producing peanuts", "images/peanutgame/factory.png", "factory", 5);
+var creationLab = new Item("Peanut Creation Lab", Number(localStorage.getItem(itemsList[6])), 1000, 9000, "Peanuts are created chemically in this lab", "images/peanutgame/creationLab.png", "creationLab", 5);
+var generatorFacility = new Item("Peanut Generator Facility", Number(localStorage.getItem(itemsList[7])), 6000, 45000, "Facility generating peanuts in the thousands", "images/peanutgame/generatorFacility.png", "generatorFacility", 5);
+var productionCenter = new Item("Underground Peanut Production Center", Number(localStorage.getItem(itemsList[8])), 40000, 200000, "A giant production center, producing peanuts underground", "images/peanutgame/productionCenter.png", "productionCenter", 5);
+var forest = new Item("Peanut Forest", Number(localStorage.getItem(itemsList[9])), 200000, 1000000, "A large forest growing millions of peanuts", "images/peanutgame/forest.png", "forest", 5);
+var island = new Item("Private Peanut Island", Number(localStorage.getItem(itemsList[10])), 1200000, 4500000, "A private island for growing peanuts", "images/peanutgame/island.png", "island", 5);
+var assemblyYard = new Item("Giant Peanut Assembly Yard", Number(localStorage.getItem(itemsList[11])), 7000000, 20000000, "A giant assembly yard, creating giant peanuts", "images/peanutgame/assemblyYard.png", "assemblyYard", 5);
+var fusionReactor = new Item("Peanut Fusion Reactor", Number(localStorage.getItem(itemsList[12])), 40000000, 100000000, "Fuse peanuts together to create more peanuts!", "images/peanutgame/fusionReactor.png", "fusionReactor", 5);
+var asteroid = new Item("Peanut Asteroid", Number(localStorage.getItem(itemsList[13])), 250000000, 450000000, "An asteroid made out of peanuts", "images/peanutgame/asteroid.png", "asteroid", 5);
+var moon = new Item("Peanut Moon", Number(localStorage.getItem(itemsList[14])), 1300000000, 2500000000, "Ever wanted to grow peanuts on the moon? Well, now you can!", "images/peanutgame/moon.png", "moon", 5);
+var planet = new Item("Peanut Planet", Number(localStorage.getItem(itemsList[15])), 7500000000, 10000000000, "An entire planet, just to grow peanuts?", "images/peanutgame/planet.png", "planet", 5);
+var star = new Item("Peanut Star", Number(localStorage.getItem(itemsList[16])), 45000000000, 45000000000, "Works like a fusion reactor, but a lot bigger", "images/peanutgame/star.png", "star", 5);
+var galaxy = new Item("Peanut Galaxy", Number(localStorage.getItem(itemsList[17])), 260000000000, 230000000000, "A galaxy full of peanut-growing planets", "images/peanutgame/galaxy.png", "galaxy", 5);
+var universe = new Item("Peanut Universe", Number(localStorage.getItem(itemsList[18])), 1500000000000, 1350000000000, "How did you even manage to buy this?", "images/peanutgame/universe.png", "universe", 5);
+var multiverse = new Item("Peanut Multiverse", Number(localStorage.getItem(itemsList[19])), 9000000000000, 6000000000000, "When the universe isn't big enough to grow peanuts", "images/peanutgame/multiverse.png", "multiverse", 5);
+var omniverse = new Item("Peanut Omniverse", Number(localStorage.getItem(itemsList[20])), 55000000000000, 25000000000000, "Could it get even bigger than this?", "images/peanutgame/omniverse.png", "omniverse", 5);
+var box = new Item("The Box", Number(localStorage.getItem(itemsList[21])), 280000000000000, 100000000000000, "The Box, containing everything in existence, now filled with peantuts. Is this the true limit of your production?", "images/peanutgame/the box.png", "box", 5);
+var theVoid = new Item("The Void", Number(localStorage.getItem(itemsList[22])), 3500000000000000, 1000000000000000, "An infinitely large, empty space", "images/peanutgame/void.png", "void", 5);
 
 //Creating farmer objects from classes
-var shnilli = new Farmer("Shnilli", 0, 0.003, 1, "Everyone's favorite chocolate potato", "images/peanutgame/shnilli.png", "shnilli", 3);
-var littina = new Farmer("Littina", 0, 0.008, 2, "Shnilli's sister, Littina", "images/peanutgame/littina.png", "littina", 5);
-var bean = new Farmer("The Bean", 0, 0.04, 8, "Smol boi and friend of Shnilli", "images/peanutgame/the bean.png", "bean", 5);
-var honey = new Farmer("Honey", 0, 0.2, 20, "Actual, living honey about half the size of a stickman", "images/peanutgame/honey.png", "honey", 5);
-var farmer = new Farmer("Peanut Farmer", 0, 1, 80, "Just a normal peanut farmer", "images/peanutgame/farmer.png", "farmer", 5);
-var bot = new Farmer("AbominationBot", 0, 8.5, 400, "A bot desiged to <s>defend Abominations</s> farm peanuts", "images/peanutgame/abominationbot.png", "bot", 5);
-var cactus = new Farmer("The Cactus", 0, 50, 1800, "Who knows better how to survive in harsh environments than a cactus?", "images/peanutgame/cactus.png", "cactus", 5);
-var ghp = new Farmer("GHP", 0, 400, 10000, "Giant Humanoid Peanut himself, here to help take care of his farm", "images/peanutgame/ghp.png", "ghp", 5);
-var overseer = new Farmer("Abomination Overseer", 0, 2500, 55000, "The Abomination Overseer, watching over all Abominations", "images/peanutgame/overseer.png", "overseer", 5);
-var davz = new Farmer("The Davz", 0, 16000, 250000, "Davz himself joins in to farm peanuts", "images/peanutgame/davz.png", "davz", 15);
-var pea = new Farmer("The Pea", 0, 850000, 12000000, "A giant Abomination, even bigger than the Stickworld itself", "images/peanutgame/the pea.png", "pea", 25);
-var penut = new Farmer("Holy Penut", 0, 500000000, 2800000000, "The god of peanuts, chillness and peace", "images/peanutgame/holy penut.png", "penut", 20);
-var bread = new Farmer("The Bread", 0, 73000000000, 200000000000, "An Abomination the size of the sun", "images/peanutgame/bread.png", "bread", 5);
-var theGalaxy = new Farmer("The Galaxy", 0, 500000000000, 1500000000000, "A living galaxy, twice the size of the Milky Way", "images/peanutgame/theGalaxy.png", "theGalaxy", 20);
-var maggot = new Farmer("The Maggot", 0, 140000000000000, 150000000000000, "A completely normal maggot, 200 times the size of the Omniverse", "images/peanutgame/maggot.png", "maggot", 5);
-var abominodas = new Farmer("Abominodas", 0, 700000000000000, 650000000000000, "One of the most powerful Abomination Gods", "images/peanutgame/abominodas.png", "abominodas", 5);
-var theInception = new Farmer("The Inception", 0, 5800000000000000, 5000000000000000, "The first, the last, the strongest", "images/peanutgame/inception.png", "creation", 5);
+var shnilli = new Farmer("Shnilli", Number(localStorage.getItem(farmersList[0])), 0.003, 1, "Everyone's favorite chocolate potato", "images/peanutgame/shnilli.png", "shnilli", 3);
+var littina = new Farmer("Littina", Number(localStorage.getItem(farmersList[1])), 0.008, 2, "Shnilli's sister, Littina", "images/peanutgame/littina.png", "littina", 5);
+var bean = new Farmer("The Bean", Number(localStorage.getItem(farmersList[2])), 0.04, 8, "Smol boi and friend of Shnilli", "images/peanutgame/the bean.png", "bean", 5);
+var honey = new Farmer("Honey", Number(localStorage.getItem(farmersList[3])), 0.2, 20, "Actual, living honey about half the size of a stickman", "images/peanutgame/honey.png", "honey", 5);
+var farmer = new Farmer("Peanut Farmer", Number(localStorage.getItem(farmersList[4])), 1, 80, "Just a normal peanut farmer", "images/peanutgame/farmer.png", "farmer", 5);
+var bot = new Farmer("AbominationBot", Number(localStorage.getItem(farmersList[5])), 8.5, 400, "A bot desiged to <s>defend Abominations</s> farm peanuts", "images/peanutgame/abominationbot.png", "bot", 5);
+var cactus = new Farmer("The Cactus", Number(localStorage.getItem(farmersList[6])), 50, 1800, "Who knows better how to survive in harsh environments than a cactus?", "images/peanutgame/cactus.png", "cactus", 5);
+var ghp = new Farmer("GHP", Number(localStorage.getItem(farmersList[7])), 400, 10000, "Giant Humanoid Peanut himself, here to help take care of his farm", "images/peanutgame/ghp.png", "ghp", 5);
+var overseer = new Farmer("Abomination Overseer", Number(localStorage.getItem(farmersList[8])), 2500, 55000, "The Abomination Overseer, watching over all Abominations", "images/peanutgame/overseer.png", "overseer", 5);
+var davz = new Farmer("The Davz", Number(localStorage.getItem(farmersList[9])), 16000, 250000, "Davz himself joins in to farm peanuts", "images/peanutgame/davz.png", "davz", 15);
+var pea = new Farmer("The Pea", Number(localStorage.getItem(farmersList[10])), 850000, 12000000, "A giant Abomination, even bigger than the Stickworld itself", "images/peanutgame/the pea.png", "pea", 25);
+var penut = new Farmer("Holy Penut", Number(localStorage.getItem(farmersList[11])), 500000000, 2800000000, "The god of peanuts, chillness and peace", "images/peanutgame/holy penut.png", "penut", 20);
+var bread = new Farmer("The Bread", Number(localStorage.getItem(farmersList[12])), 73000000000, 200000000000, "An Abomination the size of the sun", "images/peanutgame/bread.png", "bread", 5);
+var theGalaxy = new Farmer("The Galaxy", Number(localStorage.getItem(farmersList[13])), 500000000000, 1500000000000, "A living galaxy, twice the size of the Milky Way", "images/peanutgame/theGalaxy.png", "theGalaxy", 20);
+var maggot = new Farmer("The Maggot", Number(localStorage.getItem(farmersList[14])), 140000000000000, 150000000000000, "A completely normal maggot, 200 times the size of the Omniverse", "images/peanutgame/maggot.png", "maggot", 5);
+var abominodas = new Farmer("Abominodas", Number(localStorage.getItem(farmersList[15])), 700000000000000, 650000000000000, "One of the most powerful Abomination Gods", "images/peanutgame/abominodas.png", "abominodas", 5);
+var theInception = new Farmer("The Inception", Number(localStorage.getItem(farmersList[16])), 5800000000000000, 5000000000000000, "The first, the last, the strongest", "images/peanutgame/inception.png", "creation", 5);
+
+//Checking for upgrade level storage
+if (!localStorage.peanutPrice) {localStorage.peanutPrice = 0;}
+if (!localStorage.peanutProduction) {localStorage.peanutProduction = 0;}
+
+for (var i = 0; i < itemUpgradeList.length; i++) {
+	if (!localStorage.getItem(itemUpgradeList[i])) {
+		localStorage.setItem(itemUpgradeList[i], 0);
+	}
+}
+
+for (var i = 0; i < farmerUpgradeList.length; i++) {
+	if (!localStorage.getItem(farmerUpgradeList[i])) {
+		localStorage.setItem(farmerUpgradeList[i], 0);
+	}
+}
+
+if (!localStorage.getItem("Divine Blood")) {
+	localStorage.setItem("Divine Blood", 0);
+}
+
+if (!localStorage.unlockVoid) {localStorage.unlockVoid = 0;}
+if (!localStorage.unlockCreation) {localStorage.unlockCreation = 0;}
 
 //Creating upgrade objects from classes
-var peanutPrice = new Upgrade("Bigger Peanuts", 0, 15, 0.25, "Increases the value of peanuts from $0.001 to $0.0011", "images/peanutgame/upgrades/peanut.png", "peanutPrice", "peanutValue");
-var peanutProduction = new Upgrade("Increased Production", 0, 12, 0.5, "Increases the amount of peanuts produced by everything by a total of 10%", "images/peanutgame/upgrades/production.png", "peanutProduction", "peanutProduction");
+var peanutPrice = new Upgrade("Bigger Peanuts", Number(localStorage.peanutPrice), 15, 0.25, "Increases the value of peanuts from $0.001 to $0.0011", "images/peanutgame/upgrades/peanut.png", "peanutPrice", "peanutValue");
+var peanutProduction = new Upgrade("Increased Production", Number(localStorage.peanutProduction), 12, 0.5, "Increases the amount of peanuts produced by everything by a total of 10%", "images/peanutgame/upgrades/production.png", "peanutProduction", "peanutProduction");
 
-var enchantedSeeds = new Upgrade("Enchanted Seeds", 0, 1, 0.1, "Doubles the peanut production of Peanut Seeds", "images/peanutgame/upgrades/enchantedSeeds.png", "enchantedSeeds", "itemUpgrade");
-var fasterGrowingSaplings = new Upgrade("Faster-Growing Saplings", 0, 1, 0.8, "Doubles the peanut production of Peanut Saplings", "images/peanutgame/sapling.png", "fasterGrowingSaplings", "itemUpgrade");
-var tallerTrees = new Upgrade("Taller Trees", 0, 1, 6, "Doubles the peanut production of Peanut Trees", "images/peanutgame/tree.png", "tallerTrees", "itemUpgrade");
-var largerFields = new Upgrade("Larger Fields", 0, 1, 40, "Doubles the peanut production of Peanut Fields", "images/peanutgame/field.png", "largerFields", "itemUpgrade");
-var farmExpansion = new Upgrade("Farm Expansion", 0, 1, 300, "Doubles the peanut production of Peanut Farms", "images/peanutgame/farm.png", "farmExpansion", "itemUpgrade");
-var improvedMachines = new Upgrade("Improved Machines", 0, 1, 1800, "Doubles the peanut production of Peanut Factories", "images/peanutgame/factory.png", "improvedMachines", "itemUpgrade");
-var newTechnology = new Upgrade("New Technology", 0, 1, 10000, "Doubles the peanut production of Peanut Creation Labs", "images/peanutgame/creationLab.png", "newTechnology", "itemUpgrade");
-var fasterGeneration = new Upgrade("Faster Generation", 0, 1, 60000, "Doubles the peanut production of Peanut Generator Facilities", "images/peanutgame/generatorFacility.png", "fasterGeneration", "itemUpgrade");
-var largerProductionSpace = new Upgrade("Larger Production Space", 0, 1, 400000, "Doubles the peanut production of Underground Peanut Production Centers", "images/peanutgame/productionCenter.png", "largerProductionSpace", "itemUpgrade");
-var strengthenedBranches = new Upgrade("Strengthened Branches", 0, 1, 2000000, "Doubles the peanut production of Peanut Forests", "images/peanutgame/forest.png", "strengthenedBranches", "itemUpgrade");
-var privatePeanutYatch = new Upgrade("Private Peanut Yatch", 0, 1, 12000000, "Doubles the peanut production of Private Peanut Islands", "images/peanutgame/island.png", "privatePeanutYatch", "itemUpgrade");
-var xlPeanuts = new Upgrade("XL Peanuts", 0, 1, 70000000, "Doubles the peanut production of Giant Peanut Assembly Yards", "images/peanutgame/assemblyYard.png", "xlPeanuts", "itemUpgrade");
-var strongerFusion = new Upgrade("Stronger Fusion", 0, 1, 400000000, "Doubles the peanut production of Peanut Fusion Reactos", "images/peanutgame/fusionReactor.png", "strongerFusion", "itemUpgrade");
-var stableOrbit = new Upgrade("Stable Orbit", 0, 1, 2500000000, "Doubles the peanut production of Peanut Asteroids", "images/peanutgame/asteroid.png", "stableOrbit", "itemUpgrade");
-var artificialLighting = new Upgrade("Artificial Lighting", 0, 1, 13000000000, "Doubles the peanut production of Peanut Moons", "images/peanutgame/moon.png", "artificialLighting", "itemUpgrade");
-var improvedSoil = new Upgrade("Improved Soil", 0, 1, 75000000000, "Doubles the peanut production of Peanut Planets", "images/peanutgame/planet.png", "improvedSoil", "itemUpgrade");
-var fireProofPeanuts = new Upgrade("Fire-Proof Peanuts", 0, 1, 450000000000, "Doubles the peanut production of Peanut Stars", "images/peanutgame/star.png", "fireProofPeanuts", "itemUpgrade");
-var peanutBlackHole = new Upgrade("Peanut Black Hole", 0, 1, 2600000000000, "Doubles the peanut production of Peanut Galaxies", "images/peanutgame/galaxy.png", "peanutBlackHole", "itemUpgrade");
-var galacticTrade = new Upgrade("Inter-Galactic Trade", 0, 1, 15000000000000, "Doubles the peanut production of Peanut Universes", "images/peanutgame/universe.png", "galacticTrade", "itemUpgrade");
-var universePeanuts = new Upgrade("Universe-Sized Peanuts", 0, 1, 90000000000000, "Doubles the peanut production of Peanut Multiverses", "images/peanutgame/multiverse.png", "universePeanuts", "itemUpgrade");
-var omniPeanut = new Upgrade("Omni-Peanut", 0, 1, 550000000000000, "Doubles the peanut production of Peanut Omniverses", "images/peanutgame/omniverse.png", "omniPeanut", "itemUpgrade");
-var expertFarming = new Upgrade("Expert Farming", 0, 1, 2800000000000000, "The Expert helps farming peanuts, doubling the peanut production of The Box", "images/peanutgame/upgrades/expert.png", "expertFarming", "itemUpgrade");
+var enchantedSeeds = new Upgrade("Enchanted Seeds", Number(localStorage.getItem(itemUpgradeList[0])), 1, 0.1, "Doubles the peanut production of Peanut Seeds", "images/peanutgame/upgrades/enchantedSeeds.png", "enchantedSeeds", "itemUpgrade");
+var fasterGrowingSaplings = new Upgrade("Faster-Growing Saplings", Number(localStorage.getItem(itemUpgradeList[1])), 1, 0.8, "Doubles the peanut production of Peanut Saplings", "images/peanutgame/sapling.png", "fasterGrowingSaplings", "itemUpgrade");
+var tallerTrees = new Upgrade("Taller Trees", Number(localStorage.getItem(itemUpgradeList[2])), 1, 6, "Doubles the peanut production of Peanut Trees", "images/peanutgame/tree.png", "tallerTrees", "itemUpgrade");
+var largerFields = new Upgrade("Larger Fields", Number(localStorage.getItem(itemUpgradeList[3])), 1, 40, "Doubles the peanut production of Peanut Fields", "images/peanutgame/field.png", "largerFields", "itemUpgrade");
+var farmExpansion = new Upgrade("Farm Expansion", Number(localStorage.getItem(itemUpgradeList[4])), 1, 300, "Doubles the peanut production of Peanut Farms", "images/peanutgame/farm.png", "farmExpansion", "itemUpgrade");
+var improvedMachines = new Upgrade("Improved Machines", Number(localStorage.getItem(itemUpgradeList[5])), 1, 1800, "Doubles the peanut production of Peanut Factories", "images/peanutgame/factory.png", "improvedMachines", "itemUpgrade");
+var newTechnology = new Upgrade("New Technology", Number(localStorage.getItem(itemUpgradeList[6])), 1, 10000, "Doubles the peanut production of Peanut Creation Labs", "images/peanutgame/creationLab.png", "newTechnology", "itemUpgrade");
+var fasterGeneration = new Upgrade("Faster Generation", Number(localStorage.getItem(itemUpgradeList[7])), 1, 60000, "Doubles the peanut production of Peanut Generator Facilities", "images/peanutgame/generatorFacility.png", "fasterGeneration", "itemUpgrade");
+var largerProductionSpace = new Upgrade("Larger Production Space", Number(localStorage.getItem(itemUpgradeList[8])), 1, 400000, "Doubles the peanut production of Underground Peanut Production Centers", "images/peanutgame/productionCenter.png", "largerProductionSpace", "itemUpgrade");
+var strengthenedBranches = new Upgrade("Strengthened Branches", Number(localStorage.getItem(itemUpgradeList[9])), 1, 2000000, "Doubles the peanut production of Peanut Forests", "images/peanutgame/forest.png", "strengthenedBranches", "itemUpgrade");
+var privatePeanutYatch = new Upgrade("Private Peanut Yatch", Number(localStorage.getItem(itemUpgradeList[10])), 1, 12000000, "Doubles the peanut production of Private Peanut Islands", "images/peanutgame/island.png", "privatePeanutYatch", "itemUpgrade");
+var xlPeanuts = new Upgrade("XL Peanuts", Number(localStorage.getItem(itemUpgradeList[11])), 1, 70000000, "Doubles the peanut production of Giant Peanut Assembly Yards", "images/peanutgame/assemblyYard.png", "xlPeanuts", "itemUpgrade");
+var strongerFusion = new Upgrade("Stronger Fusion", Number(localStorage.getItem(itemUpgradeList[12])), 1, 400000000, "Doubles the peanut production of Peanut Fusion Reactos", "images/peanutgame/fusionReactor.png", "strongerFusion", "itemUpgrade");
+var stableOrbit = new Upgrade("Stable Orbit", Number(localStorage.getItem(itemUpgradeList[13])), 1, 2500000000, "Doubles the peanut production of Peanut Asteroids", "images/peanutgame/asteroid.png", "stableOrbit", "itemUpgrade");
+var artificialLighting = new Upgrade("Artificial Lighting", Number(localStorage.getItem(itemUpgradeList[14])), 1, 13000000000, "Doubles the peanut production of Peanut Moons", "images/peanutgame/moon.png", "artificialLighting", "itemUpgrade");
+var improvedSoil = new Upgrade("Improved Soil", Number(localStorage.getItem(itemUpgradeList[15])), 1, 75000000000, "Doubles the peanut production of Peanut Planets", "images/peanutgame/planet.png", "improvedSoil", "itemUpgrade");
+var fireProofPeanuts = new Upgrade("Fire-Proof Peanuts", Number(localStorage.getItem(itemUpgradeList[16])), 1, 450000000000, "Doubles the peanut production of Peanut Stars", "images/peanutgame/star.png", "fireProofPeanuts", "itemUpgrade");
+var peanutBlackHole = new Upgrade("Peanut Black Hole", Number(localStorage.getItem(itemUpgradeList[17])), 1, 2600000000000, "Doubles the peanut production of Peanut Galaxies", "images/peanutgame/galaxy.png", "peanutBlackHole", "itemUpgrade");
+var galacticTrade = new Upgrade("Inter-Galactic Trade", Number(localStorage.getItem(itemUpgradeList[18])), 1, 15000000000000, "Doubles the peanut production of Peanut Universes", "images/peanutgame/universe.png", "galacticTrade", "itemUpgrade");
+var universePeanuts = new Upgrade("Universe-Sized Peanuts", Number(localStorage.getItem(itemUpgradeList[19])), 1, 90000000000000, "Doubles the peanut production of Peanut Multiverses", "images/peanutgame/multiverse.png", "universePeanuts", "itemUpgrade");
+var omniPeanut = new Upgrade("Omni-Peanut", Number(localStorage.getItem(itemUpgradeList[20])), 1, 550000000000000, "Doubles the peanut production of Peanut Omniverses", "images/peanutgame/omniverse.png", "omniPeanut", "itemUpgrade");
+var expertFarming = new Upgrade("Expert Farming", Number(localStorage.getItem(itemUpgradeList[21])), 1, 2800000000000000, "The Expert helps farming peanuts, doubling the peanut production of The Box", "images/peanutgame/upgrades/expert.png", "expertFarming", "itemUpgrade");
 
-var tinyArmor = new Upgrade("Tiny Armor", 0, 1, 0.03, "Shnilli gets armor, doubling his peanut production", "images/peanutgame/upgrades/armorShnilli.png", "tinyArmor", "farmerUpgrade");
-var reckoning = new Upgrade("Day of Reckoning", 0, 1, 0.4, "Littina grows dark blades, tripling her peanut production", "images/peanutgame/upgrades/reckoning.png", "reckoning", "farmerUpgrade");
-var vines = new Upgrade("Vines from Below", 0, 1, 0.4, "The Bean transforms into its Inner Bean form, doubling its peanut production", "images/peanutgame/upgrades/innerBean.png", "vines", "farmerUpgrade");
-var metallicLimbs = new Upgrade("Metallic Limbs", 0, 1, 2, "Honey uses its stickbot suit to double its peanut production", "images/peanutgame/upgrades/honeybot.png", "metallicLimbs", "farmerUpgrade");
-var pitchfork = new Upgrade("Peanut Pitchfork", 0, 1, 10, "The Peanut Farmer uses a peanut pitchfork to double its peanut production", "images/peanutgame/upgrades/farmer.png", "pitchfork", "farmerUpgrade");
-var botUpgrade = new Upgrade("Bot Upgrade", 0, 1, 85, "The AbominationBot gets upgraded, doubling its peanut production", "images/peanutgame/upgrades/bot v2.png", "botUpgrade", "farmerUpgrade");
-var flowers = new Upgrade("Desert Flowers", 0, 1, 500, "The Cactus grows flowers, somehow doubling its peanut production", "images/peanutgame/upgrades/cactus.png", "flowers", "farmerUpgrade");
-var grp = new Upgrade("GRP", 0, 1, 4000, "GHP becomes a robot, doubling his peanut production", "images/peanutgame/upgrades/grp.png", "grp", "farmerUpgrade");
-var farmingMagic = new Upgrade("Farming Magic", 0, 1, 25000, "The Abomination Overseer learns farming magic, doubling its peanut production", "images/peanutgame/overseer.png", "farmingMagic", "farmerUpgrade");
-var peanutStabber = new Upgrade("Peanut Stabber", 0, 1, 160000, "The Davz stabs the peantuts to farm them twice as fast", "images/peanutgame/davz.png", "peanutStabber", "farmerUpgrade");
-var heightIncrease = new Upgrade("Height Increase", 0, 1, 8500000, "The Pea grows even taller, doubling its peanut production", "images/peanutgame/the pea.png", "heightIncrease", "farmerUpgrade");
-var penutAura = new Upgrade("Penut Aura", 0, 1, 5000000000, "The Holy Penut gets a Penut Aura, doubling its peanut production", "images/peanutgame/upgrades/holy penut.png", "heightIncrease", "farmerUpgrade");
-var fleshBlobs = new Upgrade("Arrival of the Flesh-Blobs", 0, 1, 730000000000, "The Flesh-Blobs help The Bread farming, doubling its production", "images/peanutgame/bread.png", "fleshBlobs", "farmerUpgrade");
-var lightspeed = new Upgrade("Lightspeed Farming", 0, 1, 5000000000000, "The Galaxy's speed increases dramatically, doubling its peanut production", "images/peanutgame/theGalaxy.png", "lightspeed", "farmerUpgrade");
-var duplication = new Upgrade("Maggot Duplication", 0, 1, 1400000000000000, "The Maggot duplicates, doubling its peanut production", "images/peanutgame/maggot.png", "duplication", "farmerUpgrade");
-var power = new Upgrade("Unlimited Power", 0, 1, 7000000000000000, "Abominodas transforms into The Abominodas, gaining near unlimited power and doubling his peanut production", "images/peanutgame/upgrades/the abominodas.png", "power", "farmerUpgrade");
+var tinyArmor = new Upgrade("Tiny Armor", Number(localStorage.getItem(farmerUpgradeList[0])), 1, 0.03, "Shnilli gets armor, doubling his peanut production", "images/peanutgame/upgrades/armorShnilli.png", "tinyArmor", "farmerUpgrade");
+var reckoning = new Upgrade("Day of Reckoning", Number(localStorage.getItem(farmerUpgradeList[1])), 1, 0.4, "Littina grows dark blades, tripling her peanut production", "images/peanutgame/upgrades/reckoning.png", "reckoning", "farmerUpgrade");
+var vines = new Upgrade("Vines from Below", Number(localStorage.getItem(farmerUpgradeList[2])), 1, 0.4, "The Bean transforms into its Inner Bean form, doubling its peanut production", "images/peanutgame/upgrades/innerBean.png", "vines", "farmerUpgrade");
+var metallicLimbs = new Upgrade("Metallic Limbs", Number(localStorage.getItem(farmerUpgradeList[3])), 1, 2, "Honey uses its stickbot suit to double its peanut production", "images/peanutgame/upgrades/honeybot.png", "metallicLimbs", "farmerUpgrade");
+var pitchfork = new Upgrade("Peanut Pitchfork", Number(localStorage.getItem(farmerUpgradeList[4])), 1, 10, "The Peanut Farmer uses a peanut pitchfork to double its peanut production", "images/peanutgame/upgrades/farmer.png", "pitchfork", "farmerUpgrade");
+var botUpgrade = new Upgrade("Bot Upgrade", Number(localStorage.getItem(farmerUpgradeList[5])), 1, 85, "The AbominationBot gets upgraded, doubling its peanut production", "images/peanutgame/upgrades/bot v2.png", "botUpgrade", "farmerUpgrade");
+var flowers = new Upgrade("Desert Flowers", Number(localStorage.getItem(farmerUpgradeList[6])), 1, 500, "The Cactus grows flowers, somehow doubling its peanut production", "images/peanutgame/upgrades/cactus.png", "flowers", "farmerUpgrade");
+var grp = new Upgrade("GRP", Number(localStorage.getItem(farmerUpgradeList[7])), 1, 4000, "GHP becomes a robot, doubling his peanut production", "images/peanutgame/upgrades/grp.png", "grp", "farmerUpgrade");
+var farmingMagic = new Upgrade("Farming Magic", Number(localStorage.getItem(farmerUpgradeList[8])), 1, 25000, "The Abomination Overseer learns farming magic, doubling its peanut production", "images/peanutgame/overseer.png", "farmingMagic", "farmerUpgrade");
+var peanutStabber = new Upgrade("Peanut Stabber", Number(localStorage.getItem(farmerUpgradeList[9])), 1, 160000, "The Davz stabs the peantuts to farm them twice as fast", "images/peanutgame/davz.png", "peanutStabber", "farmerUpgrade");
+var heightIncrease = new Upgrade("Height Increase", Number(localStorage.getItem(farmerUpgradeList[10])), 1, 8500000, "The Pea grows even taller, doubling its peanut production", "images/peanutgame/the pea.png", "heightIncrease", "farmerUpgrade");
+var penutAura = new Upgrade("Penut Aura", Number(localStorage.getItem(farmerUpgradeList[11])), 1, 5000000000, "The Holy Penut gets a Penut Aura, doubling its peanut production", "images/peanutgame/upgrades/holy penut.png", "heightIncrease", "farmerUpgrade");
+var fleshBlobs = new Upgrade("Arrival of the Flesh-Blobs", Number(localStorage.getItem(farmerUpgradeList[12])), 1, 730000000000, "The Flesh-Blobs help The Bread farming, doubling its production", "images/peanutgame/bread.png", "fleshBlobs", "farmerUpgrade");
+var lightspeed = new Upgrade("Lightspeed Farming", Number(localStorage.getItem(farmerUpgradeList[13])), 1, 5000000000000, "The Galaxy's speed increases dramatically, doubling its peanut production", "images/peanutgame/theGalaxy.png", "lightspeed", "farmerUpgrade");
+var duplication = new Upgrade("Maggot Duplication", Number(localStorage.getItem(farmerUpgradeList[14])), 1, 1400000000000000, "The Maggot duplicates, doubling its peanut production", "images/peanutgame/maggot.png", "duplication", "farmerUpgrade");
+var power = new Upgrade("Unlimited Power", Number(localStorage.getItem(farmerUpgradeList[15])), 1, 7000000000000000, "Abominodas transforms into The Abominodas, gaining near unlimited power and doubling his peanut production", "images/peanutgame/upgrades/the abominodas.png", "power", "farmerUpgrade");
 
-var unlockVoid = new Upgrade("Void", 0, 1, 1000000000000000, "Void", "images/peanutgame/void.png", "unlockVoid", "itemUpgrade");
-var darkness = new Upgrade("Darkness", 0, 1, 35000000000000000, "The Void gets filled by darkness...", "images/peanutgame/void.png", "darkness", "itemUpgrade");
+var unlockVoid = new Upgrade("Void", Number(localStorage.unlockVoid), 1, 1000000000000000, "Void", "images/peanutgame/void.png", "unlockVoid", "itemUpgrade");
+var darkness = new Upgrade("Darkness", Number(localStorage.getItem(itemUpgradeList[22])), 1, 35000000000000000, "The Void gets filled by darkness...", "images/peanutgame/void.png", "darkness", "itemUpgrade");
 
-var divineBlood = new Upgrade("Divine Blood", 0, 1, 0.3, "Shnilli transforms into Divine Shnilli, doubling his peanut production further", "images/peanutgame/upgrades/divine shnilli.png", "divineBlood", "farmerUpgrade");
-var unlockCreation = new Upgrade("Creation", 0, 1, 1500000000000000, "Creation", "images/peanutgame/upgrades/light.png", "unlockCreation", "farmerUpgrade");
-var light = new Upgrade("Light of Creation", 0, 1, 58000000000000000, "An immense light surrounds The Inception...", "images/peanutgame/upgrades/inception.png", "power", "farmerUpgrade");
+var divineBlood = new Upgrade("Divine Blood", Number(localStorage.getItem("Divine Blood")), 1, 0.3, "Shnilli transforms into Divine Shnilli, doubling his peanut production further", "images/peanutgame/upgrades/divine shnilli.png", "divineBlood", "farmerUpgrade");
+var unlockCreation = new Upgrade("Creation", Number(localStorage.unlockCreation), 1, 1500000000000000, "Creation", "images/peanutgame/upgrades/light.png", "unlockCreation", "farmerUpgrade");
+var light = new Upgrade("Light of Creation", Number(localStorage.getItem(farmerUpgradeList[16])), 1, 58000000000000000, "An immense light surrounds The Inception...", "images/peanutgame/upgrades/inception.png", "power", "farmerUpgrade");
 
 
 //Creating shop elements
@@ -528,8 +711,6 @@ function addNewItem() {
 			theVoid.createItem("theVoid.buy()");
 		}
 	}
-
-	currentItem += 1
 }
 
 function addNewFarmer() {
@@ -568,7 +749,6 @@ function addNewFarmer() {
 			theInception.createFarmer("theInception.buy()");
 		}
 	}
-	currentFarmer += 1
 }
 
 //Upgrading items
@@ -833,6 +1013,9 @@ function updateInventory(peanuts1, money1, peanutsPerClick1, peanutsPerSecond1) 
 	document.querySelector("#moneyAmount").innerHTML = "$" + money1 + ", ";
 	document.querySelector("#peanutsPerClick").innerHTML = peanutsPerClick1 + " peanuts/click, ";
 	document.querySelector("#peanutsPerSecond").innerHTML = peanutsPerSecond1 + " peanuts/second";
+
+	localStorage.peanuts = peanuts;
+	localStorage.money = money;
 }
 
 //Clicking screen function
@@ -845,14 +1028,14 @@ function clickScreen() {
 var i = 1;
 
 function autoFarming() {
-  setTimeout(function() {
-    peanuts += peanutsPerSecond * productionBonus;
-	updateInventory(peanuts, money, peanutsPerClick, peanutsPerSecond);
+	setTimeout(function() {
+    	peanuts += peanutsPerSecond * productionBonus;
+		updateInventory(peanuts, money, peanutsPerClick, peanutsPerSecond);
 	
-    if (i < 10) {
-      autoFarming(); 
-    }
-  }, 1000)
+    	if (i < 10) {
+      		autoFarming(); 
+    	}
+  	}, 1000)
 }
 
 autoFarming(); 
@@ -888,17 +1071,40 @@ function roundNumber(number) {
 		return (Math.round(number / 100000000000) / 10) + " trillion";
 	} else if (number < 1000000000000000000) {
 		return (Math.round(number / 100000000000000) / 10) + " quadrillion";
-	} else {
+	} else if (number < 1000000000000000000000) {
 		return (Math.round(number / 100000000000000000) / 10) + " quintillion";
+	} else {
+		return (Math.round(number / 100000000000000000000) / 10) + " sextillion";
 	}
 }
 
+//Updating PeanutsPerClick/Second
+function updatePPCS() {
+	peanutsPerClick = seed.p() + sapling.p() + tree.p() + field.p() + farm.p() + factory.p() + creationLab.p() +
+	generatorFacility.p() + productionCenter.p() + forest.p() + island.p() + assemblyYard.p() +
+	fusionReactor.p() + asteroid.p() + moon.p() + planet.p() + star.p() + galaxy.p() + universe.p() +
+	multiverse.p() + omniverse.p() + box.p() + theVoid.p();
+
+	peanutsPerSecond = shnilli.p() + littina.p() + bean.p() + honey.p() + farmer.p() + bot.p() + cactus.p() +
+	ghp.p() + overseer.p() + davz.p() + pea.p() + penut.p() + bread.p() + theGalaxy.p() + maggot.p() +
+	abominodas.p() + theInception.p();
+}
+
 //Running functions
-createItemElement(seed.name, seed.amount, seed.price, seed.production, seed.description, seed.image, "seed.buy()", seed.id);
+peanutPrice.createUpgrade("peanutPrice.upgrade()");
+peanutProduction.createUpgrade("peanutProduction.upgrade()");
 
-createFarmerElement(shnilli.name, shnilli.amount, shnilli.price, shnilli.production, shnilli.description, shnilli.image, "shnilli.buy()", shnilli.id);
-
-createUpgradeElement(peanutPrice.name, peanutPrice.level, peanutPrice.maxLevel, peanutPrice.price, peanutPrice.description, peanutPrice.image, "peanutPrice.upgrade()", peanutPrice.id);
-createUpgradeElement(peanutProduction.name, peanutProduction.level, peanutProduction.maxLevel, peanutProduction.price, peanutProduction.description, peanutProduction.image, "peanutProduction.upgrade()", peanutProduction.id);
+seed.createItem("seed.buy()");
+shnilli.createFarmer("shnilli.buy()");
 
 updateInventory(peanuts, money, peanutsPerClick, peanutsPerSecond);
+
+function resetProgress() {
+	localStorage.clear();
+
+	peanuts = 0;
+	money= 0.01;
+
+	localStorage.peanuts = 0.01;
+	localStorage.money = 0.01;
+}
