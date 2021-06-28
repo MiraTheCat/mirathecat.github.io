@@ -2,11 +2,17 @@ Running = True
 
 Abominish = ['oas', 'soa', 'osi', 'isa', 'ois', 'tat', 'toi', 'tas', 'iti', 'tot',
              'aso', 'ota', 'ott', 'saot', 'saat', 'dyro', 'abmt', 'hlpn', 'aeso',
-             'ooaa', 'isaot', 'toao', 'otoas', 'atost', 'tateos', 'soetat']
+             'ooaa', 'isaot', 'toao', 'otoas', 'atost', 'tateos', 'soetat',
+             'OAS', 'SOA', 'OSI', 'ISA', 'OIS', 'TAT', 'TOI', 'TAS', 'ITI', 'TOT',
+             'ASO', 'OTA', 'OTT', 'SAOT', 'SAAT', 'DYRO', 'ABMT', 'HLPN', 'AESO',
+             'OOAA', 'ISAOT', 'TOAO', 'OTOAS', 'ATOST', 'TATEOS', 'SOETAT']
 
 English = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
            'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
-           't', 'u', 'v', 'w', 'x', 'y', 'z']
+           't', 'u', 'v', 'w', 'x', 'y', 'z',
+           'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+           'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
+           'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
 
 print('Hi, and welcome to the Abominish Translator!' + '\n' +
