@@ -1073,8 +1073,16 @@ function roundNumber(number) {
 		return (Math.round(number / 100000000000000) / 10) + " quadrillion";
 	} else if (number < 1000000000000000000000) {
 		return (Math.round(number / 100000000000000000) / 10) + " quintillion";
-	} else {
+	} else if (number < 1000000000000000000000000) {
 		return (Math.round(number / 100000000000000000000) / 10) + " sextillion";
+	} else if (number < 1000000000000000000000000000) {
+		return (Math.round(number / 100000000000000000000000) / 10) + " septillion";
+	} else if (number < 1000000000000000000000000000000) {
+		return (Math.round(number / 100000000000000000000000000) / 10) + " octillion";
+	} else if (number < 1000000000000000000000000000000000) {
+		return (Math.round(number / 100000000000000000000000000000) / 10) + " nonillion";
+	} else {
+		return (Math.round(number / 100000000000000000000000000000000) / 10) + " decillion";
 	}
 }
 
