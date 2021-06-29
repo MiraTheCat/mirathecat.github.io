@@ -1105,6 +1105,27 @@ function resetProgress() {
 	peanuts = 0;
 	money= 0.01;
 
-	localStorage.peanuts = 0.01;
+	setStats()
+
+	setObjects()
+}
+
+function setStats() {
+	localStorage.peanuts = 0;
 	localStorage.money = 0.01;
+	localStorage.darknessBonus = 1;
+	localStorage.lightBonus = 1;
+
+	peanuts = Number(localStorage.peanuts);
+	money = Number(localStorage.money);
+	currentItem = -1;
+	currentFarmer = -1;
+	peanutsPerClick = 0;
+	peanutsPerSecond = 0;
+	peanutValue = 0.001;
+	productionBonus = 1;
+	unlockedVoid = false;
+	unlockedCreation = false;
+	darknessBonus = Number(localStorage.darknessBonus);
+	lightBonus = Number(localStorage.darknessBonus);
 }
