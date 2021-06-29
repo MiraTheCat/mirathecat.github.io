@@ -71,6 +71,8 @@ class Item {
 	createItem(onclick) {
 		this.price *= Math.pow(1.25, this.amount);
 
+		updatePPCS()
+
 		createItemElement(this.name, this.amount, this.price, this.production, this.description, this.image, onclick, this.id);
 
 		currentItem += 1;
@@ -133,6 +135,8 @@ class Farmer extends Item {
 
 	createFarmer(onclick) {
 		this.price *= Math.pow(1.25, this.amount);
+
+		updatePPCS()
 
 		createFarmerElement(this.name, this.amount, this.price, this.production, this.description, this.image, onclick, this.id);
 		
@@ -385,6 +389,8 @@ class Upgrade {
 			}
 
 			updateInventory(peanuts, money, peanutsPerClick, peanutsPerSecond);
+
+			updatePPCS()
 		}
 	}
 }
@@ -1114,8 +1120,6 @@ function resetProgress() {
 	money= 0.01;
 
 	setStats()
-
-	setObjects()
 }
 
 function setStats() {
