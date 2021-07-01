@@ -227,7 +227,7 @@ class Upgrade {
 			createUpgradeElement(this.name, this.level, this.maxLevel, this.price, this.description, this.image, onclick, this.id);
 		} else {
 			if (this.type == "peanutValue") {peanutValue = peanutValues[this.maxLevel] * lightBonus}
-			if (this.type == "peanutProduction") {productionBonus = peanutProductionBonuses[this.maxLevel] * darknessBonus}
+			if (this.type == "peanutProduction") {productionBonus = (1 + peanutProductionBonuses[this.maxLevel]) * darknessBonus}
 
 			if (this.type == "itemUpgrade") {
 				for (var i = 0; i < itemUpgradeList.length; i++) {
@@ -302,7 +302,7 @@ class Upgrade {
 			if (this.type == "peanutProduction") {
 				this.name = peanutProductionNames[this.level];
 				this.price *= 20;
-				productionBonus = 1 + peanutProductionBonuses[this.level] * darknessBonus;
+				productionBonus = (1 + peanutProductionBonuses[this.level]) * darknessBonus;
 				this.description = "Increases the amount of peanuts produced by everything by a total of " + Math.round(peanutProductionBonuses[this.level +1] * 100) + "%";
 				
 				localStorage.setItem("peanutProduction", this.level);
@@ -430,7 +430,7 @@ var galaxy = new Item("Peanut Galaxy", Number(localStorage.getItem(itemsList[17]
 var universe = new Item("Peanut Universe", Number(localStorage.getItem(itemsList[18])), 1500000000000, 1350000000000, "How did you even manage to buy this?", "images/peanutgame/universe.png", "universe", 5);
 var multiverse = new Item("Peanut Multiverse", Number(localStorage.getItem(itemsList[19])), 9000000000000, 6000000000000, "When the universe isn't big enough to grow peanuts", "images/peanutgame/multiverse.png", "multiverse", 5);
 var omniverse = new Item("Peanut Omniverse", Number(localStorage.getItem(itemsList[20])), 55000000000000, 25000000000000, "Could it get even bigger than this?", "images/peanutgame/omniverse.png", "omniverse", 5);
-var box = new Item("The Box", Number(localStorage.getItem(itemsList[21])), 280000000000000, 100000000000000, "The Box, containing everything in existence, now filled with peantuts. Is this the true limit of your production?", "images/peanutgame/the box.png", "box", 5);
+var box = new Item("The Box", Number(localStorage.getItem(itemsList[21])), 280000000000000, 100000000000000, "The Box, containing everything in existence", "images/peanutgame/the box.png", "box", 5);
 var theVoid = new Item("The Void", Number(localStorage.getItem(itemsList[22])), 3500000000000000, 1000000000000000, "An infinitely large, empty space", "images/peanutgame/void.png", "void", 5);
 
 //Creating farmer objects from classes
@@ -524,7 +524,7 @@ var darkness = new Upgrade("Darkness", Number(localStorage.getItem(itemUpgradeLi
 
 var divineBlood = new Upgrade("Divine Blood", Number(localStorage.getItem("Divine Blood")), 1, 0.3, "Shnilli transforms into Divine Shnilli, doubling his peanut production further", "images/peanutgame/upgrades/divine shnilli.png", "divineBlood", "farmerUpgrade");
 var unlockCreation = new Upgrade("Creation", Number(localStorage.unlockCreation), 1, 1500000000000000, "Creation", "images/peanutgame/upgrades/light.png", "unlockCreation", "farmerUpgrade");
-var light = new Upgrade("Light of Creation", Number(localStorage.getItem(farmerUpgradeList[16])), 1, 58000000000000000, "An immense light surrounds The Inception...", "images/peanutgame/upgrades/inception.png", "power", "farmerUpgrade");
+var light = new Upgrade("Light of Creation", Number(localStorage.getItem(farmerUpgradeList[16])), 1, 58000000000000000, "An immense light surrounds The Inception...", "images/peanutgame/upgrades/inception.png", "light", "farmerUpgrade");
 
 
 //Creating shop elements
