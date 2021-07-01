@@ -94,7 +94,7 @@ a {
     border-radius: 20px;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: space-evenly;
 }
 
 .project-img {
@@ -102,6 +102,26 @@ a {
     border-radius: 16px;
     border: transparent;
     margin: 10px;
+}
+
+.project-changelog {
+    border: solid 2px;
+    border-radius: 10px;
+    background-color: black;
+    width: 200px;
+    display: none;
+    position: absolute;
+    overflow: auto;
+    z-index: 2;
+    padding: 5px;
+}
+
+.project-version {
+    margin: 2px 0 2px 0;
+}
+
+.project-text {
+    margin: 2px 0 2px 0;
 }
 
 .project {
