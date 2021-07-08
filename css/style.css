@@ -95,6 +95,7 @@ a {
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
+    padding: 10px 0 10px 0;
 }
 
 .project-img {
@@ -103,6 +104,14 @@ a {
     border: transparent;
     margin: 10px;
 }
+
+.project-name {
+    font-size: 25px;
+    margin: 10px 0 10px 0;
+    text-decoration: none;
+    font-weight: bold;
+}
+
 
 .project-changelog {
     border: solid 2px;
