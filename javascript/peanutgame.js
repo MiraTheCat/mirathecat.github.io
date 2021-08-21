@@ -1097,6 +1097,9 @@ function showItemShop() {
 	itemTitle.style.backgroundColor = "rgb(51, 51, 51)";
 	farmerTitle.style.backgroundColor = "transparent";
 
+	itemTitle.classList.remove("pg-clickable");
+	farmerTitle.classList.add("pg-clickable");
+
 	itemShop.style.display = "grid";
 	farmerShop.style.display = "none";
 }
@@ -1104,6 +1107,9 @@ function showItemShop() {
 function showFarmerShop() {
 	itemTitle.style.backgroundColor = "transparent";
 	farmerTitle.style.backgroundColor = "rgb(51, 51, 51)";
+
+	farmerTitle.classList.remove("pg-clickable");
+	itemTitle.classList.add("pg-clickable");
 
 	itemShop.style.display = "none";
 	farmerShop.style.display = "grid";

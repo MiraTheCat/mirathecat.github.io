@@ -114,7 +114,6 @@
     position: relative;
     right: 2px;
     bottom: 2px;
-    cursor: pointer;
 }
 
 .pg-reset {
@@ -130,7 +129,6 @@
     position: relative;
     left: 2px;
     bottom: 2px;
-    cursor: pointer;
 }
 
 .pg-shop {
@@ -191,7 +189,7 @@
     flex-wrap: wrap;
     padding: 0 5px 0 0;
     min-height: 60px;
-    background: linear-gradient(180deg, rgb(86, 0, 107), black);
+    background: linear-gradient(180deg, rgb(86, 0, 107), rgb(19, 0, 24));
  }
  
  .pg-prestigeText {
@@ -210,3 +208,23 @@
      bottom: 2px;
      right: 1px;
  }
+
+ .pg-prestigeButton {
+    font-size: 25px;
+    color: white;
+    padding: 3px 5px 3px 5px;
+    margin: 0;
+    justify-content: left;
+    align-items: center;
+    border: solid 2px white;
+    background: linear-gradient(180deg, rgb(86, 0, 107), rgb(19, 0, 24));
+    position: relative;
+    left: 2px;
+    bottom: 4px;
+}
+
+.pg-sell:hover, .pg-reset:hover, .pg-prestigeButton:hover, .pg-shop-item:hover, .pg-upgrade:hover, .pg-clickable:hover {
+    z-index: 1;
+    filter: brightness(80%);
+    cursor: pointer;
+}
