@@ -18,7 +18,7 @@
 
     <body>
 
-        <!–– Navigation Bar ––>
+        <!--Navigation Bar-->
 
         <div class="navigation-bar">
             <img class="icon" src="/images/pfp.png">
@@ -30,7 +30,9 @@
 
         <h2>GHP's Peanut Farm</h2>
 
-        <div class="pg-container">
+        <p id="reloadText" style="display: none;">Reload website to continue playing!</p>
+
+        <div class="pg-container" id="container">
 
             <div class="pg-stats-container">
                 <p class="pg-stats">Inventory:</p>
@@ -42,7 +44,7 @@
                 <p class="pg-stats" id="peanutsPerSecond"></p>
             </div>
 
-            <!–– Upgrades ––>
+            <!--Upgrades-->
 
             <div id="upgradeShop" class="pg-upgrade-container">
                 <p class="pg-upgradeText">
@@ -50,7 +52,7 @@
                 </p>
             </div>
 
-            <!–– Main Area ––>
+            <!--Main Area-->
 
             <div class="pg-main" style="grid-area: main" onclick="clickScreen()">
                 <div class="pg-sell" onclick="sellPeanuts()">
@@ -65,7 +67,7 @@
                 </div>
             </div>
 
-            <!–– Shop ––>
+            <!--Shop-->
                 
             <div class="pg-shop">
                 <a href="#" style="text-decoration: none;">
@@ -80,22 +82,31 @@
                     </div>
                 </a>
 
-                <!–– Item Shop ––>
+                <!--Item Shop-->
 
                 <div id="itemShop" class="pg-shop-row" style="display: grid;">
                     
                 </div>
 
-                <!–– Farmer Shop ––>
+                <!--Farmer Shop-->
 
                 <div id="farmerShop" class="pg-shop-row" style="display: none;">
                     
                 </div>
 
             </div>
+
+            <!--Prestige Shop-->
+
+            <div id="prestigeShop" class="pg-prestige-container" style="display: none;">
+                <p class="pg-prestigeText">
+                    Prestige Shop
+                </p>
+            </div>
+
         </div>
 
-        <!–– JavaScript ––>
+        <!--JavaScript-->
 
         <script src="javascript/peanutgame.js"></script>
     </body>

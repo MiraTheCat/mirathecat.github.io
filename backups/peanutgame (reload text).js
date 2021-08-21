@@ -49,13 +49,11 @@ var farmerUpgradeList = ["Tiny Armor", "Day of Reckoning", "Vines from Below", "
 "Height Increase", "Penut Aura", "Arrival of the Flesh-Blobs", "Lightspeed Farming", "Maggot Duplication",
 "Unlimited Power", "Light of Creation"];
 
-var container = document.querySelector("#container");
 var itemTitle = document.querySelector("#itemTitle");
 var farmerTitle = document.querySelector("#farmerTitle");
 var itemShop = document.querySelector("#itemShop");
 var farmerShop = document.querySelector("#farmerShop");
 var upgradeShop = document.querySelector("#upgradeShop");
-var reloadText = document.querySelector("#reloadText");
 
 //Creating classes
 class Item {
@@ -1221,9 +1219,6 @@ function resetProgress() {
 	money= 0.01;
 
 	setStats()
-
-	container.style.display = "none";
-	reloadText.style.display = "block";
 }
 
 function setStats() {

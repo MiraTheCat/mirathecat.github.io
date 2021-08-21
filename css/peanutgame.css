@@ -1,6 +1,6 @@
 .pg-container {
     display: grid;
-    grid-template-areas: "stats shop" "upgrade shop" "upgrade shop" "main shop" "main shop" "main shop" "main shop";
+    grid-template-areas: "stats shop" "upgrade shop" "upgrade shop" "main shop" "main shop" "prestige shop" "prestige shop";
     margin: 0 20px 0 20px;
     gap: 5px 5px;
 }
@@ -46,7 +46,7 @@
 .pg-upgradeText {
     font-size: 25px;
     color: white;
-    padding: 3px;
+    padding: 3px 5px 3px 5px;
     margin: 0;
     justify-content: left;
     align-items: center;
@@ -182,3 +182,31 @@
     padding: 0;
     text-align: center;
 }
+
+.pg-prestige-container {
+    grid-area: prestige;
+    border: solid 2px;
+    border-radius: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0 5px 0 0;
+    min-height: 60px;
+    background: linear-gradient(180deg, rgb(86, 0, 107), black);
+ }
+ 
+ .pg-prestigeText {
+     font-size: 25px;
+     color: white;
+     padding: 3px 5px 3px 5px;
+     margin: 0;
+     justify-content: left;
+     align-items: center;
+     border: solid 2px white;
+     border-radius: 20px 0 0 0;
+     background-color: rgb(30, 0, 37);
+     grid-column: span 2;
+     height: 35px;
+     position: relative;
+     bottom: 2px;
+     right: 1px;
+ }
