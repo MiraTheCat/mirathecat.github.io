@@ -25,94 +25,123 @@
             <a href="/index.html" class="top bordered">Home</a>
             <a href="/about.html" class="top bordered">About</a>
             <a href="/projects.html" class="top bordered">Projects</a>
-            <a class="top">Peanut Game</a>
+            <div class="top">Peanut Game</div>
         </div>
 
         <h2>GHP's Peanut Farm</h2>
 
-        <p id="reloadText" style="display: none;">Reload website to continue playing!</p>
+        <h5 id="reloadText" style="display: none;"></h5>
 
-        <div class="pg-container" id="container">
+        <p class="pg-prestige-points" id="prestigePoints" style="display: none;"></p>
 
-            <div class="pg-stats-container">
-                <p class="pg-stats">Inventory:</p>
-                <img class="pg-stat-image" src="images/peanutgame/peanuts.png">
-                <p class="pg-stats" id="peanutAmount"></p>
-                <img class="pg-stat-image" src="images/peanutgame/coins.png">
-                <p class="pg-stats" id="moneyAmount"></p>
-                <p class="pg-stats" id="peanutsPerClick"></p>
-                <p class="pg-stats" id="peanutsPerSecond"></p>
-            </div>
+        <div class="pg-top-container" id="container">
 
-            <!--Upgrades-->
+            <!-- Stats, Upgrades, Main -->
 
-            <div id="upgradeShop" class="pg-upgrade-container">
-                <p class="pg-upgradeText">
-                    Upgrades
-                </p>
-            </div>
-
-            <!--Main Area-->
-
-            <div class="pg-main" style="grid-area: main" onclick="clickScreen()">
-                <div class="pg-sell" onclick="sellPeanuts()">
-                    Sell Peanuts
+            <div class="pg-container1">
+                <div class="pg-stats-container">
+                    <b class="pg-stats">Inventory:</b>
+                    <img class="pg-stat-image" src="images/peanutgame/peanuts.png">
+                    <p class="pg-stats" id="peanutAmount"></p>
+                    <img class="pg-stat-image" src="images/peanutgame/coins.png">
+                    <p class="pg-stats" id="moneyAmount"></p>
+                    <p class="pg-stats" id="peanutsPerClick"></p>
+                    <p class="pg-stats" id="peanutsPerSecond"></p>
                 </div>
 
-                <div></div>
-                <div></div>
+                <!--Upgrades-->
 
-                <div class="pg-reset" onclick="resetProgress()">
-                    Reset Progress
+                <div id="upgradeShop" class="pg-upgrade-container">
+                    <p class="pg-upgradeText">
+                        Upgrades
+                    </p>
                 </div>
 
-                <div></div>
-                <div></div>
-                <div></div>
+                <!--Main Area-->
 
-                <div class="pg-prestigeButton" onclick="prestige()" style="display: none;">
-                    Prestige
+                <div class="pg-main" onclick="clickScreen()">
+                    <div class="pg-sell" onclick="sellPeanuts()">
+                        Sell Peanuts
+                    </div>
+
+                    <div></div>
+                    <div></div>
+
+                    <div class="pg-reset" onclick="resetProgress()">
+                        Reset Progress
+                    </div>
+
+                    <div></div>
+                    <div></div>
+                    <div></div>
+
+                    <div>
+                        <div id="prestige-button" class="pg-prestigeButton" onclick="prestige()" style="display: none;">Prestige</div>
+                    </div>
+
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    
+                    <div id="pageImage" class="pg-page">
+                        <img src="images/peanutgame/prestige/page.png" style="height: 60px;">
+                    </div>
+
+                    <div></div>
+
+                    <div id="killoiImage" class="pg-killoi">
+                        <img src="images/peanutgame/prestige/killoi.png" style="height: 450px;">
+                    </div>
                 </div>
             </div>
 
             <!--Shop-->
+
+            <div class="pg-container2">
+                <div class="pg-shop">
+                    <div style="text-decoration: none;">
+                        <div id="itemTitle" class="pg-shop-title" onclick="showItemShop()" style="background-color: rgb(51, 51, 51);">
+                            <h3>Item Shop</h3>
+                        </div>
+                    </div>
+
+                    <div style="text-decoration: none;">
+                        <div id="farmerTitle" class="pg-shop-title pg-clickable" onclick="showFarmerShop()" style="background-color: transparent;">
+                            <h3>Farmer Shop</h3>
+                        </div>
+                    </div>
+
+                    <!--Item Shop-->
+
+                    <div id="itemShop" class="pg-shop-row" style="display: grid;">
+                        
+                    </div>
+
+                    <!--Farmer Shop-->
+
+                    <div id="farmerShop" class="pg-shop-row" style="display: none;">
+                        
+                    </div>
+
+                </div>
+
+            </div>
                 
-            <div class="pg-shop">
-                <div style="text-decoration: none;">
-                    <div id="itemTitle" class="pg-shop-title" onclick="showItemShop()" style="background-color: rgb(51, 51, 51);">
-                        <h3>Item Shop</h3>
-                    </div>
-                </div>
-
-                <div style="text-decoration: none;">
-                    <div id="farmerTitle" class="pg-shop-title pg-clickable" onclick="showFarmerShop()" style="background-color: transparent;"">
-                        <h3>Farmer Shop</h3>
-                    </div>
-                </div>
-
-                <!--Item Shop-->
-
-                <div id="itemShop" class="pg-shop-row" style="display: grid;">
-                    
-                </div>
-
-                <!--Farmer Shop-->
-
-                <div id="farmerShop" class="pg-shop-row" style="display: none;">
-                    
-                </div>
-
-            </div>
-
-            <!--Prestige Shop-->
-
-            <div id="prestigeShop" class="pg-prestige-container" style="display: none;">
-                <p class="pg-prestigeText">
-                    Prestige Shop
-                </p>
-            </div>
-
+            
         </div>
+
+        <!--Prestige Shop-->
+
+        <div id="prestigeShop" class="pg-prestige-container" style="display: none;">
+            <p class="pg-prestigeText">
+                Prestige Shop
+            </p>
+        </div>
+        <audio id="glitchSound">
+            <source src="sounds/glitch.wav" type="audio/wav">
+        </audio>
+        
 
         <!--JavaScript-->
 

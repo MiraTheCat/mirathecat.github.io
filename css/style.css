@@ -6,6 +6,11 @@ body {
     padding: 0;
 }
 
+a:hover {
+    filter: brightness(80%);
+    cursor: pointer;
+}
+
 .top {
     font-size: 25px;
     color: white;
@@ -135,4 +140,9 @@ a {
 
 .project {
     padding: 0 10px 0 10px;
+}
+
+.bordered:hover {
+    filter: brightness(80%);
+    cursor: pointer;
 }
