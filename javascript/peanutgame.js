@@ -1471,7 +1471,7 @@ function removeGlitchEffect() {
     	if (i < 10) {
       		glitchEffect();
     	}
-  	}, 300)
+  	}, Math.random()*900 + 100)
 }
 
 glitchEffect();
