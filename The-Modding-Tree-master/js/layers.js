@@ -4,7 +4,7 @@ addLayer("c", {
     position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
         unlocked: true,
-		points: new Decimal(0),
+		points: new Decimal(1),
         total: new Decimal(0),
         best: new Decimal(0),
     }},
@@ -17,7 +17,7 @@ addLayer("c", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() {
         let mult = new Decimal(1)
-        if (hasUpgrade('c', 13)) mult = mult.times(upgradeEffect('c', 13))
+        if (hasUpgrade('c', 14)) mult = mult.times(upgradeEffect('c', 14))
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -31,13 +31,18 @@ addLayer("c", {
 
     upgrades: {
         11: {
-            name: "Increased Production",
+            title: "Peanut Tree",
+            description: "Start farming peanuts",
+            cost: new Decimal(1),
+        },
+        12: {
+            title: "Increased Production",
             description: "Double your peanut production",
             cost: new Decimal(1),
         },
 
-        12: {
-            name: "Higher Payment",
+        13: {
+            title: "Higher Payment",
             description: "Peanut production increases based on the current amount of coins",
             cost: new Decimal(2),
 
@@ -47,8 +52,8 @@ addLayer("c", {
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },
 
-        13: {
-            name: "No inflation",
+        14: {
+            title: "No inflation",
             description: "Coin gain increases based on the current amount of peanuts",
             cost: new Decimal(5),
 
@@ -58,15 +63,16 @@ addLayer("c", {
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },
 
-        13: {
-            name: "No inflation",
-            description: "Coin gain increases based on the current amount of peanuts",
-            cost: new Decimal(5),
+        15: {
+            title: "More Trees",
+            description: "Peanut production is increased by 4x",
+            cost: new Decimal(10),
+        },
 
-            effect() {
-                return player.points.add(1).pow(0.15)
-            },
-            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        16: {
+            title: "",
+            description: "",
+            cost: new Decimal(25),
         },
     },
 })
