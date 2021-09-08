@@ -34,8 +34,7 @@ function getStartPoints(){
 // Determines if it should show points/sec
 function canGenPoints(){
 	
-	if (hasUpgrade('c', 11)) return true
-	else return false
+	return hasUpgrade('c', 11)
 }
 
 // Calculate points/sec!
@@ -47,7 +46,11 @@ function getPointGen() {
 
 	if (hasUpgrade('c', 12)) gain = gain.times(2)
 	if (hasUpgrade('c', 13)) gain = gain.times(upgradeEffect('c', 13))
-	if (hasUpgrade('c', 15)) gain = gain.times(4)
+	if (hasUpgrade('c', 22)) gain = gain.times(4)
+	if (hasUpgrade('c', 23)) gain = gain.times(upgradeEffect('c', 23))
+	if (hasUpgrade('c', 31)) gain = gain.times(upgradeEffect('c', 31))
+
+	if (player.f.unlocked) gain = gain.times(tmp.f.effect);
 
 	return gain
 }
