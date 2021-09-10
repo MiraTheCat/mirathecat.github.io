@@ -113,7 +113,9 @@ addLayer("c", {
             },
 
             effect() {
-                return upgradeCount(this.layer);
+                if (hasUpgrade("c", 32)) return upgradeCount(this.layer) ** 3
+                return upgradeCount(this.layer)
+                
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },
@@ -121,13 +123,33 @@ addLayer("c", {
         31: {
             title: "Peanut Seeds",
             description: "Peanut production increases based on the current amount of peanuts",
-            cost: new Decimal(1500),
-            unlocked: false,
+            cost: new Decimal("1e12"),
+            unlocked() {
+                return hasMilestone("f", 1)
+            },
 
             effect() {
                 return player.points.add(1).pow(0.15)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+
+        32: {
+            title: "Upgrade Power ^2",
+            description: "Production Power's effect is cubed",
+            cost: new Decimal("1e15"),
+            unlocked() {
+                return hasMilestone("f", 1)
+            },
+        },
+
+        33: {
+            title: "Upgrade Power ^2",
+            description: "Production Power's effect is cubed",
+            cost: new Decimal("1e15"),
+            unlocked() {
+                return hasMilestone("f", 1)
+            },
         },
     },
 })
@@ -212,9 +234,9 @@ addLayer("f", {
             effectDescription: "You can buy max Farms",
         },
         2: {
-            requirementDescription: "15 Farms",
+            requirementDescription: "12 Farms",
             done() {
-                return player.f.best.gte(10)
+                return player.f.best.gte(12)
             },
             effectDescription: "Unlock more Coin upgrades",
         },
@@ -224,7 +246,7 @@ addLayer("f", {
         11: {
             title: "Farm Combo",
             description: "Best Farms boost Coin gain",
-            cost: new Decimal(2),
+            cost: new Decimal(3),
 
             unlocked() {
                 return player.c.unlocked
@@ -240,7 +262,7 @@ addLayer("f", {
         12: {
             title: "Farm Generators",
             description: "Sapling Generators add to the Farm effect base",
-            cost: new Decimal(4),
+            cost: new Decimal(5),
 
             unlocked() {
                 return player.f.unlocked && player.sg.unlocked
