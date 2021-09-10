@@ -198,21 +198,21 @@ addLayer("f", {
 
     milestones: {
         0: {
-            requirementDescription: "5 Farms",
+            requirementDescription: "7 Farms",
             done() {
                 return player.f.best.gte(5)
             },
             effectDescription: "Keep Coin upgrades on reset",
         },
         1: {
-            requirementDescription: "8 Farms",
+            requirementDescription: "10 Farms",
             done() {
                 return player.f.best.gte(8)
             },
             effectDescription: "You can buy max Farms",
         },
         2: {
-            requirementDescription: "10 Farms",
+            requirementDescription: "15 Farms",
             done() {
                 return player.f.best.gte(10)
             },
@@ -386,21 +386,21 @@ addLayer("sg", {
 
     milestones: {
         0: {
-            requirementDescription: "5 Sapling Generators",
+            requirementDescription: "8 Sapling Generators",
             done() {
                 return player.sg.best.gte(5)
             },
             effectDescription: "Keep Coin upgrades on reset",
         },
         1: {
-            requirementDescription: "8 Sapling Generators",
+            requirementDescription: "10 Sapling Generators",
             done() {
                 return player.sg.best.gte(8)
             },
             effectDescription: "You can buy max Sapling Generators",
         },
         2: {
-            requirementDescription: "10 Sapling Generators",
+            requirementDescription: "15 Sapling Generators",
             done() {
                 return player.sg.best.gte(10)
             },
