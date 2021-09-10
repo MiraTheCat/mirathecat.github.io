@@ -186,6 +186,8 @@ addLayer("f", {
     exponent: 1.5, // Prestige currency exponent
     gainMult() {
         let mult = new Decimal(1)
+        if (hasUpgrade("f", 22))
+            mult = mult.div(upgradeEffect("f", 22));
         return mult
     },
     canBuyMax() {
@@ -360,6 +362,8 @@ addLayer("sg", {
     exponent: 1.5, // Prestige currency exponent
     gainMult() {
         let mult = new Decimal(1)
+        if (hasUpgrade("sg", 22))
+            mult = mult.div(upgradeEffect("sg", 22));
         return mult
     },
     canBuyMax() {
@@ -384,7 +388,7 @@ addLayer("sg", {
         let base = new Decimal(2);
         base = base.plus(tmp.sg.addToBase);
         if (hasUpgrade("sg", 21))
-            exp = exp.mult(upgradeEffect("sg", 21));
+            exp = exp.times(upgradeEffect("sg", 21));
         return base;
     },
     effect() {
