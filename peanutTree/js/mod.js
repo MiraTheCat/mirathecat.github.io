@@ -51,6 +51,7 @@ function getPointGen() {
 	if (hasUpgrade('c', 31)) gain = gain.times(upgradeEffect('c', 31))
 
 	if (player.f.unlocked) gain = gain.times(tmp.f.effect);
+	if (player.sg.unlocked) gain = gain.times(tmp.sg.saplingEff);
 
 	return gain
 }

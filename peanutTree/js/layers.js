@@ -125,7 +125,7 @@ addLayer("c", {
             description: "Peanut production increases based on the current amount of peanuts",
             cost: new Decimal("1e12"),
             unlocked() {
-                return hasMilestone("f", 1)
+                return hasMilestone("f", 2)
             },
 
             effect() {
@@ -139,17 +139,22 @@ addLayer("c", {
             description: "Production Power's effect is cubed",
             cost: new Decimal("1e15"),
             unlocked() {
-                return hasMilestone("f", 1)
+                return hasMilestone("f", 2)
             },
         },
 
         33: {
-            title: "Upgrade Power ^2",
-            description: "Production Power's effect is cubed",
-            cost: new Decimal("1e15"),
+            title: "Reverse Boost",
+            description: "Farm and Sapling Generator boosts get boosted by total peanuts",
+            cost: new Decimal("1e16"),
             unlocked() {
-                return hasMilestone("f", 1)
+                return hasMilestone("f", 2)
             },
+
+            effect() {
+                return player.points.add(1).log10()
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },
     },
 })
@@ -205,6 +210,8 @@ addLayer("f", {
     effectBase() {
         let base = new Decimal(2);
         base = base.plus(tmp.f.addToBase);
+        if (hasUpgrade("c", 33))
+            base = base.times(upgradeEffect("c", 33));
         return base.pow(tmp.f.power);
     },
     power() {
@@ -216,6 +223,12 @@ addLayer("f", {
     },
     effectDescription() {
         return "which are boosting Peanut production by " + format(tmp.f.effect) + "x"
+    },
+
+    doReset(resettingLayer) {
+        let keep = [];
+        if (layers[resettingLayer].row > this.row)
+            layerDataReset("f", keep)
     },
 
     milestones: {
@@ -299,11 +312,6 @@ addLayer("f", {
             unlocked() {
                 return hasUpgrade(this.layer, 12) && player.sg.unlocked
             },
-
-            effect() {
-                let ret = player.sg.points.add(1).log10().sqrt().div(3);
-                return ret
-            },
         },
 
         22: {
@@ -372,12 +380,13 @@ addLayer("sg", {
     },
     effBase() {
         let base = new Decimal(2);
+        base = base.plus(tmp.sg.addToBase);
         return base;
     },
     effect() {
-        if ((!player.sg.unlocked))
-            return new Decimal(0);
-        let eff = Decimal.pow(this.effBase(), player.sg.points.plus(tmp.sg.spectralTotal)).sub(1).max(0);
+        if (!player.sg.unlocked) {return new Decimal(0)}
+
+        let eff = Decimal.pow(this.effBase(), player.sg.points);
         return eff;
     },
     effectDescription() {
@@ -390,7 +399,9 @@ addLayer("sg", {
     saplingExp() {
         let exp = new Decimal(1 / 3);
         if (hasUpgrade("f", 21))
-            exp = exp.times(2);
+            exp = exp.pow(2);
+        if (hasUpgrade("c", 33))
+            exp = exp.times(upgradeEffect("c",33));
         return exp;
     },
     saplingEff() {
@@ -398,6 +409,14 @@ addLayer("sg", {
             return new Decimal(1);
         return player.sg.saplings.plus(1).pow(this.saplingExp());
     },
+
+    doReset(resettingLayer) {
+        let keep = [];
+        player.sg.saplings = new Decimal(0);
+        if (layers[resettingLayer].row > this.row)
+            layerDataReset("sg", keep)
+    },
+
     tabFormat: ["main-display", "prestige-button", "blank", ["display-text", function() {
         return 'You have ' + format(player.sg.saplings) + ' Saplings, which boosts Peanut production by ' + format(tmp.sg.saplingEff) + 'x'
     }
