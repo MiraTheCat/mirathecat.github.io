@@ -235,14 +235,14 @@ addLayer("f", {
         0: {
             requirementDescription: "7 Farms",
             done() {
-                return player.f.best.gte(5)
+                return player.f.best.gte(7)
             },
             effectDescription: "Keep Coin upgrades on reset",
         },
         1: {
             requirementDescription: "10 Farms",
             done() {
-                return player.f.best.gte(8)
+                return player.f.best.gte(10)
             },
             effectDescription: "You can buy max Farms",
         },
