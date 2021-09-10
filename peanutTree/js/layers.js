@@ -22,6 +22,8 @@ addLayer("c", {
             mult = mult.times(upgradeEffect('c', 21))
             if (hasUpgrade("f", 11))
             mult = mult.times(upgradeEffect("f", 11));
+            if (hasUpgrade("sg", 11))
+            mult = mult.times(upgradeEffect("sg", 11));
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -381,6 +383,8 @@ addLayer("sg", {
     effBase() {
         let base = new Decimal(2);
         base = base.plus(tmp.sg.addToBase);
+        if (hasUpgrade("sg", 21))
+            exp = exp.mult(upgradeEffect("sg", 21));
         return base;
     },
     effect() {
@@ -402,6 +406,10 @@ addLayer("sg", {
             exp = exp.pow(2);
         if (hasUpgrade("c", 33))
             exp = exp.times(upgradeEffect("c",33));
+        if (hasUpgrade("sg", 12))
+            base = base.plus(upgradeEffect("sg", 12));
+            if (hasUpgrade("sg", 13))
+            base = base.plus(upgradeEffect("sg", 13));
         return exp;
     },
     saplingEff() {
@@ -450,5 +458,88 @@ addLayer("sg", {
     },
 
     upgrades: {
+        11: {
+            title: "Gen Combo",
+            description: "Best Sapling Generators boost Coin gain",
+            cost: new Decimal(3),
+
+            unlocked() {
+                return player.c.unlocked
+            },
+
+            effect() {
+                let ret = player.sg.best.sqrt().plus(1);
+                return ret
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+
+        12: {
+            title: "Farmed Saplings",
+            description: "Farms add to the Sapling effect base",
+            cost: new Decimal(5),
+
+            unlocked() {
+                return player.f.unlocked && player.sg.unlocked
+            },
+
+            effect() {
+                let ret = player.f.points.add(1).log10().sqrt().div(3);
+                return ret
+            },
+            effectDisplay() { return "+" + format(upgradeEffect(this.layer, this.id)) }, // Add formatting to the effect
+        },
+
+        13: {
+            title: "Generator Improvements",
+            description: "Total Coins add to the Sapling effect base",
+            cost: new Decimal(7),
+
+            unlocked() {
+                return player.c.unlocked
+            },
+
+            effect() {
+                let ret = player.c.total.add(1).log10().add(1).log10().div(3)
+                return ret
+            },
+            effectDisplay() { return "+" + format(upgradeEffect(this.layer, this.id)) }, // Add formatting to the effect
+        },
+
+        21: {
+            title: "Exponential Growth",
+            description: "Saplings boost their own generation",
+            cost: new Decimal(80000),
+
+            currencyDisplayName: "saplings",
+            currencyInternalName: "saplings",
+            currencyLayer: "sg",
+
+            unlocked() {
+                return hasUpgrade(this.layer, 13)
+            },
+
+            effect() {
+                let ret = player.sg.saplings.add(1).log10().add(1);
+                return ret
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
+        },
+
+        22: {
+            title: "Gen Discount",
+            description: "Sapling Generators are cheaper based on your coins",
+            cost: new Decimal(12),
+
+            unlocked() {
+                return hasUpgrade(this.layer, 13)
+            },
+
+            effect() {
+                let ret = player.c.points.add(1).log10().add(1).pow(3.2);
+                return ret;
+            },
+            effectDisplay() {return "/" + format(upgradeEffect(this.layer, this.id))}, // Add formatting to the effect
+        },
     },
 })
