@@ -427,23 +427,23 @@ addLayer("sg", {
 
     milestones: {
         0: {
-            requirementDescription: "8 Sapling Generators",
+            requirementDescription: "7 Sapling Generators",
             done() {
-                return player.sg.best.gte(5)
+                return player.sg.best.gte(7)
             },
             effectDescription: "Keep Coin upgrades on reset",
         },
         1: {
             requirementDescription: "10 Sapling Generators",
             done() {
-                return player.sg.best.gte(8)
+                return player.sg.best.gte(10)
             },
             effectDescription: "You can buy max Sapling Generators",
         },
         2: {
             requirementDescription: "15 Sapling Generators",
             done() {
-                return player.sg.best.gte(10)
+                return player.sg.best.gte(15)
             },
             effectDescription: "You gain 100% of Coin gain every second",
         },
