@@ -40,6 +40,8 @@ addLayer("c", {
         let keep = [];
         if (hasMilestone("f", 0) && resettingLayer == "f")
             keep.push("upgrades")
+            if (hasMilestone("sg", 0) && resettingLayer == "sg")
+            keep.push("upgrades")
         if (layers[resettingLayer].row > this.row)
             layerDataReset("c", keep)
     },
@@ -353,7 +355,7 @@ addLayer("sg", {
     effect() {
         if ((!player.sg.unlocked))
             return new Decimal(0);
-        let eff = Decimal.pow(this.effBase(), player.g.points.plus(tmp.sg.spectralTotal)).sub(1).max(0);
+        let eff = Decimal.pow(this.effBase(), player.sg.points.plus(tmp.sg.spectralTotal)).sub(1).max(0);
         return eff;
     },
     effectDescription() {
@@ -363,19 +365,19 @@ addLayer("sg", {
         if (player.sg.unlocked)
             player.sg.saplings = player.sg.saplings.plus(tmp.sg.effect.times(diff));
     },
-    powerExp() {
+    saplingExp() {
         let exp = new Decimal(1 / 3);
         if (hasUpgrade("f", 21))
             exp = exp.times(2);
         return exp;
     },
-    powerEff() {
+    saplingEff() {
         if (!player.sg.unlocked)
             return new Decimal(1);
-        return player.sg.power.plus(1).pow(this.powerExp());
+        return player.sg.saplings.plus(1).pow(this.saplingExp());
     },
     tabFormat: ["main-display", "prestige-button", "blank", ["display-text", function() {
-        return 'You have ' + format(player.sg.saplings) + ' Saplings, which boosts Peanut production by ' + format(tmp.sg.powerEff) + 'x'
+        return 'You have ' + format(player.sg.saplings) + ' Saplings, which boosts Peanut production by ' + format(tmp.sg.saplingEff) + 'x'
     }
     , {}], "blank", ["display-text", function() {
         return 'Your best Sapling Generators is ' + formatWhole(player.sg.best) + '<br>You have made a total of ' + formatWhole(player.sg.total) + " Sapling Generators."
