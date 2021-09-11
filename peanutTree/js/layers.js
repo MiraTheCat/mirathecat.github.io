@@ -384,6 +384,8 @@ addLayer("sg", {
         let base = new Decimal(0);
         if (hasUpgrade("sg", 12))
             base = base.plus(upgradeEffect("sg", 12));
+        if (hasUpgrade("sg", 13))
+            base = base.plus(upgradeEffect("sg", 13));
         return base;
     },
     effBase() {
@@ -496,7 +498,7 @@ addLayer("sg", {
 
         13: {
             title: "Generator Improvements",
-            description: "Total Coins add to the Sapling effect base",
+            description: "Total Coins add to the Sapling Generator effect base",
             cost: new Decimal(9),
 
             unlocked() {
