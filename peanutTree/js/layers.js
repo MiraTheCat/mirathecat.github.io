@@ -115,7 +115,7 @@ addLayer("c", {
             },
 
             effect() {
-                if (hasUpgrade("c", 32)) return upgradeCount(this.layer) ** 3
+                if (hasUpgrade("c", 32)) return upgradeCount(this.layer) ** 2
                 return upgradeCount(this.layer)
                 
             },
@@ -138,7 +138,7 @@ addLayer("c", {
 
         32: {
             title: "Upgrade Power ^2",
-            description: "Production Power's effect is cubed",
+            description: "Production Power's effect is squared",
             cost: new Decimal("1e15"),
             unlocked() {
                 return hasMilestone("f", 2)
