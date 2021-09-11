@@ -215,7 +215,7 @@ addLayer("f", {
         let base = new Decimal(2);
         base = base.plus(tmp.f.addToBase);
         if (hasUpgrade("c", 33))
-            base = base.times(upgradeEffect("c", 33));
+            base = base.mult(upgradeEffect("c", 33));
         return base.pow(tmp.f.power);
     },
     power() {
@@ -411,9 +411,9 @@ addLayer("sg", {
     saplingExp() {
         let exp = new Decimal(1 / 3);
         if (hasUpgrade("f", 21))
-            exp = exp.pow(2);
+            exp = exp.times(2);
         if (hasUpgrade("c", 33))
-            exp = exp.times(upgradeEffect("c",33));
+            exp = exp.mult(upgradeEffect("c",33));
         return exp;
     },
     saplingEff() {
