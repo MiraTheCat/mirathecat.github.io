@@ -339,6 +339,9 @@ addLayer("f", {
 
             effect() {
                 let ret = player.points.add(1).log10().add(1).pow(3.2);
+                if (upgradeEffect("c", 21).gte("1000")) {
+                    ret.times(1000).sqrt();
+                }
                 return ret;
             },
             effectDisplay() {return "/" + format(tmp.f.upgrades[22].effect)}, // Add formatting to the effect
@@ -523,7 +526,7 @@ addLayer("sg", {
         21: {
             title: "Exponential Growth",
             description: "Saplings boost their own generation",
-            cost: new Decimal(25000),
+            cost: new Decimal(300000),
 
             currencyDisplayName: "saplings",
             currencyInternalName: "saplings",
@@ -550,7 +553,10 @@ addLayer("sg", {
             },
 
             effect() {
-                let ret = player.c.points.add(1).log10().add(1).pow(3.2);
+                let ret = player.c.points.add(1).log10().add(1).pow(4);
+                if (upgradeEffect("c", 21).gte("1000")) {
+                    ret.times(1000).sqrt();
+                }
                 return ret;
             },
             effectDisplay() {return "/" + format(upgradeEffect(this.layer, this.id))}, // Add formatting to the effect
