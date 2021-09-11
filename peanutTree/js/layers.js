@@ -521,7 +521,7 @@ addLayer("sg", {
             currencyLayer: "sg",
 
             unlocked() {
-                return hasUpgrade(this.layer, 13)
+                return hasUpgrade(this.layer, 12)
             },
 
             effect() {
