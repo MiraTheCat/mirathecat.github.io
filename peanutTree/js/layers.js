@@ -497,7 +497,7 @@ addLayer("sg", {
         13: {
             title: "Generator Improvements",
             description: "Total Coins add to the Sapling effect base",
-            cost: new Decimal(7),
+            cost: new Decimal(9),
 
             unlocked() {
                 return player.c.unlocked
@@ -513,7 +513,7 @@ addLayer("sg", {
         21: {
             title: "Exponential Growth",
             description: "Saplings boost their own generation",
-            cost: new Decimal(80000),
+            cost: new Decimal(25000),
 
             currencyDisplayName: "saplings",
             currencyInternalName: "saplings",
@@ -533,7 +533,7 @@ addLayer("sg", {
         22: {
             title: "Gen Discount",
             description: "Sapling Generators are cheaper based on your coins",
-            cost: new Decimal(12),
+            cost: new Decimal(14),
 
             unlocked() {
                 return hasUpgrade(this.layer, 13)
