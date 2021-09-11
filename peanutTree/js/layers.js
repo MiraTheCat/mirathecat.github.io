@@ -295,7 +295,7 @@ addLayer("f", {
         13: {
             title: "Farm Improvements",
             description: "Total Coins add to the Farm effect base",
-            cost: new Decimal(7),
+            cost: new Decimal(9),
 
             unlocked() {
                 return player.c.unlocked
@@ -311,7 +311,7 @@ addLayer("f", {
         21: {
             title: "Faster-Growing Saplings",
             description: "Square the Sapling effect",
-            cost: new Decimal(9),
+            cost: new Decimal(12),
 
             unlocked() {
                 return hasUpgrade(this.layer, 12) && player.sg.unlocked
@@ -321,7 +321,7 @@ addLayer("f", {
         22: {
             title: "Farm Discount",
             description: "Farms are cheaper based on your peanuts",
-            cost: new Decimal(12),
+            cost: new Decimal(15),
 
             unlocked() {
                 return hasUpgrade(this.layer, 13)
@@ -533,7 +533,7 @@ addLayer("sg", {
         22: {
             title: "Gen Discount",
             description: "Sapling Generators are cheaper based on your coins",
-            cost: new Decimal(14),
+            cost: new Decimal(15),
 
             unlocked() {
                 return hasUpgrade(this.layer, 13)
