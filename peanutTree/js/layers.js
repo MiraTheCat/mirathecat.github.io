@@ -174,7 +174,7 @@ addLayer("f", {
     }},
     color: "#0a9100",
     requires() {
-        return new Decimal(2500).times((!player.f.unlocked && player.sg.unlocked) ? 1000 : 1)
+        return new Decimal(1500).times((!player.f.unlocked && player.sg.unlocked) ? 1000 : 1)
     }, // Can be a function that takes requirement increases into account
     resource: "farms", // Name of prestige currency
     baseResource: "peanuts", // Name of resource prestige is based on
@@ -350,7 +350,7 @@ addLayer("sg", {
     }},
     color: "#696969",
     requires() {
-        return new Decimal(2500).times((!player.sg.unlocked && player.f.unlocked) ? 1000 : 1)
+        return new Decimal(1500).times((!player.sg.unlocked && player.f.unlocked) ? 1000 : 1)
     },
     resource: "sapling generators", // Name of prestige currency
     baseResource: "peanuts", // Name of resource prestige is based on
