@@ -414,8 +414,6 @@ addLayer("sg", {
             exp = exp.pow(2);
         if (hasUpgrade("c", 33))
             exp = exp.times(upgradeEffect("c",33));
-        if (hasUpgrade("sg", 13))
-            base = base.plus(upgradeEffect("sg", 13));
         return exp;
     },
     saplingEff() {
