@@ -154,7 +154,7 @@ addLayer("c", {
             },
 
             effect() {
-                return player.points.add(1).log10().add(1).log10()
+                return player.points.add(1).log10().add(1).log10().add(1)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },
