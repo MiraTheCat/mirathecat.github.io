@@ -75,7 +75,7 @@ addLayer("c", {
             effect() {
                 let eff = player.c.points.plus(1).pow(0.4);
                 if (upgradeEffect("c", 13).gte(1000)) {
-                    eff.times(1000).sqrt();
+                    eff.times(1000000).pow(0.33);
                 }
                 return eff;
             },
@@ -94,7 +94,7 @@ addLayer("c", {
             effect() {
                 let eff = player.points.add(1).pow(0.1);
                 if (upgradeEffect("c", 21).gte(100)) {
-                    eff.times(100).sqrt();
+                    eff.times(10000).pow(0.33);
                 }
                 return eff;
             },
@@ -139,7 +139,7 @@ addLayer("c", {
             effect() {
                 let eff = player.points.add(1).pow(0.1)
                 if (upgradeEffect("c", 31).gte(1000)) {
-                    eff.times(1000).sqrt();
+                    eff.times(1000000).pow(0.33);
                 }
                 return eff;
             },
@@ -340,7 +340,7 @@ addLayer("f", {
             effect() {
                 let ret = player.points.add(1).log10().add(1).pow(3);
                 if (upgradeEffect("f", 22).gte(1000)) {
-                    ret.times(1000).sqrt();
+                    ret.times(1000000).pow(0.33);
                 }
                 return ret;
             },
@@ -555,7 +555,7 @@ addLayer("sg", {
             effect() {
                 let ret = player.c.points.add(1).log10().add(1).pow(3);
                 if (upgradeEffect("sg", 22).gte(1000)) {
-                    ret.times(1000).sqrt();
+                    ret.times(1000000).pow(0.33);
                 }
                 return ret;
             },
