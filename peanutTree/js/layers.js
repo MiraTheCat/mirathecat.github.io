@@ -183,7 +183,7 @@ addLayer("f", {
     type() {
         return "static"
     },
-    exponent: 1.6, // Prestige currency exponent
+    exponent: 1.5, // Prestige currency exponent
     gainMult() {
         let mult = new Decimal(1)
         if (hasUpgrade("f", 22))
@@ -359,7 +359,7 @@ addLayer("sg", {
     type() {
         return "static"
     },
-    exponent: 1.6, // Prestige currency exponent
+    exponent: 1.5, // Prestige currency exponent
     gainMult() {
         let mult = new Decimal(1)
         if (hasUpgrade("sg", 22))
@@ -472,7 +472,7 @@ addLayer("sg", {
             },
 
             effect() {
-                let ret = player.sg.best.sqrt().plus(1);
+                let ret = player.sg.best.add(1).pow(0.4);
                 return ret
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
