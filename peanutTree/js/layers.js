@@ -22,8 +22,6 @@ addLayer("c", {
             mult = mult.times(upgradeEffect('c', 21))
             if (hasUpgrade("f", 11))
             mult = mult.times(upgradeEffect("f", 11));
-            if (hasUpgrade("sg", 11))
-            mult = mult.times(upgradeEffect("sg", 11));
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -95,7 +93,7 @@ addLayer("c", {
 
             effect() {
                 let eff = player.points.add(1).pow(0.1);
-                if (upgradeEffect("c", 13).gte("1000")) {
+                if (upgradeEffect("c", 21).gte("1000")) {
                     eff.times(1000).sqrt();
                 }
                 return eff;
@@ -472,7 +470,7 @@ addLayer("sg", {
     upgrades: {
         11: {
             title: "Gen Combo",
-            description: "Best Sapling Generators boost Coin gain",
+            description: "Best Sapling Generators boost Peanut production",
             cost: new Decimal(3),
 
             unlocked() {
