@@ -338,9 +338,9 @@ addLayer("f", {
             },
 
             effect() {
-                let ret = player.points.add(1).log10().add(1).pow(3.2);
+                let ret = player.points.add(1).log10().add(1).pow(3);
                 if (upgradeEffect("f", 22).gte(1000)) {
-                    ret.times(1000000).curt();
+                    ret.times(1000).sqrt();
                 }
                 return ret;
             },
@@ -553,9 +553,9 @@ addLayer("sg", {
             },
 
             effect() {
-                let ret = player.c.points.add(1).log10().add(1).pow(3.2);
+                let ret = player.c.points.add(1).log10().add(1).pow(3);
                 if (upgradeEffect("sg", 22).gte(1000)) {
-                    ret.times(1000000).curt();
+                    ret.times(1000).sqrt();
                 }
                 return ret;
             },
