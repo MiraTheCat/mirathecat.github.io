@@ -73,7 +73,7 @@ addLayer("c", {
             },
 
             effect() {
-                let eff = player.c.points.plus(1).pow(0.4);
+                let eff = player.c.points.plus(1).pow(0.35);
                 if (upgradeEffect("c", 13).gte(1000)) {
                     eff.times(1000000).pow(0.33);
                 }
