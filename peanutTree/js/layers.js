@@ -75,7 +75,11 @@ addLayer("c", {
             },
 
             effect() {
-                return player.c.points.plus(1).pow(0.2);
+                let eff = player.c.points.plus(1).pow(0.3);
+                if (upgradeEffect("c", 13).gte("10000")) {
+                    eff.times(10000).sqrt();
+                }
+                return eff;
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },
