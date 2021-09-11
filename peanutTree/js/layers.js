@@ -392,9 +392,9 @@ addLayer("sg", {
         let base = new Decimal(2);
         base = base.plus(tmp.sg.addToBase);
         if (hasUpgrade("sg", 21))
-            exp = exp.times(upgradeEffect("sg", 21));
+            base = base.times(upgradeEffect("sg", 21));
         if (hasUpgrade("c", 33))
-            exp = exp.times(upgradeEffect("c",33));
+            base = base.times(upgradeEffect("c",33));
         return base;
     },
     effect() {
