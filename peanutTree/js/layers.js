@@ -382,6 +382,8 @@ addLayer("sg", {
 
     addToBase() {
         let base = new Decimal(0);
+        if (hasUpgrade("sg", 12))
+            base = base.plus(upgradeEffect("sg", 12));
         return base;
     },
     effBase() {
@@ -410,9 +412,7 @@ addLayer("sg", {
             exp = exp.pow(2);
         if (hasUpgrade("c", 33))
             exp = exp.times(upgradeEffect("c",33));
-        if (hasUpgrade("sg", 12))
-            base = base.plus(upgradeEffect("sg", 12));
-            if (hasUpgrade("sg", 13))
+        if (hasUpgrade("sg", 13))
             base = base.plus(upgradeEffect("sg", 13));
         return exp;
     },
@@ -479,8 +479,8 @@ addLayer("sg", {
         },
 
         12: {
-            title: "Farmed Saplings",
-            description: "Farms add to the Sapling effect base",
+            title: "Sapling Farms",
+            description: "Farms add to the Sapling Generator base",
             cost: new Decimal(5),
 
             unlocked() {
