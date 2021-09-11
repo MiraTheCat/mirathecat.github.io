@@ -154,7 +154,7 @@ addLayer("c", {
             },
 
             effect() {
-                return player.points.add(1).log10()
+                return player.points.add(1).log10().add(1).log10()
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },
@@ -215,7 +215,7 @@ addLayer("f", {
         let base = new Decimal(2);
         base = base.plus(tmp.f.addToBase);
         if (hasUpgrade("c", 33))
-            base = base.mult(upgradeEffect("c", 33));
+            base = base.times(upgradeEffect("c", 33));
         return base.pow(tmp.f.power);
     },
     power() {
@@ -393,6 +393,8 @@ addLayer("sg", {
         base = base.plus(tmp.sg.addToBase);
         if (hasUpgrade("sg", 21))
             exp = exp.times(upgradeEffect("sg", 21));
+        if (hasUpgrade("c", 33))
+            exp = exp.times(upgradeEffect("c",33));
         return base;
     },
     effect() {
@@ -412,8 +414,6 @@ addLayer("sg", {
         let exp = new Decimal(1 / 3);
         if (hasUpgrade("f", 21))
             exp = exp.times(2);
-        if (hasUpgrade("c", 33))
-            exp = exp.mult(upgradeEffect("c",33));
         return exp;
     },
     saplingEff() {
