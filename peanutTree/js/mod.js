@@ -54,7 +54,7 @@ function getPointGen() {
 	if (player.f.unlocked) gain = gain.times(tmp.f.effect);
 	if (player.sg.unlocked) gain = gain.times(tmp.sg.saplingEff);
 
-	return gain
+	return softcap(gain, new Decimal("1e20"), 0.5);
 }
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
