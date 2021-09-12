@@ -332,7 +332,7 @@ addLayer("f", {
                 let ret = player.points.add(1).log10().add(1).pow(3);
                 return softcap(ret, new Decimal(1000), 0.33);
             },
-            effectDisplay() {return "/" + format(tmp.f.upgrades[22].effect)}, // Add formatting to the effect
+            effectDisplay() {return "/" + format(tmp.f.upgrades[23].effect)}, // Add formatting to the effect
         },
     },
 })
