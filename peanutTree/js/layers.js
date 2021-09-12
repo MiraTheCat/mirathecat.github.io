@@ -224,7 +224,10 @@ addLayer("f", {
         return power;
     },
     effect() {
-        return Decimal.pow(tmp.f.effectBase, player.f.points).max(0);
+        let eff = Decimal.pow(tmp.f.effectBase, player.f.points).max(0);
+        if (hasUpgrade("f", 21))
+            eff = eff.times(3);
+        return eff;
     },
     effectDescription() {
         return "which are boosting Peanut production by " + format(tmp.f.effect) + "x"
@@ -307,6 +310,16 @@ addLayer("f", {
                 return ret
             },
             effectDisplay() { return "+" + format(upgradeEffect(this.layer, this.id)) }, // Add formatting to the effect
+        },
+
+        21: {
+            title: "Farm Expansion",
+            description: "Increase the Farm boost by 3x",
+            cost: new Decimal(10),
+
+            unlocked() {
+                return hasUpgrade(this.layer, 11)
+            },
         },
 
         22: {
@@ -402,6 +415,8 @@ addLayer("sg", {
         if (!player.sg.unlocked) {return new Decimal(0)}
 
         let eff = Decimal.pow(this.effBase(), player.sg.points);
+        if (hasUpgrade("sg", 21))
+            eff = eff.times(3);
         return eff;
     },
     effectDescription() {
@@ -509,6 +524,16 @@ addLayer("sg", {
                 return ret
             },
             effectDisplay() { return "+" + format(upgradeEffect(this.layer, this.id)) }, // Add formatting to the effect
+        },
+
+        21: {
+            title: "More Saplings",
+            description: "Increase Sapling generation by 3x",
+            cost: new Decimal(10),
+
+            unlocked() {
+                return hasUpgrade(this.layer, 11)
+            },
         },
 
         22: {
