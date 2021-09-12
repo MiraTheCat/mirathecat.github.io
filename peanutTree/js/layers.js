@@ -187,8 +187,8 @@ addLayer("f", {
     exponent: 1.5, // Prestige currency exponent
     gainMult() {
         let mult = new Decimal(1)
-        if (hasUpgrade("f", 22))
-            mult = mult.div(upgradeEffect("f", 22));
+        if (hasUpgrade("f", 23))
+            mult = mult.div(upgradeEffect("f", 23));
         return mult
     },
     canBuyMax() {
@@ -296,20 +296,20 @@ addLayer("f", {
         13: {
             title: "Farm Improvements",
             description: "Total Coins add to the Farm effect base",
-            cost: new Decimal(9),
+            cost: new Decimal(8),
 
             unlocked() {
                 return player.c.unlocked
             },
 
             effect() {
-                let ret = player.c.total.add(1).log10().add(1).log10().div(3)
+                let ret = player.c.total.add(1).log10().add(1).log(6).div(3)
                 return ret
             },
             effectDisplay() { return "+" + format(upgradeEffect(this.layer, this.id)) }, // Add formatting to the effect
         },
 
-        21: {
+        22: {
             title: "Faster-Growing Saplings",
             description: "Square the Sapling effect",
             cost: new Decimal(12),
@@ -319,7 +319,7 @@ addLayer("f", {
             },
         },
 
-        22: {
+        23: {
             title: "Farm Discount",
             description: "Farms are cheaper based on your peanuts",
             cost: new Decimal(15),
@@ -363,7 +363,7 @@ addLayer("sg", {
     exponent: 1.5, // Prestige currency exponent
     gainMult() {
         let mult = new Decimal(1)
-        if (hasUpgrade("sg", 22))
+        if (hasUpgrade("sg", 23))
             mult = mult.div(upgradeEffect("sg", 22));
         return mult
     },
@@ -392,8 +392,8 @@ addLayer("sg", {
     effBase() {
         let base = new Decimal(2);
         base = base.plus(tmp.sg.addToBase);
-        if (hasUpgrade("sg", 21))
-            base = base.times(upgradeEffect("sg", 21));
+        if (hasUpgrade("sg", 22))
+            base = base.times(upgradeEffect("sg", 22));
         if (hasUpgrade("c", 33))
             base = base.times(upgradeEffect("c",33));
         return base;
@@ -413,7 +413,7 @@ addLayer("sg", {
     },
     saplingExp() {
         let exp = new Decimal(1 / 3);
-        if (hasUpgrade("f", 21))
+        if (hasUpgrade("f", 22))
             exp = exp.times(2);
         return exp;
     },
@@ -498,20 +498,20 @@ addLayer("sg", {
         13: {
             title: "Generator Improvements",
             description: "Total Coins add to the Sapling Generator effect base",
-            cost: new Decimal(9),
+            cost: new Decimal(8),
 
             unlocked() {
                 return player.c.unlocked
             },
 
             effect() {
-                let ret = player.c.total.add(1).log10().add(1).log10().div(3)
+                let ret = player.c.total.add(1).log10().add(1).log(6).div(3)
                 return ret
             },
             effectDisplay() { return "+" + format(upgradeEffect(this.layer, this.id)) }, // Add formatting to the effect
         },
 
-        21: {
+        22: {
             title: "Exponential Growth",
             description: "Saplings boost their own generation",
             cost: new Decimal(300000),
@@ -531,7 +531,7 @@ addLayer("sg", {
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
         },
 
-        22: {
+        23: {
             title: "Gen Discount",
             description: "Sapling Generators are cheaper based on your coins",
             cost: new Decimal(15),
