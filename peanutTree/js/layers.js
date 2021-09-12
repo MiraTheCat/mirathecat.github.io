@@ -125,13 +125,13 @@ addLayer("c", {
         31: {
             title: "Peanut Seeds",
             description: "Peanut production increases based on the current amount of peanuts",
-            cost: new Decimal("1e12"),
+            cost: new Decimal("1e10"),
             unlocked() {
                 return hasMilestone("f", 2)
             },
 
             effect() {
-                let eff = player.points.add(1).pow(0.1)
+                let eff = player.points.add(1).log10().add(1)
                 return softcap(eff, new Decimal(1000), 0.33);
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
@@ -140,7 +140,7 @@ addLayer("c", {
         32: {
             title: "Upgrade Power ^2",
             description: "Production Power's effect is squared",
-            cost: new Decimal("1e15"),
+            cost: new Decimal("1e14"),
             unlocked() {
                 return hasMilestone("f", 2)
             },
@@ -149,7 +149,7 @@ addLayer("c", {
         33: {
             title: "Reverse Boost",
             description: "Farm and Sapling Generator boosts get boosted by total peanuts",
-            cost: new Decimal("1e16"),
+            cost: new Decimal("3e15"),
             unlocked() {
                 return hasMilestone("f", 2)
             },
@@ -417,7 +417,7 @@ addLayer("sg", {
         let eff = Decimal.pow(this.effBase(), player.sg.points);
         if (hasUpgrade("sg", 21))
             eff = eff.times(4);
-        return eff;
+        return softcap(eff, new Decimal("1e9"), 0.4);
     },
     effectDescription() {
         return "which are generating " + format(tmp.sg.effect) + " Saplings/sec"
@@ -539,7 +539,7 @@ addLayer("sg", {
         22: {
             title: "Exponential Growth",
             description: "Saplings boost their own generation",
-            cost: new Decimal(10000000),
+            cost: new Decimal(2000000),
 
             currencyDisplayName: "saplings",
             currencyInternalName: "saplings",
@@ -550,7 +550,7 @@ addLayer("sg", {
             },
 
             effect() {
-                let ret = player.sg.saplings.add(1).log10().add(1);
+                let ret = player.sg.saplings.add(1).log10().add(1).pow(0.5);
                 return softcap(ret, new Decimal(10), 0.33);
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
