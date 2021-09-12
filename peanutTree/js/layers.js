@@ -526,7 +526,7 @@ addLayer("sg", {
 
             effect() {
                 let ret = player.sg.saplings.add(1).log10().add(1);
-                return softcap(ret, new Decimal(10), 0.5);
+                return softcap(ret, new Decimal(10), 0.33);
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
         },
