@@ -74,7 +74,7 @@ addLayer("c", {
 
             effect() {
                 let eff = player.c.points.plus(1).pow(0.35);
-                return softcap(eff, new Decimal(1000), 0.33);
+                return softcap(eff, new Decimal(1000), 0.25);
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },
