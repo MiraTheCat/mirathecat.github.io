@@ -226,7 +226,7 @@ addLayer("f", {
     effect() {
         let eff = Decimal.pow(tmp.f.effectBase, player.f.points).max(0);
         if (hasUpgrade("f", 21))
-            eff = eff.times(3);
+            eff = eff.times(4);
         return eff;
     },
     effectDescription() {
@@ -314,7 +314,7 @@ addLayer("f", {
 
         21: {
             title: "Farm Expansion",
-            description: "Increase the Farm boost by 3x",
+            description: "Increase the Farm boost by 4x",
             cost: new Decimal(10),
 
             unlocked() {
@@ -416,7 +416,7 @@ addLayer("sg", {
 
         let eff = Decimal.pow(this.effBase(), player.sg.points);
         if (hasUpgrade("sg", 21))
-            eff = eff.times(3);
+            eff = eff.times(4);
         return eff;
     },
     effectDescription() {
@@ -528,7 +528,7 @@ addLayer("sg", {
 
         21: {
             title: "More Saplings",
-            description: "Increase Sapling generation by 3x",
+            description: "Increase Sapling generation by 4x",
             cost: new Decimal(10),
 
             unlocked() {
@@ -539,7 +539,7 @@ addLayer("sg", {
         22: {
             title: "Exponential Growth",
             description: "Saplings boost their own generation",
-            cost: new Decimal(300000),
+            cost: new Decimal(10000000),
 
             currencyDisplayName: "saplings",
             currencyInternalName: "saplings",
