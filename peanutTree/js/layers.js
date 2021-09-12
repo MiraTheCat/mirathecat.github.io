@@ -74,7 +74,7 @@ addLayer("c", {
 
             effect() {
                 let eff = player.c.points.plus(1).pow(0.35);
-                return softcap(eff, 1000, 0.33);
+                return softcap(eff, new Decimal(1000), 0.33);
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },
@@ -90,7 +90,7 @@ addLayer("c", {
 
             effect() {
                 let eff = player.points.add(1).pow(0.1);
-                return softcap(eff, 100, 0.33);
+                return softcap(eff, new Decimal(100), 0.33);
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },
@@ -132,7 +132,7 @@ addLayer("c", {
 
             effect() {
                 let eff = player.points.add(1).pow(0.1)
-                return softcap(eff, 1000, 0.33);
+                return softcap(eff, new Decimal(1000), 0.33);
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },
@@ -330,7 +330,7 @@ addLayer("f", {
 
             effect() {
                 let ret = player.points.add(1).log10().add(1).pow(3);
-                return softcap(ret, 1000, 0.33);
+                return softcap(ret, new Decimal(1000), 0.33);
             },
             effectDisplay() {return "/" + format(tmp.f.upgrades[22].effect)}, // Add formatting to the effect
         },
@@ -542,7 +542,7 @@ addLayer("sg", {
 
             effect() {
                 let ret = player.c.points.add(1).log10().add(1).pow(3);
-                return softcap(ret, 1000, 0.33);
+                return softcap(ret, new Decimal(1000), 0.33);
             },
             effectDisplay() {return "/" + format(upgradeEffect(this.layer, this.id))}, // Add formatting to the effect
         },
