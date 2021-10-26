@@ -9,5 +9,9 @@ function upgradeCount(layer) {
     if (hasUpgrade(layer, 22)) count += 1;
     if (hasUpgrade(layer, 23)) count += 1;
 
-    return count +1;
+    if (hasUpgrade(layer, 31)) count += 1;
+    if (hasUpgrade(layer, 32)) count += 1;
+    if (hasUpgrade(layer, 33)) count += 1;
+
+    return count;
 }

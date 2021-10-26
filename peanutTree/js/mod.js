@@ -7,19 +7,25 @@ let modInfo = {
 
 	discordName: "",
 	discordLink: "",
-	initialStartPoints: new Decimal (0), // Used for hard resets and new players
+	initialStartPoints: new Decimal(0), // Used for hard resets and new players
 	offlineLimit: 1,  // In hours
 }
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1",
-	name: "Row 2 Update",
+	num: "0.2",
+	name: "Row 3 Update",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.1</h3><br>
-		- Added Farms & Sapling Generators<br>`
+<h3>v0.2</h3><br>
+- Added Row 3<br>
+- Added Achievements<br>
+- Endgame: 1e3650 peanuts<br>
+<h3>v0.1</h3><br>
+- Added Row 1 and 2<br>
+- Endgame: 1e30 peanuts<br>`
+	
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
@@ -33,7 +39,6 @@ function getStartPoints(){
 
 // Determines if it should show points/sec
 function canGenPoints(){
-	
 	return hasUpgrade('c', 11)
 }
 
@@ -50,9 +55,12 @@ function getPointGen() {
 	if (hasUpgrade('c', 23)) gain = gain.times(upgradeEffect('c', 23))
 	if (hasUpgrade('c', 31)) gain = gain.times(upgradeEffect('c', 31))
 	if (hasUpgrade("sg", 11)) gain = gain.times(upgradeEffect("sg", 11));
+	if (hasUpgrade("t", 12)) gain = gain.times(upgradeEffect("t", 12));
+	if (hasUpgrade("fa", 23)) gain = gain.times(upgradeEffect("fa", 23));
 
 	if (player.f.unlocked) gain = gain.times(tmp.f.effect);
 	if (player.sg.unlocked) gain = gain.times(tmp.sg.saplingEff);
+	if (player.ms.unlocked) gain = gain.times(tmp.ms.effect);
 
 	return softcap(gain, new Decimal("1e20"), 0.5);
 }
@@ -67,7 +75,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("e1e20"))
+	return player.points.gte(new Decimal("1e3650"))
 }
 
 
