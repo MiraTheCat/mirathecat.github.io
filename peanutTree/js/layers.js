@@ -1714,12 +1714,12 @@ addLayer("a", {
         34: {
             name: "Who needs Row 2?",
             done() {
-                return !player.f.points.gt(0) && !player.sg.points.gt(0) && player.points.gte(50000000)
+                return !player.f.points.gt(0) && !player.sg.points.gt(0) && player.points.gte(20000000)
             },
             unlocked() {
-                return hasAchievement("a", 31)
+                return hasAchievement("a", 31) && hasMilestone("t", 1) && hasMilestone("fa", 1)
             },
-            tooltip: "Reach 50 000 000 peanuts without any Farms or Sapling Generators <br> Reward: Always keep Coin upgrades on all resets!",
+            tooltip: "Reach 20 000 000 peanuts without any Farms or Sapling Generators <br> Reward: Always keep Coin upgrades on all resets!",
         },
         41: {
             name: "A pretty strange Ore",
