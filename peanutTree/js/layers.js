@@ -1719,7 +1719,7 @@ addLayer("a", {
             unlocked() {
                 return hasAchievement("a", 31)
             },
-            tooltip: "Reach 100 000 000 points without any Farms or Sapling Generators <br> Reward: Always keep Coin upgrades on all resets!",
+            tooltip: "Reach 100 000 000 peanuts without any Farms or Sapling Generators <br> Reward: Always keep Coin upgrades on all resets!",
         },
         41: {
             name: "A pretty strange Ore",
