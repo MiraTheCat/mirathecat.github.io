@@ -113,7 +113,7 @@
     border: solid 2px;
     border-radius: 20px;
     display: grid;
-    grid-template: repeat(15, 1fr) / repeat(4, 1fr);
+    grid-template: repeat(12, 1fr) / repeat(4, 1fr);
     max-height: 700px;
 }
 
@@ -154,7 +154,7 @@
 
 .pg-killoi {
     grid-column: span 2;
-    grid-row: span 12;
+    grid-row: span 10;
     display: none;
 }
 
