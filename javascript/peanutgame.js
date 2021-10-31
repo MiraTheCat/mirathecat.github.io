@@ -1425,7 +1425,7 @@ function updateInventory(peanuts1, money1, peanutsPerClick1, peanutsPerSecond1) 
 		prestigeButton.style.background = "linear-gradient(180deg, rgb(86, 0, 107), rgb(19, 0, 24))";
 	} else {
 		prestigeButton.innerHTML = "To Prestige: $" + roundNumber(prestigeRequirement);
-		prestigeButton.style.background = "linear-gradient(180deg, rgb(109, 109, 109), rgb(19, 0, 24))";
+		prestigeButton.style.background = "linear-gradient(180deg, rgb(70, 70, 70), rgb(19, 0, 24))";
 	}
 }
 
