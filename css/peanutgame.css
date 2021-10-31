@@ -271,7 +271,7 @@
     justify-content: left;
     align-items: center;
     border: solid 2px white;
-    background: linear-gradient(180deg, rgb(54, 54, 54), rgb(19, 0, 24));
+    background-color: rgb(54, 54, 54);
     position: relative;
     left: 2px;
     bottom: 4px;
