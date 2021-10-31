@@ -1423,6 +1423,7 @@ function updateInventory(peanuts1, money1, peanutsPerClick1, peanutsPerSecond1) 
 	if (money >= prestigeRequirement) {
 		prestigeButton.style.display = "block";
 		prestigeButton.innerHTML = "Prestige";
+		prestigeButton.style.background = "linear-gradient(180deg, rgb(86, 0, 107), rgb(19, 0, 24))";
 	}
 }
 
