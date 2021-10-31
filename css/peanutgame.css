@@ -263,6 +263,20 @@
     bottom: 4px;
 }
 
+.pg-prestigeRequirement {
+    font-size: 22px;
+    color: white;
+    padding: 3px 5px 3px 5px;
+    margin: 0;
+    justify-content: left;
+    align-items: center;
+    border: solid 2px white;
+    background: linear-gradient(180deg, rgb(54, 54, 54), rgb(19, 0, 24));
+    position: relative;
+    left: 2px;
+    bottom: 4px;
+}
+
 .pg-prestige-points {
     font-size: 25px;
     color: white;

@@ -1422,10 +1422,10 @@ function updateInventory(peanuts1, money1, peanutsPerClick1, peanutsPerSecond1) 
 	//Show prestige button
 	if (money >= prestigeRequirement) {
 		prestigeButton.innerHTML = "Prestige";
-		prestigeButton.style.background = "linear-gradient(180deg, rgb(86, 0, 107), rgb(19, 0, 24))";
+		prestigeButton.class = "pg-prestigeButton";
 	} else {
 		prestigeButton.innerHTML = "To Prestige: <br> $" + roundNumber(prestigeRequirement);
-		prestigeButton.style.background = "linear-gradient(180deg, rgb(54, 54, 54), rgb(19, 0, 24))";
+		prestigeButton.class = "pg-prestigeRequirement";
 	}
 }
 
