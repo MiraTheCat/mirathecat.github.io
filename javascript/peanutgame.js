@@ -22,6 +22,7 @@ var lightBonus = Number(localStorage.lightBonus);
 var killoiBonus = 0.05;
 var prestigePoints = Number(localStorage.prestigePoints);
 var prestiges = Number(localStorage.prestiges);
+var prestigeRequirement = 1000000000000000;
 
 var itemsList = ["seed", "sapling", "tree", "field", "farm", "factory", "creationLab",
 "generatorFacility", "productionCenter", "forest", "island", "assemblyYard", "fusionReactor",
@@ -1410,17 +1411,19 @@ function updateInventory(peanuts1, money1, peanutsPerClick1, peanutsPerSecond1) 
 	productionBonus = (1 + peanutProductionBonuses[peanutProduction.level]) * darknessBonus * Math.pow(2, prestigeProductionSpeed.level);
 	peanutValue = peanutValues[peanutPrice.level] * lightBonus * Math.pow(2, prestigePeanutValue.level) * Math.pow(1 + (killoiBook.amount * killoiBonus), missingPage.level);
 
-	//Show prestige button
+	// Set prestige requirement
+
 	if (prestiges < prestigeRequirements.length) {
-		if (money >= prestigeRequirements[prestiges]) {
-			prestigeButton.style.display = "block";
-		}
+		prestigeRequirement = prestigeRequirements[prestiges];
 	} else {
-		if (money >= prestigeRequirements[prestigeRequirements.length -1] * Math.pow(10, (prestiges + 1 - prestigeRequirements.length))) {
-			prestigeButton.style.display = "block";
-		}
+		prestigeRequirement = prestigeRequirements[prestigeRequirements.length -1] * Math.pow(10, (prestiges + 1 - prestigeRequirements.length));
 	}
-	
+
+	//Show prestige button
+	if (money >= prestigeRequirement) {
+		prestigeButton.style.display = "block";
+		prestigeButton.innerHTML = "Prestige";
+	}
 }
 
 //Clicking screen function
