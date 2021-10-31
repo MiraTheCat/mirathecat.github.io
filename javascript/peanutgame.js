@@ -41,7 +41,7 @@ var peanutValues = [0.001, 0.0011, 0.0012, 0.00135, 0.0015, 0.00165, 0.0018, 0.0
 	0.0028, 0.003, 0.0033, 0.0036, 0.004];
 
 var peanutProductionNames = ["Increased Production", "Skilled Farmers", "Improved Storage", "Enchanted Tools",
-"Strengthened Production", "Professional Farmers", "Enlarged Storage", "Reinfroced Tools", "Godly Production",
+"Strengthened Production", "Professional Farmers", "Enlarged Storage", "Reinforced Tools", "Godly Production",
 "Expert Farmers", "Colossal Storage", "Supreme Tools"];
 
 var peanutProductionBonuses = [0, 0.1, 0.2, 0.3, 0.45, 0.6, 0.75, 0.9, 1.1, 1.3, 1.5, 1.75, 2];
@@ -732,7 +732,7 @@ var largerProductionSpace = new Upgrade("Larger Production Space", Number(localS
 var strengthenedBranches = new Upgrade("Strengthened Branches", Number(localStorage.getItem(itemUpgradeList[9])), 1, 2000000, "The Peanut Forests get strengthened branches, doubling their peanut production", "images/peanutgame/forest.png", "strengthenedBranches", "itemUpgrade");
 var privatePeanutYatch = new Upgrade("Private Peanut Yatch", Number(localStorage.getItem(itemUpgradeList[10])), 1, 12000000, "The Private Peanut Islands get their own Private Peanut Yatchs, doubling their peanut productions", "images/peanutgame/island.png", "privatePeanutYatch", "itemUpgrade");
 var xlPeanuts = new Upgrade("XL Peanuts", Number(localStorage.getItem(itemUpgradeList[11])), 1, 70000000, "The Giant Peanut Assembly Yards now produce even larger peanuts, doubling their peanut production", "images/peanutgame/assemblyYard.png", "xlPeanuts", "itemUpgrade");
-var strongerFusion = new Upgrade("Stronger Fusion", Number(localStorage.getItem(itemUpgradeList[12])), 1, 400000000, "The Peanut Fusion Reactos achieves stronger fusion, doubling their peanut production", "images/peanutgame/fusionReactor.png", "strongerFusion", "itemUpgrade");
+var strongerFusion = new Upgrade("Stronger Fusion", Number(localStorage.getItem(itemUpgradeList[12])), 1, 400000000, "The Peanut Fusion Reactors achieve stronger fusion, doubling their peanut production", "images/peanutgame/fusionReactor.png", "strongerFusion", "itemUpgrade");
 var stableOrbit = new Upgrade("Stable Orbit", Number(localStorage.getItem(itemUpgradeList[13])), 1, 2500000000, "The Peanut Asteroids get a stable orbit, doubling their peanut production", "images/peanutgame/asteroid.png", "stableOrbit", "itemUpgrade");
 var artificialLighting = new Upgrade("Artificial Lighting", Number(localStorage.getItem(itemUpgradeList[14])), 1, 13000000000, "The Peanut Moons build artifical lighting to double their peanut production", "images/peanutgame/moon.png", "artificialLighting", "itemUpgrade");
 var improvedSoil = new Upgrade("Improved Soil", Number(localStorage.getItem(itemUpgradeList[15])), 1, 75000000000, "The soil of the Peanut Planets gets improved, doubling their peanut production", "images/peanutgame/planet.png", "improvedSoil", "itemUpgrade");
