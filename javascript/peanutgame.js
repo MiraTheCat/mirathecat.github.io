@@ -1583,36 +1583,38 @@ function setStats() {
 //Prestiging
 
 function prestige() {
-	localStorage.clear();
+	if (money >= prestigeRequirement) {
+		localStorage.clear();
 
-	peanuts = 0;
-	money= 0.01;
-	prestigePoints += 1 + morePrestigePoints.level;
-	prestiges += 1;
+		peanuts = 0;
+		money= 0.01;
+		prestigePoints += 1 + morePrestigePoints.level;
+		prestiges += 1;
 
-	localStorage.prestigePoints = prestigePoints;
-	localStorage.prestiges = prestiges;
-	
-	localStorage.prestigePeanutValue = prestigePeanutValue.level;
-	localStorage.prestigeProductionSpeed = prestigeProductionSpeed.level;
-	localStorage.morePrestigePoints = morePrestigePoints.level;
-	localStorage.moreStartingMoney = moreStartingMoney.level;
+		localStorage.prestigePoints = prestigePoints;
+		localStorage.prestiges = prestiges;
+		
+		localStorage.prestigePeanutValue = prestigePeanutValue.level;
+		localStorage.prestigeProductionSpeed = prestigeProductionSpeed.level;
+		localStorage.morePrestigePoints = morePrestigePoints.level;
+		localStorage.moreStartingMoney = moreStartingMoney.level;
 
-	localStorage.p2107 = p2107.level;
-	localStorage.book = book.level;
+		localStorage.p2107 = p2107.level;
+		localStorage.book = book.level;
 
-	localStorage.happy = happy.level;
-	localStorage.smile = smile.level;
+		localStorage.happy = happy.level;
+		localStorage.smile = smile.level;
 
-	setStats()
+		setStats()
 
-	container.style.display = "none";
-	reloadText.innerHTML = "Reload the website to continue playing!";
-	reloadText.style.display = "block";
-	prestigeShop.style.display = "flex";
+		container.style.display = "none";
+		reloadText.innerHTML = "Reload the website to continue playing!";
+		reloadText.style.display = "block";
+		prestigeShop.style.display = "flex";
 
-	document.querySelector("#prestigePoints").innerHTML = "You have " + prestigePoints + " prestige points, and you have prestiged " + prestiges + " times!";
-	document.querySelector("#prestigePoints").style.display = "block";
+		document.querySelector("#prestigePoints").innerHTML = "You have " + prestigePoints + " prestige points, and you have prestiged " + prestiges + " times!";
+		document.querySelector("#prestigePoints").style.display = "block";
+	}
 }
 
 //Running functions
