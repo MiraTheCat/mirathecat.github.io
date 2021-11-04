@@ -57,10 +57,10 @@ var farmerUpgradeList = ["Tiny Armor", "Day of Reckoning", "Vines from Below", "
 "Height Increase", "Penut Aura", "Arrival of the Flesh-Blobs", "Lightspeed Farming", "Maggot Duplication",
 "Unlimited Power", "Light of Creation", "More Happiness", "Creepier Smile", "Endless Nightmares"];
 
-var prestigeRequirements = [1000000000000000000, 2000000000000000000, 4000000000000000000, 6000000000000000000,
-	10000000000000000000, 20000000000000000000, 50000000000000000000, 100000000000000000000, 200000000000000000000,
-	400000000000000000000, 800000000000000000000, 1500000000000000000000, 5000000000000000000000,
-	10000000000000000000000]
+var prestigeRequirements = [1000000000000000, 2000000000000000, 4000000000000000, 6000000000000000,
+	10000000000000000, 20000000000000000, 50000000000000000, 100000000000000000, 200000000000000000,
+	400000000000000000, 800000000000000000, 1500000000000000000, 5000000000000000000,
+	10000000000000000000]
 
 var body = document.querySelector("body");
 
@@ -1416,7 +1416,7 @@ function updateInventory(peanuts1, money1, peanutsPerClick1, peanutsPerSecond1) 
 	if (prestiges < prestigeRequirements.length) {
 		prestigeRequirement = prestigeRequirements[prestiges];
 	} else {
-		prestigeRequirement = prestigeRequirements[prestigeRequirements.length -1] * Math.pow(10, (prestiges + 1 - prestigeRequirements.length));
+		prestigeRequirement = prestigeRequirements[prestigeRequirements.length -1] * Math.pow(10, (prestiges + 1 - prestigeRequirements.length)) * ((prestiges >= prestigeRequirements.length + 10)? Math.pow(3.2, (prestiges + 1 - prestigeRequirements.length) - 10): 1);
 	}
 
 	//Show prestige button
@@ -1503,28 +1503,28 @@ function roundNumber(number) {
 		return Math.round(number * 1000) / 1000;
 	} else if (number < 100) {
 		return Math.round(number * 10) / 10;
-	} else if (number < 1000000) {
+	} else if (number < 10**6) {
 		return Math.round(number);
-	} else if (number < 1000000000) {
-		return (Math.round(number / 100000) / 10) + " million";
-	} else if (number < 1000000000000) {
-		return (Math.round(number / 100000000) / 10) + " billion";
-	} else if (number < 1000000000000000) {
-		return (Math.round(number / 100000000000) / 10) + " trillion";
-	} else if (number < 1000000000000000000) {
-		return (Math.round(number / 100000000000000) / 10) + " quadrillion";
-	} else if (number < 1000000000000000000000) {
-		return (Math.round(number / 100000000000000000) / 10) + " quintillion";
-	} else if (number < 1000000000000000000000000) {
-		return (Math.round(number / 100000000000000000000) / 10) + " sextillion";
-	} else if (number < 1000000000000000000000000000) {
-		return (Math.round(number / 100000000000000000000000) / 10) + " septillion";
-	} else if (number < 1000000000000000000000000000000) {
-		return (Math.round(number / 100000000000000000000000000) / 10) + " octillion";
-	} else if (number < 1000000000000000000000000000000000) {
-		return (Math.round(number / 100000000000000000000000000000) / 10) + " nonillion";
+	} else if (number < 10**9) {
+		return (Math.round(number / 10**5) / 10) + " million";
+	} else if (number < 10**12) {
+		return (Math.round(number / 10**8) / 10) + " billion";
+	} else if (number < 10**15) {
+		return (Math.round(number / 10**11) / 10) + " trillion";
+	} else if (number < 10**18) {
+		return (Math.round(number / 10**14) / 10) + " quadrillion";
+	} else if (number < 10**21) {
+		return (Math.round(number / 10**17) / 10) + " quintillion";
+	} else if (number < 10**24) {
+		return (Math.round(number / 10**20) / 10) + " sextillion";
+	} else if (number < 10**27) {
+		return (Math.round(number / 10**23) / 10) + " septillion";
+	} else if (number < 10**30) {
+		return (Math.round(number / 10**26) / 10) + " octillion";
+	} else if (number < 10**33) {
+		return (Math.round(number / 10**29) / 10) + " nonillion";
 	} else {
-		return (Math.round(number / 100000000000000000000000000000000) / 10) + " decillion";
+		return (Math.round(number / 10**32) / 10) + " decillion";
 	}
 }
 
