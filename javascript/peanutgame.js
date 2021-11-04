@@ -22,7 +22,7 @@ var lightBonus = Number(localStorage.lightBonus);
 var killoiBonus = 0.05;
 var prestigePoints = Number(localStorage.prestigePoints);
 var prestiges = Number(localStorage.prestiges);
-var prestigeRequirement = 1000000000000000;
+var prestigeRequirement = 10**15;
 
 var itemsList = ["seed", "sapling", "tree", "field", "farm", "factory", "creationLab",
 "generatorFacility", "productionCenter", "forest", "island", "assemblyYard", "fusionReactor",
@@ -57,10 +57,8 @@ var farmerUpgradeList = ["Tiny Armor", "Day of Reckoning", "Vines from Below", "
 "Height Increase", "Penut Aura", "Arrival of the Flesh-Blobs", "Lightspeed Farming", "Maggot Duplication",
 "Unlimited Power", "Light of Creation", "More Happiness", "Creepier Smile", "Endless Nightmares"];
 
-var prestigeRequirements = [1000000000000000, 2000000000000000, 4000000000000000, 6000000000000000,
-	10000000000000000, 20000000000000000, 50000000000000000, 100000000000000000, 200000000000000000,
-	400000000000000000, 800000000000000000, 1500000000000000000, 5000000000000000000,
-	10000000000000000000]
+var prestigeRequirements = [10**15, 2*10**15, 4*10**15, 6*10**15, 10**16, 2*10**16, 5*10**16, 10**17, 2*10**17,
+	4*10**17, 8*10**17, 1.5*10**18, 5*10**18, 10**19]
 
 var body = document.querySelector("body");
 
