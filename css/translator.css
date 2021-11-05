@@ -37,6 +37,6 @@ textarea {
     cursor: pointer;
 }
 
-a {
+.noDecoration {
     text-decoration: none;
 }
