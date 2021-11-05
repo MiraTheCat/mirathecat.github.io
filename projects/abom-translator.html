@@ -48,6 +48,66 @@
         let english = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
         't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
         'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+
+        englishEl.addEventListener("change", englishToAbominish)
+        abominishEl.addEventListener("change", abominishToEnglish)
+
+        function englishToAbominish() {
+            let text = englishEl.innerHTML;
+            let translatedText = " ";
+
+            // Gets a letter in the text
+
+            for (let letter in text) {
+                let letterFound = false;
+                let counting = 0;
+
+                // Goes trough the different english letters
+
+                for (let englishLetter in english) {
+
+                    // If the letter is found, continue
+
+                    if (letter == englishLetter) {
+                        let useLine = false;
+
+                        //If the previous letter in the translated text is an English letter, add a "-"
+
+                        for (let Eletter in english) {
+                            if (translatedText[-1] == Eletter) {
+                                useLine = true;
+                            }
+                        }
+
+                        if (useLine) {
+                            translatedText = translatedText + '-';
+                        }
+
+                        // Add the letter to the translated text
+                        
+                        translatedText = translatedText + abominish[counting];
+
+                        letterFound = true;
+                    }
+
+                    counting += 1;
+                }
+
+                if (!letterFound) {
+                    translatedText += letter;
+                }
+            }
+
+            abominishEl.innerHTML = translatedText;
+        }
+
+        function abominishToEnglish() {
+
+        }
+
+        function updateFont() {
+            fontEl.innerHTML = englishEl.innerHTML;
+        }
     </script>
 
     </body>
