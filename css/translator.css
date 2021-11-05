@@ -2,7 +2,7 @@
     width: auto;
     height: auto;
     display: grid;
-    grid-template: 30px 1fr 30px / repeat(3, 1fr);
+    grid-template: 30px 1fr 40px / repeat(3, 1fr);
 }
 
 textarea {
@@ -15,7 +15,7 @@ textarea {
 
 .t-button {
     justify-self: center;
-    width: 100px;
+    width: 200px;
     border: 2px solid white;
     border-radius: 10px;
     background-color: black;
