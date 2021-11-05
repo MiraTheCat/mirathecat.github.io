@@ -2,3 +2,10 @@
     width: auto;
     height: auto;
 }
+
+textarea {
+    border: 2px solid white;
+    border-radius: 5px;
+    background-color: black;
+    color: white;
+}
