@@ -63,6 +63,8 @@
                 let letterFound = false;
                 let counting = 0;
 
+                console.log(letter);
+
                 // Goes trough the different english letters
 
                 for (let englishLetter in english) {
@@ -74,8 +76,8 @@
 
                         //If the previous letter in the translated text is an English letter, add a "-"
 
-                        for (let Eletter in english) {
-                            if (translatedText[-1] == Eletter) {
+                        for (let eletter in english) {
+                            if (translatedText[-1] == eletter) {
                                 useLine = true;
                             }
                         }
@@ -99,7 +101,7 @@
                 }
             }
 
-            abominishEl.innerHTML = translatedText.slice(0, 1);
+            abominishEl.innerHTML = translatedText;
             updateFont()
         }
 
