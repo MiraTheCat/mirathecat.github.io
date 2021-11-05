@@ -13,6 +13,11 @@ textarea {
     color: white;
 }
 
+#font {
+    font-family: Abominish;
+    src: url(/files/Abominish.ttf)
+}
+
 .t-button {
     justify-self: center;
     width: 200px;
