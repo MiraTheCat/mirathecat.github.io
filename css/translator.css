@@ -12,3 +12,7 @@ textarea {
     color: white;
     margin: 5px;
 }
+
+.t-button {
+    justify-items: center;
+}
