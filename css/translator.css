@@ -14,5 +14,10 @@ textarea {
 }
 
 .t-button {
-    justify-items: center;
+    justify-self: center;
+    width: 100px;
+    border: 2px solid white;
+    border-radius: 10px;
+    background-color: black;
+    color: white;
 }
