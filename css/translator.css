@@ -21,3 +21,8 @@ textarea {
     background-color: black;
     color: white;
 }
+
+.t-button:hover {
+    filter: brightness(80%);
+    cursor: pointer;
+}
