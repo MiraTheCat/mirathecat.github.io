@@ -235,7 +235,7 @@ class Upgrade {
 				this.name = peanutValueNames[this.level];
 				peanutValue = peanutValues[this.level] * lightBonus * Math.pow(2, prestigePeanutValue.level) * Math.pow(1 + (killoiBook.amount * killoiBonus), missingPage.level);
 				this.price = this.price * Math.pow(10, this.level);
-				this.description = "Increases the value of peanuts from $" + Math.round(peanutValue * 10000) / 10000 + " to $" + Math.round(peanutValues[this.level +1] * lightBonus * Math.pow(2, prestigePeanutValue.level) * Math.pow(1 + (killoiBook.amount * killoiBonus), missingPage.level) * 10000) / 10000;
+				this.description = "Increases the value of peanuts from $" + Math.round(peanutValue * 100000) / 100000 + " to $" + Math.round(peanutValues[this.level +1] * lightBonus * Math.pow(2, prestigePeanutValue.level) * Math.pow(1 + (killoiBook.amount * killoiBonus), missingPage.level) * 100000) / 100000;
 			}
 
 			if (this.type == "peanutProduction") {
@@ -314,7 +314,7 @@ class Upgrade {
 				this.name = peanutValueNames[this.level];
 				this.price *= 10;
 				peanutValue = peanutValues[this.level] * lightBonus * Math.pow(2, prestigePeanutValue.level) * Math.pow(1 + (killoiBook.amount * killoiBonus), missingPage.level);
-				this.description = "Increases the value of peanuts from $" + Math.round(peanutValue * 10000) / 10000 + " to $" + Math.round(peanutValues[this.level +1] * lightBonus * Math.pow(2, prestigePeanutValue.level) * Math.pow(1 + (killoiBook.amount * killoiBonus), missingPage.level) * 10000) / 10000;
+				this.description = "Increases the value of peanuts from $" + Math.round(peanutValue * 100000) / 100000 + " to $" + Math.round(peanutValues[this.level +1] * lightBonus * Math.pow(2, prestigePeanutValue.level) * Math.pow(1 + (killoiBook.amount * killoiBonus), missingPage.level) * 100000) / 100000;
 
 				localStorage.setItem("peanutPrice", this.level);
 			}
