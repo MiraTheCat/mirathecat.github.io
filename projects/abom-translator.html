@@ -55,7 +55,7 @@
 
         function englishToAbominish() {
             let text = englishEl.value;
-            let translatedText = " ";
+            let translatedText = "";
 
             // Gets a letter in the text
 
@@ -77,7 +77,7 @@
                         //If the previous letter in the translated text is an English letter, add a "-"
 
                         for (let eletter of english) {
-                            if (translatedText[translatedText.length -2] == eletter) {
+                            if (translatedText.length > 1 && translatedText[translatedText.length -2] == eletter) {
                                 useLine = true;
                             }
                         }
