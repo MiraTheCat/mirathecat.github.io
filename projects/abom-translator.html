@@ -30,9 +30,13 @@
             <label for="english">English text</label>
             <label for="abominish">Abominish text</label>
             <label for="font">Abominish font</label>
+
             <textarea id="english" rows="10" cols="50" placeholder="Type English here!"></textarea>
             <textarea id="abominish" rows="10" cols="50" placeholder="Type Abominish here!"></textarea>
             <textarea id="font" rows="10" cols="50" placeholder="See text in the Abominish font here!"></textarea>
+
+            <button onclick="englishToAbominish()">Translate to Abominish</button>
+            <button onclick="abominishToEnglish()">Translate to English</button>
         </div>
         
     <script>
@@ -48,9 +52,6 @@
         let english = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
         't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
         'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
-
-        englishEl.addEventListener("change", englishToAbominish)
-        abominishEl.addEventListener("change", abominishToEnglish)
 
         function englishToAbominish() {
             let text = englishEl.innerHTML;
