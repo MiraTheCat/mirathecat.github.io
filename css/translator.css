@@ -1,6 +1,8 @@
 .t-folder {
     width: auto;
     height: auto;
+    display: grid;
+    grid-template: 30px 1fr / repeat(3, 1fr)
 }
 
 textarea {
