@@ -77,7 +77,7 @@
                         //If the previous letter in the translated text is an English letter, add a "-"
 
                         for (let eletter of english) {
-                            if (translatedText[-1] == eletter) {
+                            if (translatedText[translatedText.length -2] == eletter) {
                                 useLine = true;
                             }
                         }
