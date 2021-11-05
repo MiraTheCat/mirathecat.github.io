@@ -54,7 +54,7 @@
         'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
         function englishToAbominish() {
-            let text = englishEl.innerHTML;
+            let text = englishEl.value;
             let translatedText = " ";
 
             // Gets a letter in the text
@@ -101,7 +101,7 @@
                 }
             }
 
-            abominishEl.innerHTML = translatedText;
+            abominishEl.value = translatedText;
             updateFont()
         }
 
@@ -110,7 +110,7 @@
         }
 
         function updateFont() {
-            fontEl.innerHTML = englishEl.innerHTML;
+            fontEl.value = englishEl.value;
         }
     </script>
 
