@@ -201,7 +201,12 @@
 
         function updateFont() {
             fontEl.value = englishEl.value;
-            fontEl.className = "font";
+            if (fontEl.value) {
+                fontEl.className = "font";
+            } else {
+                fontEl.className = "";
+            }
+            
         }
     </script>
 
