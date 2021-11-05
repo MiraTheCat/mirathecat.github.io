@@ -68,8 +68,6 @@
                 let letterFound = false;
                 let counting = 0;
 
-                console.log(letter);
-
                 // Goes trough the different English letters
 
                 for (let englishLetter of english) {
@@ -82,15 +80,14 @@
                         //If the previous letter in the translated text is an English letter, add a "-"
 
                         for (let eletter of english) {
-                            if (translatedText.length > 1 && translatedText[translatedText.length -2] == eletter) {
+                            if (translatedText.length > 1 && translatedText[translatedText.length -1] == eletter) {
                                 useLine = true;
-                                console.log(translatedText.length);
-                                console.log(translatedText[translatedText.length -2]);
                             }
                         }
 
                         if (useLine) {
                             translatedText = translatedText + '-';
+                            useLine = false;
                         }
 
                         // Add the letter to the translated text
