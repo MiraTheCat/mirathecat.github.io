@@ -5,7 +5,8 @@
 
 textarea {
     border: 2px solid white;
-    border-radius: 5px;
+    border-radius: 10px;
     background-color: black;
     color: white;
+    margin: 5px;
 }
