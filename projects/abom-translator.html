@@ -65,7 +65,7 @@
 
                 console.log(letter);
 
-                // Goes trough the different english letters
+                // Goes trough the different English letters
 
                 for (let englishLetter of english) {
 
@@ -106,7 +106,97 @@
         }
 
         function abominishToEnglish() {
+            let text = abominishEl.value;
+            let translatedText = "";
+            let word = "";
+            let word2 = "";
+            let counting = 0;
 
+            // Gets a letter in the text
+
+            for (let letter of text) {
+                let letterFound = false;
+                let wordFound = false;
+
+                // Goes through the different English letters
+
+                for (let englishLetter of english) {
+
+                    // If letter is found, add to word
+
+                    if (letter == englishLetter) {
+                        word += letter;
+
+                        letterFound = true;
+                    }
+                }
+
+                // If letter is not found, the word is completed
+
+                if (!letterFound) {
+                    counting = 0;
+                    
+                    if (letter != "-") {
+                        word2 = letter;
+                    }
+
+                    // Goes through the different Abominish letters
+
+                    for (let abominishWord of abominish) {
+
+                        // If Abominish word is found, add the letter to the translated text
+
+                        if (word == abominishWord) {
+                            translatedText += english[counting];
+                            translatedText += word2;
+
+                            word2 = "";
+
+                            wordFound = true;
+                            word = "";
+                        }
+
+                        counting += 1;
+
+                    }
+
+                    // If word is not found, add letter to translated text
+
+                    if (!wordFound) {
+                        translatedText += letter;
+                        word2 = "";
+                    }
+
+                }
+
+            }
+
+            if (word != "") {
+                counting = 0;
+
+                for (let abominishWord of abominish) {
+
+                    // If Abominish word is found, add the letter to the translated text
+
+                    if (word == abominishWord) {
+                        translatedText += english[counting];
+
+                        wordFound = 1;
+                        word = "";
+                    }
+
+                    counting += 1;
+                }
+
+                // If word is not found, add letter to translated text
+
+                if (!wordFound) {
+                    translatedText += letter;
+                }
+            }
+
+            englishEl.value = translatedText;
+            updateFont()
         }
 
         function updateFont() {
