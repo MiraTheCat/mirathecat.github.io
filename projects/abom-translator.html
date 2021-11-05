@@ -59,7 +59,7 @@
 
             // Gets a letter in the text
 
-            for (let letter in text) {
+            for (let letter of text) {
                 let letterFound = false;
                 let counting = 0;
 
@@ -67,7 +67,7 @@
 
                 // Goes trough the different english letters
 
-                for (let englishLetter in english) {
+                for (let englishLetter of english) {
 
                     // If the letter is found, continue
 
@@ -76,7 +76,7 @@
 
                         //If the previous letter in the translated text is an English letter, add a "-"
 
-                        for (let eletter in english) {
+                        for (let eletter of english) {
                             if (translatedText[-1] == eletter) {
                                 useLine = true;
                             }
