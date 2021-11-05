@@ -3,6 +3,7 @@
     height: auto;
     display: grid;
     grid-template: 30px 1fr 40px / repeat(3, 1fr);
+    grid-gap: 10px;
 }
 
 textarea {
@@ -10,7 +11,6 @@ textarea {
     border-radius: 10px;
     background-color: black;
     color: white;
-    margin: 5px;
 }
 
 .t-button {
