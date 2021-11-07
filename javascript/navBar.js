@@ -21,3 +21,5 @@ function addNavBar() {
     gamesEl.href = "/games.html";
     gamesEl.classList.add("top", "bordered");
 }
+
+addNavBar();
