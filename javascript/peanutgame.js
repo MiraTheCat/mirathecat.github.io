@@ -1530,19 +1530,19 @@ function roundNumber(number) {
 	} else if (number < 10**45) {
 		return (Math.round(number / 10**41) / 10) + " tredecillion";
 	} else if (number < 10**48) {
-		return (Math.round(number / 10**43) / 10) + " quattuordecillion";
+		return (Math.round(number / 10**44) / 10) + " quattuordecillion";
 	} else if (number < 10**51) {
-		return (Math.round(number / 10**46) / 10) + " quindecillion";
+		return (Math.round(number / 10**47) / 10) + " quindecillion";
 	} else if (number < 10**54) {
-		return (Math.round(number / 10**49) / 10) + " sexdecillion";
+		return (Math.round(number / 10**50) / 10) + " sexdecillion";
 	} else if (number < 10**57) {
-		return (Math.round(number / 10**52) / 10) + " septendecillion";
+		return (Math.round(number / 10**53) / 10) + " septendecillion";
 	} else if (number < 10**60) {
-		return (Math.round(number / 10**55) / 10) + " octodecillion";
+		return (Math.round(number / 10**56) / 10) + " octodecillion";
 	} else if (number < 10**63) {
-		return (Math.round(number / 10**58) / 10) + " novemdecillion";
+		return (Math.round(number / 10**59) / 10) + " novemdecillion";
 	} else {
-		return (Math.round(number / 10**61) / 10) + " vigintillion";
+		return (Math.round(number / 10**62) / 10) + " vigintillion";
 	}
 }
 
