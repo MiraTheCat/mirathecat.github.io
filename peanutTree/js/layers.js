@@ -254,6 +254,8 @@ addLayer("f", {
             keep.push("milestones")
         if (hasMilestone("t", 1))
             keep.push("upgrades")
+        if (hasAchievement("a", 51) || player.n.unlocked)
+            keep.push("milestones")
         keep.push("auto")
         if (layers[resettingLayer].row > this.row)
             layerDataReset("f", keep)
@@ -500,6 +502,8 @@ addLayer("sg", {
             keep.push("milestones")
         if (hasMilestone("fa", 1))
             keep.push("upgrades")
+        if (hasAchievement("a", 51) || player.n.unlocked)
+            keep.push("milestones")
         keep.push("auto")
         if (layers[resettingLayer].row > this.row)
             layerDataReset("sg", keep)
@@ -514,13 +518,16 @@ addLayer("sg", {
         return (hasMilestone("fa", 2) && player.sg.auto)
     },
 
-    tabFormat: ["main-display", "prestige-button", "blank", ["display-text", function() {
+    tabFormat: ["main-display", "prestige-button", ["display-text", function() {
+        return "You have " + formatWhole(player.points) + " peanuts"
+    }
+    , {}], "blank", ["display-text", function() {
         return 'You have ' + format(player.sg.saplings) + ' Saplings, which boosts Peanut production by ' + format(tmp.sg.saplingEff) + 'x'
     }
     , {}], "blank", ["display-text", function() {
         return 'Your best Sapling Generators is ' + formatWhole(player.sg.best) + '<br>You have made a total of ' + formatWhole(player.sg.total) + " Sapling Generators."
     }
-    , {}], "blank", "milestones", "blank", "blank", "upgrades"],
+    , {}], "blank", "milestones", "blank", "upgrades"],
 
     milestones: {
         0: {
@@ -672,6 +679,11 @@ addLayer("t", {
         return mult
     },
 
+    automate() {},
+    resetsNothing() {
+        return hasMilestone("n", 5)
+    },
+
     base() {
         return new Decimal(1.18)
     },
@@ -696,6 +708,8 @@ addLayer("t", {
         let base = new Decimal(2);
         base = base.plus(tmp.t.addToBase);
         base = base.times(tmp.t.buyables[11].effect.first);
+
+        if (player.n.unlocked) base = base.times(tmp.n.effect);
         return base.pow(tmp.t.power);
     },
     power() {
@@ -712,6 +726,13 @@ addLayer("t", {
 
     doReset(resettingLayer) {
         let keep = [];
+        if (hasMilestone("n", 0)) {
+            keep.push("milestones")
+        }
+        if (hasMilestone("n", 2)) {
+            keep.push("upgrades")
+        }
+        keep.push("auto");
         if (layers[resettingLayer].row > this.row)
             layerDataReset("t", keep)
     },
@@ -1051,6 +1072,11 @@ addLayer("fa", {
         return hasAchievement("a", 24)
     },
 
+    automate() {},
+    resetsNothing() {
+        return hasMilestone("b", 3)
+    },
+
     // ======================================================
 
     workerLimitMult() {
@@ -1067,6 +1093,8 @@ addLayer("fa", {
     },
     effBaseMult() {
         let mult = new Decimal(1);
+
+        if (player.b.unlocked) mult = mult.times(tmp.b.effect);
         return mult;
     },
     effBasePow() {
@@ -1097,7 +1125,7 @@ addLayer("fa", {
         return "which are recruiting " + format(tmp.fa.gain) + " Workers/sec, but with a limit of " + format(tmp.fa.limit) + " Workers"
     },
     workerEff() {
-        if (!player.fa.unlocked)
+        if (!player.fa.unlocked || !player.fa.points.gt(0))
             return new Decimal(1);
         let eff = player.fa.workers.pow(0.4).plus(1);
         
@@ -1118,17 +1146,27 @@ addLayer("fa", {
 
     doReset(resettingLayer) {
         let keep = [];
+        if (hasMilestone("b", 0)) {
+            keep.push("milestones")
+        }
+        if (hasMilestone("b", 1)) {
+            keep.push("upgrades")
+        }
+        keep.push("auto");
         if (layers[resettingLayer].row > this.row)
             layerDataReset("fa", keep)
     },
 
-    tabFormat: ["main-display", "prestige-button", "blank", ["display-text", function() {
+    tabFormat: ["main-display", "prestige-button", ["display-text", function() {
+        return "You have " + formatWhole(player.sg.points) + " sapling generators "
+    }
+    , {}], "blank", ["display-text", function() {
         return 'You have ' + format(player.fa.workers) + ' Workers, which boosts Sapling effect base by ' + format(tmp.fa.workerEff) + 'x'
     }
     , {}], "blank", ["display-text", function() {
         return 'Your best Factories is ' + formatWhole(player.fa.best) + '<br>You have made a total of ' + formatWhole(player.fa.total) + " Factories."
     }
-    , {}], "blank", "milestones", "blank", "blank", "upgrades"],
+    , {}], "blank", "milestones", "blank", "upgrades"],
 
     milestones: {
         0: {
@@ -1375,6 +1413,12 @@ addLayer("ms", {
 
     doReset(resettingLayer) {
         let keep = [];
+        if (hasMilestone("n", 1)) {
+            keep.push("milestones")
+        }
+        if (hasMilestone("n", 3)) {
+            keep.push("upgrades")
+        }
         if (layers[resettingLayer].row > this.row)
             layerDataReset("ms", keep)
     },
@@ -1574,6 +1618,259 @@ addLayer("ms", {
     },
 })
 
+addLayer("n", {
+    name: "Nations", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "N", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: false,
+		points: new Decimal(0),
+        total: new Decimal(0),
+        best: new Decimal(0),
+        auto: false,
+    }},
+    color: "#00ab2d",
+    requires() {
+        return new Decimal(20)
+    }, // Can be a function that takes requirement increases into account
+    roundUpCost: true,
+    resource: "nations", // Name of prestige currency
+    baseResource: "towns", // Name of resource prestige is based on
+    branches: ["t", "ms"],
+    baseAmount() {return player.t.points}, // Get the current amount of baseResource
+    type() {
+        return "static"
+    },
+    exponent: 1, // Prestige currency exponent
+    gainMult() {
+        let mult = new Decimal(1)
+        return mult
+    },
+
+    base() {
+        return new Decimal(1.18)
+    },
+    canBuyMax() {
+        return hasMilestone("n", 3)
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    row: 3, // Row the layer is in on the tree (0 is the first row)
+    hotkeys: [
+        {key: "n", description: "N: Perform a Nation reset", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    layerShown() {
+        return hasAchievement("a", 44)
+    },
+    addToBase() {
+        let base = new Decimal(0);
+        return base;
+    },
+    effectBase() {
+        let base = new Decimal(2);
+        base = base.plus(tmp.n.addToBase);
+        return base.pow(tmp.n.power);
+    },
+    power() {
+        let power = new Decimal(1);
+        return power;
+    },
+    effect() {
+        let eff = Decimal.pow(tmp.n.effectBase, player.n.points).log(10).add(1);
+        return softcap(eff, new Decimal(100), 0.33);
+    },
+    effectDescription() {
+        return "which are boosting the Town base by " + format(tmp.n.effect) + "x"
+    },
+
+    doReset(resettingLayer) {
+        let keep = [];
+        if (layers[resettingLayer].row > this.row)
+            layerDataReset("n", keep)
+    },
+
+    tabFormat: {
+        "Main Tab": {
+            content: ["main-display", "prestige-button", ["display-text", function() {
+                return "You have " + formatWhole(player.t.points) + " towns "
+            }
+            , {}], "blank", ["display-text", function() {
+                return 'Your best Nations is ' + formatWhole(player.n.best) + '<br>You have made a total of ' + formatWhole(player.n.total) + " Nations."
+            }
+            , {}], "blank", "milestones", "blank", "upgrades"],
+        },
+        "Researchers": {
+            unlocked() {
+                return false
+            },
+            content: ["main-display", ["display-text", function() {
+                return 'Your best Nations is ' + formatWhole(player.n.best) + '<br>You have made a total of ' + formatWhole(player.n.total) + " Nations."
+            }
+            , {}], "blank",],
+        },
+    },
+
+    milestones: {
+        0: {
+            requirementDescription: "2 Nations",
+            done() {
+                return player.n.best.gte(2)
+            },
+            effectDescription: "Keep Town milestones on all resets",
+        },
+        1: {
+            requirementDescription: "3 Nations",
+            done() {
+                return player.n.best.gte(3)
+            },
+            effectDescription: "Keep MSPaintium milestones on all resets",
+        },
+        2: {
+            requirementDescription: "4 Nations",
+            done() {
+                return player.n.best.gte(4)
+            },
+            effectDescription: "Keep Town upgrades on all resets",
+        },
+        3: {
+            requirementDescription: "5 Nations",
+            done() {
+                return player.n.best.gte(4)
+            },
+            effectDescription: "Keep MSPaintium upgrades on all resets",
+        },
+        4: {
+            requirementDescription: "6 Nations",
+            done() {
+                return player.n.best.gte(6)
+            },
+            effectDescription: "Unlock Auto-Towns",
+            toggles: [["t", "auto"]],
+        },
+        5: {
+            requirementDescription: "8 Nations",
+            done() {
+                return player.n.best.gte(8)
+            },
+            effectDescription: "Towns reset nothing and you can buy max Nations",
+        },
+    },
+
+    upgrades: {
+    },
+})
+
+addLayer("b", {
+    name: "Bots", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "B", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: false,
+		points: new Decimal(0),
+        total: new Decimal(0),
+        best: new Decimal(0),
+        auto: false,
+    }},
+    color: "#486b51",
+    requires() {
+        return new Decimal(20)
+    }, // Can be a function that takes requirement increases into account
+    resource: "bot parts", // Name of prestige currency
+    baseResource: "factories", // Name of resource prestige is based on
+    roundUpCost: true,
+    branches: ["ms", "fa"],
+    baseAmount() {return player.fa.points}, // Get the current amount of baseResource
+    type() {
+        return "normal"
+    },
+    exponent: 1, // Prestige currency exponent
+    gainMult() {
+        let mult = new Decimal(1.7)
+        return mult
+    },
+
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+
+    passiveGeneration() {
+        return false
+    },
+
+    row: 3, // Row the layer is in on the tree (0 is the first row)
+    hotkeys: [
+        {key: "b", description: "B: Perform a Bot reset", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    layerShown() {
+        return hasAchievement("a", 44)
+    },
+    addToBase() {
+        let base = new Decimal(0);
+        return base;
+    },
+    effectBase() {
+        let base = new Decimal(1.5);
+        base = base.plus(tmp.b.addToBase);
+        return base.pow(tmp.b.power);
+    },
+    power() {
+        let power = new Decimal(1);
+        return power;
+    },
+    effect() {
+        let eff = Decimal.pow(tmp.b.effectBase, player.b.points).log(10).add(1);
+        eff = softcap(eff, new Decimal(5), 0.2);
+        return softcap(eff, new Decimal(100), 0.33);
+    },
+
+    effectDescription() {
+        let desc = "which is boosting the Factory base by " + format(tmp.b.effect) + "x";
+        return desc;
+    },
+
+    doReset(resettingLayer) {
+        let keep = [];
+        if (layers[resettingLayer].row > this.row)
+            layerDataReset("b", keep)
+    },
+
+    milestones: {
+        0: {
+            requirementDescription: "2 Bot Parts",
+            done() {
+                return player.b.best.gte(2)
+            },
+            effectDescription: "Keep Factory milestones on all resets",
+        },
+        1: {
+            requirementDescription: "5 Bot Parts",
+            done() {
+                return player.b.best.gte(5)
+            },
+            effectDescription: "Keep Factory upgrades on all resets",
+        },
+        2: {
+            requirementDescription: "20 Bot Parts",
+            done() {
+                return player.b.best.gte(20)
+            },
+            effectDescription: "Unlock Auto-Factories",
+            toggles: [["fa", "auto"]],
+        },
+        3: {
+            requirementDescription: "50 Bot Parts",
+            done() {
+                return player.b.best.gte(50)
+            },
+            effectDescription: "Factories reset nothing",
+        },
+    },
+
+    upgrades: {
+    },
+})
+
 /* ===== ACHIEVEMENTS ===== */
 
 addLayer("a", {
@@ -1591,7 +1888,7 @@ addLayer("a", {
         return ("Achievements")
     },
     achievements: {
-        rows: 4,
+        rows: 5,
         cols: 4,
         11: {
             name: "The Beginning of an Adventure",
@@ -1635,7 +1932,7 @@ addLayer("a", {
         },
 
        21: {
-            name: "Next Row, please",
+            name: "Next Row, please!",
             done() {
                 return player.f.unlocked || player.sg.unlocked
             },
@@ -1679,7 +1976,7 @@ addLayer("a", {
         },
 
         31: {
-            name: "Down we go",
+            name: "Down we go!",
             done() {
                 return player.t.unlocked || player.fa.unlocked
             },
@@ -1714,13 +2011,14 @@ addLayer("a", {
         34: {
             name: "Who needs Row 2?",
             done() {
-                return !player.f.points.gt(0) && !player.sg.points.gt(0) && player.points.gte(20000000)
+                return !player.f.points.gt(0) && !player.sg.points.gt(0) && player.points.gte(20000000) && hasMilestone("t", 1) && hasMilestone("fa", 1)
             },
             unlocked() {
-                return hasAchievement("a", 31) && hasMilestone("t", 1) && hasMilestone("fa", 1)
+                return hasAchievement("a", 31)
             },
             tooltip: "Reach 20 000 000 peanuts without any Farms or Sapling Generators <br> Reward: Always keep Coin upgrades on all resets!",
         },
+
         41: {
             name: "A pretty strange Ore",
             done() {
@@ -1732,7 +2030,7 @@ addLayer("a", {
             tooltip: "Unlock MSPaintium",
         },
 
-         42: {
+        42: {
             name: "Enhancements & Enrichments",
             done() {
                 return tmp.ms.buyables[11].unlocked && tmp.ms.buyables[12].unlocked
@@ -1755,12 +2053,34 @@ addLayer("a", {
         },
 
         44: {
+            name: "MSPaintium Mine",
+            done() {
+                return player.ms.points.gte(40000)
+            },
+            unlocked() {
+                return hasAchievement("a", 41)
+            },
+            tooltip: "Reach 40 000 MSPaintium <br> Reward: Unlock Row 4!",
+        },
+
+        51: {
+            name: "Yet another Row",
+            done() {
+                return player.n.unlocked || player.b.unlocked;
+            },
+            unlocked() {
+                return hasAchievement("a", 44) 
+            },
+            tooltip: "Perform a Row 4 reset <br> Reward: Always keep Farm and Sapling Generator milestones on all resets!",
+        },
+
+        54: {
             name: "Millinilli- onaire",
             done() {
                 return player.c.points.gte("1e3000")
             },
             unlocked() {
-                return hasAchievement("a", 41)
+                return false
             },
             tooltip: "Reach 1e3000 Coins (Impossible to reach for now)",
         },
