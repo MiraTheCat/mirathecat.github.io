@@ -446,7 +446,7 @@ class PrestigeUpgrade {
 		if (this.maxLevel > this.level) {
 			if (this.type == "peanutValue") {
 				peanutValue = 0.001 * Math.pow(2, this.level);
-				this.description = "Doubles the value of peanuts from $" + ((peanutValue >= 1)? roundNumber(peanutValue) : Math.round(peanutValue * 10000) / 10000) + " to $" + ((peanutValue >= 1)? roundNumber(peanutValue) : Math.round(peanutValue * 2 * 10000) / 10000);
+				this.description = "Doubles the value of peanuts from $" + ((peanutValue >= 1)? roundNumber(peanutValue) : Math.round(peanutValue * 10000) / 10000) + " to $" + ((peanutValue >= 1)? roundNumber(peanutValue * 2) : Math.round(peanutValue * 2 * 10000) / 10000);
 			}
 
 			if (this.type == "peanutProduction") {
@@ -522,7 +522,7 @@ class PrestigeUpgrade {
 
 			if (this.type == "peanutValue") {
 				peanutValue = 0.001 * Math.pow(2, this.level);
-				this.description = "Doubles the value of peanuts from $" + ((peanutValue >= 1)? roundNumber(peanutValue) : Math.round(peanutValue * 10000) / 10000) + " to $" + ((peanutValue >= 1)? roundNumber(peanutValue) : Math.round(peanutValue * 2 * 10000) / 10000);
+				this.description = "Doubles the value of peanuts from $" + ((peanutValue >= 1)? roundNumber(peanutValue) : Math.round(peanutValue * 10000) / 10000) + " to $" + ((peanutValue >= 1)? roundNumber(peanutValue * 2) : Math.round(peanutValue * 2 * 10000) / 10000);
 
 				localStorage.setItem("prestigePeanutValue", this.level);
 
@@ -547,6 +547,10 @@ class PrestigeUpgrade {
 				if (this.level == 1) {
 					p2107.createUpgrade("p2107.upgrade()")
 				}
+
+				if (this.level == 5) {
+					autoSellUpgrade.createUpgrade("autoSellUpgrade.upgrade()")
+				}
 			}
 
 			if (this.type == "startingMoney") {
@@ -557,6 +561,10 @@ class PrestigeUpgrade {
 				localStorage.setItem("moreStartingMoney", this.level);
 				localStorage.money = 0.01 * Math.pow(5, this.level);
 				money = 0.01 * Math.pow(5, this.level);
+			}
+
+			if (this.type == "autoSell") {
+				localStorage.setItem("autoSell", this.level);
 			}
 
 			//Item/Farmer upgrades
@@ -629,7 +637,7 @@ class PrestigeUpgrade {
 			}
 		}
 
-		document.querySelector("#prestigePoints").innerHTML = "You have " + prestigePoints + " prestige points";
+		document.querySelector("#prestigePoints").innerHTML = "You have " + prestigePoints + " prestige points, and you have prestiged " + prestiges + " times!";
 	}
 }
 
@@ -671,8 +679,8 @@ var omniverse = new Item("Peanut Omniverse", Number(localStorage.getItem(itemsLi
 var box = new Item("The Box", Number(localStorage.getItem(itemsList[21])), 280000000000000, 100000000000000, "The Box, containing everything in existence", "images/peanutgame/the box.png", "box", 5);
 var theVoid = new Item("The Void", Number(localStorage.getItem(itemsList[22])), 3500000000000000, 1000000000000000, "An infinitely large, empty space", "images/peanutgame/void.png", "void", 10);
 
-var d2107 = new Item("2107th Dimension", Number(localStorage.getItem(itemsList[23])), 60000000000000000, 10000000000000000, "A dimension far, far beyond our own", "images/peanutgame/prestige/2107.jpg", "d2107", 10);
-var killoiBook = new Item("Killoi's Book", Number(localStorage.getItem(itemsList[24])), 2000000000000000000, 200000000000000000, '"Choices Do Not Require Wills"', "images/peanutgame/prestige/book.png", "killoiBook", 5);
+var d2107 = new Item("2107th Dimension", Number(localStorage.getItem(itemsList[23])), 3000000000000000000, 10000000000000000, "A dimension far, far beyond our own", "images/peanutgame/prestige/2107.jpg", "d2107", 10);
+var killoiBook = new Item("Killoi's Book", Number(localStorage.getItem(itemsList[24])), 10000000000000000000000, 200000000000000000, '"Choices Do Not Require Wills"', "images/peanutgame/prestige/book.png", "killoiBook", 5);
 
 //Creating farmer objects from classes
 var shnilli = new Farmer("Shnilli", Number(localStorage.getItem(farmersList[0])), 0.003, 1, "Everyone's favorite chocolate potato", "images/peanutgame/shnilli.png", "shnilli", 3);
@@ -693,9 +701,9 @@ var maggot = new Farmer("The Maggot", Number(localStorage.getItem(farmersList[14
 var abominodas = new Farmer("Abominodas", Number(localStorage.getItem(farmersList[15])), 700000000000000, 650000000000000, "One of the most powerful Abomination Gods", "images/peanutgame/abominodas.png", "abominodas", 5);
 var theInception = new Farmer("The Inception", Number(localStorage.getItem(farmersList[16])), 5800000000000000, 5000000000000000, "The first, the last, the strongest", "images/peanutgame/inception.png", "creation", 10);
 
-var houi = new Farmer("Houi", Number(localStorage.getItem(farmersList[17])), 90000000000000000, 50000000000000000, "A 2107th dimensional creature with only 1 emotion: Happiness", "images/peanutgame/prestige/houi.png", "houi", 5);
-var croui = new Farmer("Croui", Number(localStorage.getItem(farmersList[18])), 550000000000000000, 250000000000000000, "Another 2107th dimensional creature, known for its creepy smile", "images/peanutgame/prestige/croui.png", "croui", 5);
-var killoi = new Farmer("Killoi", Number(localStorage.getItem(farmersList[19])), 3000000000000000000, 1200000000000000000, "The nightmares aren't real, right", "images/peanutgame/prestige/killoi2.png", "killoi", 5);
+var houi = new Farmer("Houi", Number(localStorage.getItem(farmersList[17])), 4500000000000000000, 50000000000000000, "A 2107th dimensional creature with only 1 emotion: Happiness", "images/peanutgame/prestige/houi.png", "houi", 5);
+var croui = new Farmer("Croui", Number(localStorage.getItem(farmersList[18])), 250000000000000000000, 250000000000000000, "Another 2107th dimensional creature, known for its creepy smile", "images/peanutgame/prestige/croui.png", "croui", 5);
+var killoi = new Farmer("Killoi", Number(localStorage.getItem(farmersList[19])), 15000000000000000000000, 1200000000000000000, "The nightmares aren't real, right?", "images/peanutgame/prestige/killoi2.png", "killoi", 5);
 
 //Checking for upgrade level storage
 if (!localStorage.peanutPrice) {localStorage.peanutPrice = 0;}
@@ -767,16 +775,16 @@ var power = new Upgrade("Unlimited Power", Number(localStorage.getItem(farmerUpg
 var unlockVoid = new Upgrade("Void", Number(localStorage.unlockVoid), 1, 1000000000000000, "Void", "images/peanutgame/void.png", "unlockVoid", "itemUpgrade");
 var darkness = new Upgrade("Darkness", Number(localStorage.getItem(itemUpgradeList[22])), 1, 35000000000000000, "The Void gets filled by darkness...", "images/peanutgame/void.png", "darkness", "itemUpgrade");
 
-var extraDimension = new Upgrade("Extra Dimension", Number(localStorage.getItem(itemUpgradeList[23])), 1, 600000000000000000, "The 2107th Dimension gains an extra dimension, doubling its peanut production", "images/peanutgame/prestige/2107.jpg", "extraDimension", "itemUpgrade");
-var missingPage = new Upgrade("Missing Page", Number(localStorage.getItem(itemUpgradeList[24])), 1, 20000000000000000000, "A missing page is found...", "images/peanutgame/prestige/page.png", "missingPage", "itemUpgrade");
+var extraDimension = new Upgrade("Extra Dimension", Number(localStorage.getItem(itemUpgradeList[23])), 1, 90000000000000000000, "The 2107th Dimension gains an extra dimension, doubling its peanut production", "images/peanutgame/prestige/2107.jpg", "extraDimension", "itemUpgrade");
+var missingPage = new Upgrade("Missing Page", Number(localStorage.getItem(itemUpgradeList[24])), 1, 300000000000000000000000, "A missing page is found...", "images/peanutgame/prestige/page.png", "missingPage", "itemUpgrade");
 
 var divineBlood = new Upgrade("Divine Blood", Number(localStorage.getItem("Divine Blood")), 1, 0.3, "Shnilli transforms into Divine Shnilli, doubling his peanut production further", "images/peanutgame/upgrades/divine shnilli.png", "divineBlood", "farmerUpgrade");
 var unlockCreation = new Upgrade("Creation", Number(localStorage.unlockCreation), 1, 1500000000000000, "Creation", "images/peanutgame/upgrades/light.png", "unlockCreation", "farmerUpgrade");
 var light = new Upgrade("Light of Creation", Number(localStorage.getItem(farmerUpgradeList[16])), 1, 58000000000000000, "An immense light surrounds The Inception...", "images/peanutgame/upgrades/inception.png", "light", "farmerUpgrade");
 
-var moreHappiness = new Upgrade("More Happiness", Number(localStorage.getItem(farmerUpgradeList[17])), 1, 900000000000000000, "Houi gets even happier, doubling his peanut production", "images/peanutgame/prestige/houi.png", "moreHappiness", "farmerUpgrade");
-var creepierSmile = new Upgrade("Creepier Smile", Number(localStorage.getItem(farmerUpgradeList[18])), 1, 5500000000000000000, "Croui's smile gets creepier, doubling his peanut production", "images/peanutgame/prestige/croui.png", "creepierSmile", "farmerUpgrade");
-var endlessNightmares = new Upgrade("Endless Nightmares", Number(localStorage.getItem(farmerUpgradeList[19])), 1, 30000000000000000000, "You feel yourself getting more and more consumed by the nightmares...", "images/peanutgame/prestige/killoi2.png", "endlessNightmares", "farmerUpgrade");
+var moreHappiness = new Upgrade("More Happiness", Number(localStorage.getItem(farmerUpgradeList[17])), 1, 135000000000000000000, "Houi gets even happier, doubling his peanut production", "images/peanutgame/prestige/houi.png", "moreHappiness", "farmerUpgrade");
+var creepierSmile = new Upgrade("Creepier Smile", Number(localStorage.getItem(farmerUpgradeList[18])), 1, 7500000000000000000000, "Croui's smile gets creepier, doubling his peanut production", "images/peanutgame/prestige/croui.png", "creepierSmile", "farmerUpgrade");
+var endlessNightmares = new Upgrade("Endless Nightmares", Number(localStorage.getItem(farmerUpgradeList[19])), 1, 450000000000000000000000, "You feel yourself getting more and more consumed by the nightmares...", "images/peanutgame/prestige/killoi2.png", "endlessNightmares", "farmerUpgrade");
 
 //Creating prestige upgrade objects from classes
 if (!localStorage.prestigePeanutValue) {localStorage.prestigePeanutValue = 0;}
@@ -789,6 +797,8 @@ if (!localStorage.happy) {localStorage.happy = 0;}
 if (!localStorage.smile) {localStorage.smile = 0;}
 if (!localStorage.book) {localStorage.book = 0;}
 
+if (!localStorage.autoSell) {localStorage.autoSell = 0;}
+
 var prestigePeanutValue = new PrestigeUpgrade("Peanut Value", Number(localStorage.prestigePeanutValue), 99, 1, "Doubles the value of peanuts from $0.001 to $0.002", "images/peanutgame/prestige/peanut.png", "pPeanutValue", "peanutValue");
 var prestigeProductionSpeed = new PrestigeUpgrade("Production Speed", Number(localStorage.prestigeProductionSpeed), 99, 1, "Increases the amount of peanuts produced by everything by a total of 2x", "images/peanutgame/prestige/production.png", "pProductionSpeed", "peanutProduction");
 var morePrestigePoints = new PrestigeUpgrade("Prestige Points", Number(localStorage.morePrestigePoints), 4, 1, "Increases the amount of prestige points you get from prestiging by a total of 1", "images/peanutgame/prestige/prestige-point.png", "pPrestigePoints", "prestigePoints");
@@ -799,6 +809,8 @@ var p2107 = new PrestigeUpgrade("2107", Number(localStorage.p2107), 1, 2, "A hig
 var happy = new PrestigeUpgrade("Happy", Number(localStorage.happy), 1, 2, "There is only happiness", "images/peanutgame/prestige/pHoui.png", "happy", "farmerUpgrade");
 var smile = new PrestigeUpgrade("Smile", Number(localStorage.smile), 1, 3, "Where there is happiness, there is smile", "images/peanutgame/prestige/pCroui.png", "smile", "farmerUpgrade");
 var book = new PrestigeUpgrade("Book", Number(localStorage.book), 1, 4, "Where you go, the Book will follow", "images/peanutgame/prestige/pBook.png", "book", "farmerUpgrade");
+
+var autoSellUpgrade = new PrestigeUpgrade("Auto-Sell Peanuts", Number(localStorage.autoSell), 1, 5, "Does selling peanuts take too long? Buy this!", "images/peanutgame/prestige/auto-sell.png", "autoSell", "autoSell");
 
 //Creating shop elements
 function createItemElement(name, amount, price, production, description, image, onclick, id) {
@@ -1440,16 +1452,17 @@ function clickScreen() {
 }
 
 //Auto-farming function
-var i = 1;
 
 function autoFarming() {
 	setTimeout(function() {
     	peanuts += peanutsPerSecond * productionBonus;
 		updateInventory(peanuts, money, peanutsPerClick, peanutsPerSecond);
 	
-    	if (i < 10) {
-      		autoFarming(); 
-    	}
+      	autoFarming();
+		
+		if (autoSellUpgrade.level > 0) {
+			sellPeanuts();
+		}
   	}, 1000)
 }
 
@@ -1464,9 +1477,7 @@ function glitchEffect() {
 			glitchSound.play();
 		}
 
-    	if (i < 10) {
-      		removeGlitchEffect();
-    	}
+      	removeGlitchEffect();
 
   	}, (Math.random()+1)*100000)
 }
@@ -1478,9 +1489,8 @@ function removeGlitchEffect() {
 			glitchSound.pause();
 		}
 		
-    	if (i < 10) {
-      		glitchEffect();
-    	}
+      	glitchEffect();
+		
   	}, Math.random()*900 + 100)
 }
 
@@ -1557,8 +1567,18 @@ function roundNumber(number) {
 		return (Math.round(number / 10**71) / 10) + " tresvigintillion";
 	} else if (number < 10**78) {
 		return (Math.round(number / 10**74) / 10) + " quatuorvigintillion";
-	} else {
+	} else if (number < 10**81) {
 		return (Math.round(number / 10**77) / 10) + " quinquavigintillion";
+	} else if (number < 10**84) {
+		return (Math.round(number / 10**80) / 10) + " sesvigintillion";
+	} else if (number < 10**87) {
+		return (Math.round(number / 10**83) / 10) + " septemvigintillion";
+	} else if (number < 10**90) {
+		return (Math.round(number / 10**86) / 10) + " octovigintillion";
+	} else if (number < 10**93) {
+		return (Math.round(number / 10**89) / 10) + " novemvigintillion";
+	} else {
+		return (Math.round(number / 10**92) / 10) + " trigintillion";
 	}
 }
 
@@ -1635,6 +1655,7 @@ function prestige() {
 		localStorage.prestigeProductionSpeed = prestigeProductionSpeed.level;
 		localStorage.morePrestigePoints = morePrestigePoints.level;
 		localStorage.moreStartingMoney = moreStartingMoney.level;
+		localStorage.autoSell = autoSellUpgrade.level;
 
 		localStorage.p2107 = p2107.level;
 		localStorage.book = book.level;
@@ -1683,6 +1704,10 @@ if (happy.level > 0 && smile.level < 1) {
 
 if (smile.level > 0 && book.level < 1) {
 	book.createUpgrade("book.upgrade()")
+}
+
+if (morePrestigePoints.level > 3 && autoSellUpgrade.level < 1) {
+	autoSellUpgrade.createUpgrade("autoSellUpgrade.upgrade()")
 }
 
 if (missingPage.level > 0) {
