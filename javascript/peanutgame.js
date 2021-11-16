@@ -238,7 +238,7 @@ class Upgrade {
 
 				let nextPeanutValue = peanutValues[this.level +1] * lightBonus * Math.pow(2, prestigePeanutValue.level) * Math.pow(1 + (killoiBook.amount * killoiBonus), missingPage.level);
 
-				this.description = "Increases the value of peanuts from $" + (peanutValue >= 1)? roundNumber(peanutValue) : Math.round(peanutValue * 100000) / 100000 + " to $" + (nextPeanutValue >= 1)? roundNumber(nextPeanutValue) : Math.round(nextPeanutValue * 100000) / 100000;
+				this.description = "Increases the value of peanuts from $" + ((peanutValue >= 1)? roundNumber(peanutValue) : Math.round(peanutValue * 100000) / 100000) + " to $" + ((nextPeanutValue >= 1)? roundNumber(nextPeanutValue) : Math.round(nextPeanutValue * 100000) / 100000);
 			}
 
 			if (this.type == "peanutProduction") {
@@ -320,7 +320,7 @@ class Upgrade {
 
 				let nextPeanutValue = peanutValues[this.level +1] * lightBonus * Math.pow(2, prestigePeanutValue.level) * Math.pow(1 + (killoiBook.amount * killoiBonus), missingPage.level);
 
-				this.description = "Increases the value of peanuts from $" + (peanutValue >= 1)? roundNumber(peanutValue) : Math.round(peanutValue * 100000) / 100000 + " to $" + (nextPeanutValue >= 1)? roundNumber(nextPeanutValue) : Math.round(nextPeanutValue * 100000) / 100000;
+				this.description = "Increases the value of peanuts from $" + ((peanutValue >= 1)? roundNumber(peanutValue) : Math.round(peanutValue * 100000) / 100000) + " to $" + ((nextPeanutValue >= 1)? roundNumber(nextPeanutValue) : Math.round(nextPeanutValue * 100000) / 100000);
 
 				localStorage.setItem("peanutPrice", this.level);
 			}
@@ -446,7 +446,7 @@ class PrestigeUpgrade {
 		if (this.maxLevel > this.level) {
 			if (this.type == "peanutValue") {
 				peanutValue = 0.001 * Math.pow(2, this.level);
-				this.description = "Doubles the value of peanuts from $" + (peanutValue >= 1)? roundNumber(peanutValue) : Math.round(peanutValue * 10000) / 10000 + " to $" + (peanutValue >= 1)? roundNumber(peanutValue) : Math.round(peanutValue * 2 * 10000) / 10000;
+				this.description = "Doubles the value of peanuts from $" + ((peanutValue >= 1)? roundNumber(peanutValue) : Math.round(peanutValue * 10000) / 10000) + " to $" + ((peanutValue >= 1)? roundNumber(peanutValue) : Math.round(peanutValue * 2 * 10000) / 10000);
 			}
 
 			if (this.type == "peanutProduction") {
@@ -522,7 +522,7 @@ class PrestigeUpgrade {
 
 			if (this.type == "peanutValue") {
 				peanutValue = 0.001 * Math.pow(2, this.level);
-				this.description = "Doubles the value of peanuts from $" + (peanutValue >= 1)? roundNumber(peanutValue) : Math.round(peanutValue * 10000) / 10000 + " to $" + (peanutValue >= 1)? roundNumber(peanutValue) : Math.round(peanutValue * 2 * 10000) / 10000;
+				this.description = "Doubles the value of peanuts from $" + ((peanutValue >= 1)? roundNumber(peanutValue) : Math.round(peanutValue * 10000) / 10000) + " to $" + ((peanutValue >= 1)? roundNumber(peanutValue) : Math.round(peanutValue * 2 * 10000) / 10000);
 
 				localStorage.setItem("prestigePeanutValue", this.level);
 
