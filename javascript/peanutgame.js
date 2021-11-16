@@ -1547,8 +1547,18 @@ function roundNumber(number) {
 		return (Math.round(number / 10**56) / 10) + " octodecillion";
 	} else if (number < 10**63) {
 		return (Math.round(number / 10**59) / 10) + " novemdecillion";
-	} else {
+	} else if (number < 10**66) {
 		return (Math.round(number / 10**62) / 10) + " vigintillion";
+	} else if (number < 10**69) {
+		return (Math.round(number / 10**65) / 10) + " unvigintillion";
+	} else if (number < 10**72) {
+		return (Math.round(number / 10**68) / 10) + " duovigintillion";
+	} else if (number < 10**75) {
+		return (Math.round(number / 10**71) / 10) + " tresvigintillion";
+	} else if (number < 10**78) {
+		return (Math.round(number / 10**74) / 10) + " quatuorvigintillion";
+	} else {
+		return (Math.round(number / 10**77) / 10) + " quinquavigintillion";
 	}
 }
 
