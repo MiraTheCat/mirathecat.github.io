@@ -1618,6 +1618,259 @@ addLayer("ms", {
     },
 })
 
+addLayer("n", {
+    name: "Nations", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "N", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: false,
+		points: new Decimal(0),
+        total: new Decimal(0),
+        best: new Decimal(0),
+        auto: false,
+    }},
+    color: "#00ab2d",
+    requires() {
+        return new Decimal(20)
+    }, // Can be a function that takes requirement increases into account
+    roundUpCost: true,
+    resource: "nations", // Name of prestige currency
+    baseResource: "towns", // Name of resource prestige is based on
+    branches: ["t", "ms"],
+    baseAmount() {return player.t.points}, // Get the current amount of baseResource
+    type() {
+        return "static"
+    },
+    exponent: 1, // Prestige currency exponent
+    gainMult() {
+        let mult = new Decimal(1)
+        return mult
+    },
+
+    base() {
+        return new Decimal(1.18)
+    },
+    canBuyMax() {
+        return hasMilestone("n", 3)
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    row: 3, // Row the layer is in on the tree (0 is the first row)
+    hotkeys: [
+        {key: "n", description: "N: Perform a Nation reset", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    layerShown() {
+        return false
+    },
+    addToBase() {
+        let base = new Decimal(0);
+        return base;
+    },
+    effectBase() {
+        let base = new Decimal(2);
+        base = base.plus(tmp.n.addToBase);
+        return base.pow(tmp.n.power);
+    },
+    power() {
+        let power = new Decimal(1);
+        return power;
+    },
+    effect() {
+        let eff = Decimal.pow(tmp.n.effectBase, player.n.points).log(10).add(1);
+        return softcap(eff, new Decimal(100), 0.33);
+    },
+    effectDescription() {
+        return "which are boosting the Town base by " + format(tmp.n.effect) + "x"
+    },
+
+    doReset(resettingLayer) {
+        let keep = [];
+        if (layers[resettingLayer].row > this.row)
+            layerDataReset("n", keep)
+    },
+
+    tabFormat: {
+        "Main Tab": {
+            content: ["main-display", "prestige-button", ["display-text", function() {
+                return "You have " + formatWhole(player.t.points) + " towns "
+            }
+            , {}], "blank", ["display-text", function() {
+                return 'Your best Nations is ' + formatWhole(player.n.best) + '<br>You have made a total of ' + formatWhole(player.n.total) + " Nations."
+            }
+            , {}], "blank", "milestones", "blank", "upgrades"],
+        },
+        "Researchers": {
+            unlocked() {
+                return false
+            },
+            content: ["main-display", ["display-text", function() {
+                return 'Your best Nations is ' + formatWhole(player.n.best) + '<br>You have made a total of ' + formatWhole(player.n.total) + " Nations."
+            }
+            , {}], "blank",],
+        },
+    },
+
+    milestones: {
+        0: {
+            requirementDescription: "2 Nations",
+            done() {
+                return player.n.best.gte(2)
+            },
+            effectDescription: "Keep Town milestones on all resets",
+        },
+        1: {
+            requirementDescription: "3 Nations",
+            done() {
+                return player.n.best.gte(3)
+            },
+            effectDescription: "Keep MSPaintium milestones on all resets",
+        },
+        2: {
+            requirementDescription: "4 Nations",
+            done() {
+                return player.n.best.gte(4)
+            },
+            effectDescription: "Keep Town upgrades on all resets",
+        },
+        3: {
+            requirementDescription: "5 Nations",
+            done() {
+                return player.n.best.gte(4)
+            },
+            effectDescription: "Keep MSPaintium upgrades on all resets",
+        },
+        4: {
+            requirementDescription: "6 Nations",
+            done() {
+                return player.n.best.gte(6)
+            },
+            effectDescription: "Unlock Auto-Towns",
+            toggles: [["t", "auto"]],
+        },
+        5: {
+            requirementDescription: "8 Nations",
+            done() {
+                return player.n.best.gte(8)
+            },
+            effectDescription: "Towns reset nothing and you can buy max Nations",
+        },
+    },
+
+    upgrades: {
+    },
+})
+
+addLayer("b", {
+    name: "Bots", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "B", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: false,
+		points: new Decimal(0),
+        total: new Decimal(0),
+        best: new Decimal(0),
+        auto: false,
+    }},
+    color: "#486b51",
+    requires() {
+        return new Decimal(20)
+    }, // Can be a function that takes requirement increases into account
+    resource: "bot parts", // Name of prestige currency
+    baseResource: "factories", // Name of resource prestige is based on
+    roundUpCost: true,
+    branches: ["ms", "fa"],
+    baseAmount() {return player.fa.points}, // Get the current amount of baseResource
+    type() {
+        return "normal"
+    },
+    exponent: 1, // Prestige currency exponent
+    gainMult() {
+        let mult = new Decimal(1.7)
+        return mult
+    },
+
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+
+    passiveGeneration() {
+        return false
+    },
+
+    row: 3, // Row the layer is in on the tree (0 is the first row)
+    hotkeys: [
+        {key: "b", description: "B: Perform a Bot reset", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    layerShown() {
+        return false
+    },
+    addToBase() {
+        let base = new Decimal(0);
+        return base;
+    },
+    effectBase() {
+        let base = new Decimal(1.5);
+        base = base.plus(tmp.b.addToBase);
+        return base.pow(tmp.b.power);
+    },
+    power() {
+        let power = new Decimal(1);
+        return power;
+    },
+    effect() {
+        let eff = Decimal.pow(tmp.b.effectBase, player.b.points).log(10).add(1);
+        eff = softcap(eff, new Decimal(5), 0.2);
+        return softcap(eff, new Decimal(100), 0.33);
+    },
+
+    effectDescription() {
+        let desc = "which is boosting the Factory base by " + format(tmp.b.effect) + "x";
+        return desc;
+    },
+
+    doReset(resettingLayer) {
+        let keep = [];
+        if (layers[resettingLayer].row > this.row)
+            layerDataReset("b", keep)
+    },
+
+    milestones: {
+        0: {
+            requirementDescription: "2 Bot Parts",
+            done() {
+                return player.b.best.gte(2)
+            },
+            effectDescription: "Keep Factory milestones on all resets",
+        },
+        1: {
+            requirementDescription: "5 Bot Parts",
+            done() {
+                return player.b.best.gte(5)
+            },
+            effectDescription: "Keep Factory upgrades on all resets",
+        },
+        2: {
+            requirementDescription: "20 Bot Parts",
+            done() {
+                return player.b.best.gte(20)
+            },
+            effectDescription: "Unlock Auto-Factories",
+            toggles: [["fa", "auto"]],
+        },
+        3: {
+            requirementDescription: "50 Bot Parts",
+            done() {
+                return player.b.best.gte(50)
+            },
+            effectDescription: "Factories reset nothing",
+        },
+    },
+
+    upgrades: {
+    },
+})
+
 /* ===== ACHIEVEMENTS ===== */
 
 addLayer("a", {
