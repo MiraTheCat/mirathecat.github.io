@@ -1,0 +1,44 @@
+button {
+    justify-self: center;
+    width: 150px;
+    border: 2px solid white;
+    border-radius: 10px;
+    background-color: black;
+    color: white;
+    min-height: 40px;
+    margin: 10px;
+}
+
+button:hover {
+    filter: brightness(80%);
+    cursor: pointer;
+}
+
+table {
+    border-collapse: collapse;
+    border-bottom: 1px solid white;
+    margin: 10px auto;
+}
+
+th, td {
+    border: 1px solid white;
+    height: 25px;
+    width: 25px;
+}
+
+.mine {
+    background-color: #a80000;
+}
+
+.veryBigNum {
+    background-color: #c5c5c5;
+    color: black;
+}
+
+.bigNum {
+    background-color: #808080;
+}
+
+.smallNum {
+    background-color: #414141;
+}

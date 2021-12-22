@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Mira The Cat - Minesweeper Generator</title>
+        <link rel="icon" href="/images/pfp.png">
+        
+        <meta property="og:site_name" content="Mira The Cat's Website">
+        <meta property="og:title" content="Minesweeper Generator">
+        <meta property="og:description" content="A Minesweeper Generator for Discord!">
+        <meta property='og:image' content='/images/pfp.png'>
+        <meta property="og:type" content="website">
+        <meta name="theme-color" content="#60ff52">
+
+        <link rel="stylesheet" type="text/css" href="/css/style.css">
+        <link rel="stylesheet" type="text/css" href="/css/minesweeper.css">
+    </head>
+
+    <body>
+        <!-- HTML -->
+
+        <div class="navigation-bar">
+            <img class="icon" src="/images/pfp.png">
+        </div>
+
+        <h2>Discord Minesweeper Generator</h2>
+
+        <button id="gen">Generate Minesweeper</button>
+
+        <div>
+            <form>
+                <label for="rows" id="rowsText">Rows: 10/10</label>
+                <input type="range" id="rows" name="rows" min="1" max="10" step="1">
+            </form>
+            <form>
+                <label for="cols" id="colsText">Columns: 9/10</label>
+                <input type="range" id="cols" name="cols" min="1" max="9" step="1">
+            </form>
+        </div>
+
+        <table id="map"></table>
+
+        <button id="copy" style="display: none;">Copy to Discord</button>
+
+        <!-- Script -->
+
+        <script src="/javascript/navBar.js"></script>
+
+        <script>
+            let genButtonEl = document.querySelector("#gen");
+            let copyButtonEl = document.querySelector("#copy");
+            let mapEl = document.querySelector("#map");
+
+            let rowsEl = document.querySelector("#rows");
+            let rowsTextEl = document.querySelector("#rowsText");
+
+            let colsEl = document.querySelector("#cols");
+            let colsTextEl = document.querySelector("#colsText");
+
+            rowsEl.value = 10;
+            colsEl.value = 9;
+
+            let map = [];
+            let cols = 9;
+            let rows = 10;
+            let percentMines = 0.2;
+
+            genButtonEl.addEventListener("click", generateMinesweeper);
+            copyButtonEl.addEventListener("click", copyToDiscord);
+
+            rowsEl.addEventListener("mousemove", changeRows);
+            rowsEl.addEventListener("change", generateMinesweeper);
+
+            colsEl.addEventListener("mousemove", changeCols);
+            colsEl.addEventListener("change", generateMinesweeper);
+
+            function generateMinesweeper() {
+                // Generating map and placing down mines
+
+                map = [];
+
+                for (let i = 0; i < rows; i++) {
+                    let row = [];
+
+                    for (let j = 0; j < cols; j++) {
+                        let mineCheck = Math.random();
+                        let col = (mineCheck > percentMines) ? 0 : "x";
+
+                        row.push(col);
+                    }
+
+                    map.push(row);
+                }
+
+                // Going through map and checking if the different rows/columns have mines beside them
+
+                // For every row
+                for (let i = 0; i < rows; i++) {
+                    // For every column
+                    for (let j = 0; j < cols; j++) {
+                        let mineCount = 0;
+
+                        if (map[i][j] == 0) {
+
+                            // ========= CHECKING LEFT COLUMN =========
+
+                            // If j > 0, it has a column to the left
+                            if (j > 0) {
+                                // If i > 0, it has a row above it
+                                if (i > 0) {
+                                    if (map[i-1][j-1] == "x") {
+                                        mineCount += 1;
+                                    }
+                                }
+
+                                // Check the area to the left
+                                if (map[i][j-1] == "x") mineCount += 1;
+
+                                // If i < (rows -1), it has a row below it
+                                if (i < (rows -1)) {
+                                    if (map[i+1][j-1] == "x") {
+                                        mineCount += 1;
+                                    }
+                                }
+                            }
+
+                            // ========= CHECKING SAME COLUMN =========
+
+                            // If i > 0, it has a row above it
+                            if (i > 0) {
+                                if (map[i-1][j] == "x") {
+                                    mineCount += 1;
+                                }
+                            }
+
+                            // If i < (rows -1), it has a row below it
+                            if (i < (rows -1)) {
+                                if (map[i+1][j] == "x") {
+                                    mineCount += 1;
+                                }
+                            }
+
+                            // ========= CHECKING RIGHT COLUMN =========
+
+                            // If j < (cols -1), it has a column to the right
+                            if (j < cols -1) {
+                                // If i > 0, it has a row above it
+                                if (i > 0) {
+                                    if (map[i-1][j+1] == "x") {
+                                        mineCount += 1;
+                                    }
+                                }
+
+                                // Check the area to the right
+                                if (map[i][j+1] == "x") mineCount += 1;
+
+                                // If i < (rows -1), it has a row below it
+                                if (i < (rows -1)) {
+                                    if (map[i+1][j+1] == "x") {
+                                        mineCount += 1;
+                                    }
+                                }
+                            }
+
+                            map[i][j] = mineCount;
+                        }
+                        
+                    }
+                }
+
+                // Update table
+                updateMap(map, cols, rows);
+            }
+
+            function updateMap(map, cols, rows) {
+
+                // If tbody already exists, delete it
+                if (document.querySelector("tbody")) mapEl.removeChild(document.querySelector("tbody"));
+
+                // Create a new tbody element
+                let tbodyEl = document.createElement("tbody");
+
+                // For every row, create a row in the table
+                for (let i = 0; i < rows; i++) {
+                    let trEl = document.createElement("tr");
+
+                    // For every column, create a column in the table
+                    for (let j = 0; j < cols; j++) {
+                        let tdEl = document.createElement("td");
+
+                        if (map[i][j] == "x") {
+                            tdEl.className = "mine";
+                        } else if (map[i][j] >= 5) {
+                            tdEl.className = "veryBigNum";
+                        } else if (map[i][j] >= 3) {
+                            tdEl.className = "bigNum";
+                        } else if (map[i][j] >= 1) {
+                            tdEl.className = "smallNum";
+                        }
+
+                        tdEl.innerHTML = map[i][j];
+
+                        trEl.appendChild(tdEl);
+                    }
+
+                    tbodyEl.appendChild(trEl);
+                }
+
+                mapEl.appendChild(tbodyEl);
+
+                // Display the Copy button
+                copyButtonEl.style.display = "inline";
+            }
+            
+            function copyToDiscord() {
+                let copyText = "";
+
+                let rows = map.length;
+                let cols = map[0].length;
+
+                let toEmoji = {
+                    0: ":zero:",
+                    1: ":one:",
+                    2: ":two:",
+                    3: ":three:",
+                    4: ":four:",
+                    5: ":five:",
+                    6: ":six:",
+                    7: ":seven:",
+                    8: ":eight:",
+                    9: ":nine:",
+                    "x": ":bomb:",
+                }
+
+                // For every row
+                for (let i = 0; i < rows; i++) {
+                    // For every column
+                    for (let j = 0; j < cols; j++) {
+                        // Find the value in the current area
+                        let currentText = map[i][j];
+
+                        // Turn it into discord emojies + spoilers
+                        currentText = "||" + toEmoji[currentText] + "|| ";
+
+                        copyText += currentText;
+                    }
+
+                    copyText += "\n";
+                }
+
+                // Copy to clipboard!
+                navigator.clipboard.writeText(copyText);
+            }
+
+            function changeRows() {
+                rows = Number(rowsEl.value);
+                rowsTextEl.innerHTML = "Rows: " + rows + "/10";
+            }
+
+            function changeCols() {
+                cols = Number(colsEl.value);
+                colsTextEl.innerHTML = "Columns: " + cols + "/9";
+            }
+        </script>
+    </body>
+</html>
