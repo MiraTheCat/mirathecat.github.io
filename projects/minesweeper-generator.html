@@ -249,7 +249,17 @@
 
                 // Copy to clipboard!
 
-                navigator.clipboard.writeText(copyText);
+                /* Get the text field */
+                let copyEl = document.createElement("textarea");
+
+                copyEl.innerHTML = copyText;
+
+                /* Select the text field */
+                copyEl.select();
+                copyEl.setSelectionRange(0, 99999); /* For mobile devices */
+
+                /* Copy the text inside the text field */
+                navigator.clipboard.writeText(copEl.value);
             }
 
             function changeRows() {
