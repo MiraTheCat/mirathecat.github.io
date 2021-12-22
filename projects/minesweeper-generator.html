@@ -32,8 +32,12 @@
                 <input type="range" id="rows" name="rows" min="1" max="10" step="1">
             </form>
             <form>
-                <label for="cols" id="colsText">Columns: 9/10</label>
+                <label for="cols" id="colsText">Columns: 9/9</label>
                 <input type="range" id="cols" name="cols" min="1" max="9" step="1">
+            </form>
+            <form>
+                <label for="percent" id="percentText">Mine Percentage: 20%</label>
+                <input type="range" id="percent" name="percent" min="0" max="100" step="1">
             </form>
         </div>
 
@@ -55,14 +59,19 @@
 
             let colsEl = document.querySelector("#cols");
             let colsTextEl = document.querySelector("#colsText");
+            
+            let percentEl = document.querySelector("#percent");
+            let percentTextEl = document.querySelector("#percentText");
 
             rowsEl.value = 10;
             colsEl.value = 9;
+            percentEl.value = 20;
 
             let map = [];
             let cols = 9;
             let rows = 10;
             let percentMines = 0.2;
+            let mines = 0;
 
             genButtonEl.addEventListener("click", generateMinesweeper);
             copyButtonEl.addEventListener("click", copyToDiscord);
@@ -70,13 +79,14 @@
             rowsEl.addEventListener("mousemove", changeRows);
             rowsEl.addEventListener("change", generateMinesweeper);
 
-            colsEl.addEventListener("mousemove", changeCols);
-            colsEl.addEventListener("change", generateMinesweeper);
+            percentEl.addEventListener("mousemove", changePercent);
+            percentEl.addEventListener("change", generateMinesweeper);
 
             function generateMinesweeper() {
                 // Generating map and placing down mines
 
                 map = [];
+                mines = 0;
 
                 for (let i = 0; i < rows; i++) {
                     let row = [];
@@ -84,6 +94,8 @@
                     for (let j = 0; j < cols; j++) {
                         let mineCheck = Math.random();
                         let col = (mineCheck > percentMines) ? 0 : "x";
+
+                        if (col == "x") mines += 1;
 
                         row.push(col);
                     }
@@ -247,6 +259,8 @@
                     copyText += "\n";
                 }
 
+                copyText += "Mines: **" + mines + "**";
+
                 // Copy to clipboard!
 
                 /* Get the text field */
@@ -270,6 +284,11 @@
             function changeCols() {
                 cols = Number(colsEl.value);
                 colsTextEl.innerHTML = "Columns: " + cols + "/9";
+            }
+
+            function changePercent() {
+                percentMines = Number(percentEl.value) / 100;
+                percentTextEl.innerHTML = "Mine Percentage: " + percentEl.value + "%";
             }
         </script>
     </body>
