@@ -5921,7 +5921,7 @@ addLayer("a", {
         },
 
         84: {
-            name: "The End?",
+            name: "Is this The End?",
             done() {
                 return player.points.gte("1e5400");
             },

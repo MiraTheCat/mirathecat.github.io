@@ -15,3 +15,15 @@ function upgradeCount(layer) {
 
     return count;
 }
+
+function challengeCompletions(layer) {
+    let count = 0;
+
+    if (hasChallenge(layer, 11)) count += 1;
+    if (hasChallenge(layer, 12)) count += 1;
+    
+    if (hasChallenge(layer, 21)) count += 1;
+    if (hasChallenge(layer, 22)) count += 1;
+
+    return count;
+}
