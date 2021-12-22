@@ -248,7 +248,35 @@
                 }
 
                 // Copy to clipboard!
-                navigator.clipboard.writeText(copyText);
+
+                
+                if (true) {
+                    var dummy = document.createElement("textarea");
+                    
+                    document.body.appendChild(dummy);
+
+                    dummy.value = $parameters.Text;
+
+                    dummy.contentEditable = true;
+
+                    dummy.readOnly = true;
+
+                    var range = document.createRange();
+
+                    range.selectNodeContents(dummy);
+
+                    var selection = window.getSelection();
+
+                    selection.removeAllRanges();
+
+                    selection.addRange(range);
+
+                    el.setSelectionRange(0, 999999);
+
+                    document.execCommand("copy");
+
+                    document.body.removeChild(dummy);
+                }
             }
 
             function changeRows() {
