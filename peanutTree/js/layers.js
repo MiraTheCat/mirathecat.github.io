@@ -5136,7 +5136,7 @@ addLayer("l", {
             },
 
             effect() {
-                return player.l.buyables[11].log(1.5);
+                return player.l.buyables[11].max(1).log(1.5);
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
         },
@@ -5166,7 +5166,7 @@ addLayer("l", {
             },
 
             effect() {
-                return player.l.buyables[11].log(1.5);
+                return player.l.buyables[11].max(1).log(1.5);
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
         },
@@ -5248,7 +5248,7 @@ addLayer("l", {
             },
 
             effect() {
-                return player.l.buyables[11].log(1.5);
+                return player.l.buyables[11].max(1).log(1.5);
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
         },
