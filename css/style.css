@@ -105,6 +105,11 @@ a {
     padding: 10px 0 10px 0;
 }
 
+.project-span {
+    grid-column: span 2;
+    margin: auto;
+}
+
 .project-img {
     width: 90%;
     border-radius: 16px;
