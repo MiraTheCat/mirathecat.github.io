@@ -28,8 +28,8 @@
 
         <div>
             <form>
-                <label for="rows" id="rowsText">Rows: 10/10</label>
-                <input type="range" id="rows" name="rows" min="1" max="10" step="1">
+                <label for="rows" id="rowsText">Rows: 11/11</label>
+                <input type="range" id="rows" name="rows" min="1" max="11" step="1">
             </form>
             <form>
                 <label for="cols" id="colsText">Columns: 9/9</label>
@@ -63,15 +63,16 @@
             let percentEl = document.querySelector("#percent");
             let percentTextEl = document.querySelector("#percentText");
 
-            rowsEl.value = 10;
+            rowsEl.value = 11;
             colsEl.value = 9;
             percentEl.value = 20;
 
             let map = [];
             let cols = 9;
-            let rows = 10;
+            let rows = 11;
             let percentMines = 0.2;
             let mines = 0;
+            let maxCells = 99;
 
             genButtonEl.addEventListener("click", generateMinesweeper);
             copyButtonEl.addEventListener("click", copyToDiscord);
@@ -79,12 +80,14 @@
             rowsEl.addEventListener("mousemove", changeRows);
             rowsEl.addEventListener("change", generateMinesweeper);
 
+            colsEl.addEventListener("mousemove", changeCols);
+            colsEl.addEventListener("change", generateMinesweeper);
+
             percentEl.addEventListener("mousemove", changePercent);
             percentEl.addEventListener("change", generateMinesweeper);
 
             function generateMinesweeper() {
                 // Generating map and placing down mines
-
                 map = [];
                 mines = 0;
 
@@ -278,12 +281,18 @@
 
             function changeRows() {
                 rows = Number(rowsEl.value);
-                rowsTextEl.innerHTML = "Rows: " + rows + "/10";
+                rowsTextEl.innerHTML = "Rows: " + rows + "/" + rowsEl.max;
+
+                colsEl.max = Math.floor(maxCells / rows);
+                colsTextEl.innerHTML = "Columns: " + cols + "/" + colsEl.max;
             }
 
             function changeCols() {
                 cols = Number(colsEl.value);
-                colsTextEl.innerHTML = "Columns: " + cols + "/9";
+                colsTextEl.innerHTML = "Columns: " + cols + "/" + colsEl.max;
+
+                rowsEl.max = Math.floor(maxCells / cols);
+                rowsTextEl.innerHTML = "Rows: " + rows + "/" + rowsEl.max;
             }
 
             function changePercent() {
