@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="no">
+<head>
+    <title>Custom Discord - Games</title>
+    <link rel="icon" href="/images/discord.png">
+
+    <meta property="og:site_name" content="Mira The Cat's Website">
+    <meta property="og:title" content="Custom Discord">
+    <meta property="og:description" content="So I made Discord...">
+    <meta property='og:image' content='/images/discord.png'>
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#60ff52">
+
+    <link rel="stylesheet" type="text/css" href="/css/discord.css">
+</head>
+<body>
+
+<div class="top-div">
+    <div class="server-name">
+        Custom Discord
+    </div>
+
+    <div class="channel-description">
+        <p class="channel"># games</p>
+        <p class="description">Talk about games here!</p>
+    </div>
+</div>
+
+<div class="main-div">
+    <div class="left-div">
+        <div class="channel-list">
+            <a class="channel-name" href="news.html"># news</a>
+            <a class="channel-name" href="general.html"># general</a>
+            <a id="verifiedChat" href="verified-chat.html" class="channel-name" style="display: none;"># verified-chat</a>
+            <a class="selected-channel"># games</a>
+        </div>
+    
+        <div class="user-info-div">
+            User Settings
+        </div>
+    </div>
+    
+    <div class="mid-div">
+        <div id="messageList"></div>
+
+        <div id="input-grid">
+            <input id="messageInput" placeholder="Message #general" type="text">
+            <button id="sendButton">Send</button>
+        </div>
+    </div>
+
+    <div class="user-list" id="userList">
+
+    </div>
+</div>
+
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/8.6.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.2/firebase-auth.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+<script src="https://www.gstatic.com/firebasejs/8.6.2/firebase-firestore.js"></script>
+
+<script>
+    let bodyEl = document.querySelector("body");
+
+    bodyEl.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        hideMessageSettings();
+    })
+
+    bodyEl.addEventListener("click", hideMessageSettings);
+
+    let messageListEl = document.querySelector("#messageList");
+    let userListEl = document.querySelector("#userList");
+    let sendButtonEl = document.querySelector("#sendButton");
+    let userSettingsEl = document.querySelector(".user-info-div");
+    let messageInputEl = document.querySelector("#messageInput");
+
+    let verifiedChatEl = document.querySelector("#verifiedChat");
+    let leftDivEl = document.querySelector(".left-div");
+    let topDivEl = document.querySelector(".top-div");
+
+    leftDivEl.style.gridTemplateRows = (screen.availHeight - topDivEl.offsetHeight - 50 - 72) + "px 50px";
+
+    sendButtonEl.addEventListener("click", sendMessage);
+    messageInputEl.addEventListener("keydown", (e) => {
+        if (e.keyCode === 13) {
+            sendMessage();
+        }
+    });
+    
+    userSettingsEl.addEventListener("click", () => {
+        window.location.assign('profile.html');
+    })
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyAw_dXDTLEw5X9VBnD9PCh78z-GfxF9Vh8",
+        authDomain: "discord-2fc56.firebaseapp.com",
+        projectId: "discord-2fc56",
+        storageBucket: "discord-2fc56.appspot.com",
+        messagingSenderId: "186189307358",
+        appId: "1:186189307358:web:bbf3a14156023aef56114f"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    // Reference to database
+    let db = firebase.firestore();
+
+    // Initialize Firebase Authentication and get a reference to the service
+    const auth = firebase.auth();
+
+    let userColor;
+    let userScroll;
+
+    auth.onAuthStateChanged(user => {
+        if (!user) {
+            window.location.assign('authentication-test.html');
+        }
+
+        if (!userColor || !userScroll) {
+            getUsers(user);
+        }
+
+        if (user.emailVerified) {
+            verifiedChatEl.style.display = "block";
+        }
+    })
+
+    // Get userInfo from database
+    function getUsers(user) {
+        db.collection("users").get().then((snapshot) => {
+            let userList = snapshot.docs;
+
+            for (i = 0; i < userList.length; i++) {
+                let userData = userList[i].data();
+
+                if (userData.name == user.displayName) {
+
+                    userColor = userData.color;
+                    userScroll = userData.autoScroll;
+                    return;
+                }
+            }
+        });
+    }
+
+    // Listen for changes to database
+    db.collection("games").onSnapshot(() => {
+        update();
+    });
+
+    db.collection("users").orderBy("name", "desc").get().then((snapshot) => {
+        let userList = snapshot.docs;
+
+        for (let i = 0; i < userList.length; i++) {
+            addUserToList(userList[i]);
+        }
+    })
+
+    function update() {
+        db.collection("games").orderBy("date", "desc").limit(1).get().then((snapshot) => {
+            // Check if a new message has been sent
+            if (messageListEl.lastChild) {
+                let lastDatabaseMessageDate = snapshot.docs[0].data().date;
+                let lastWebsiteMessageDate = messageListEl.lastChild.getAttribute("data-date");
+
+                if (lastDatabaseMessageDate > lastWebsiteMessageDate) {
+                    addMessage(snapshot.docs[0]);
+                } else {
+                    reloadMessages();
+                }
+            }  else {
+                reloadMessages();
+            }
+        });
+    }
+
+    function reloadMessages() {
+        db.collection("games").orderBy("date", "desc").limit(30).get().then((snapshot) => {
+            let messages = snapshot.docs;
+
+            // Empties messageListEl
+            messageListEl.innerText = "";
+
+            // For every message, show it on the website
+            for (let i = messages.length -1; i >= 0; i--) {
+                addMessage(messages[i]);
+            }
+        });
+    }
+
+    // Function that shows the messages
+    function addMessage(message) {
+        let messageData = message.data();
+
+        let divEl = document.createElement("div");
+
+        let topDivEl = document.createElement("div");
+
+        divEl.className = "message-div";
+        divEl.setAttribute("data-id", message.id);
+        divEl.setAttribute("data-date", messageData.date);
+
+        topDivEl.className ="message-top-div";
+
+        divEl.addEventListener('contextmenu', function (e) { 
+            messageSettings(e.target);
+        }, false);
+
+        let messageEl = document.createElement("p");
+
+        let editMessageDivEl = document.createElement("div");
+        let editMessageInputEl = document.createElement("input");
+        let editMessageTextEl = document.createElement("p");
+
+        let nameEl = document.createElement("p");
+        
+        let timeEl = document.createElement("p");
+
+        let imgEl = document.createElement("img");
+
+        let time = new Date(messageData.date);
+
+        let month = ((time.getMonth() + 1) / 10 < 1) ?  "0" + (time.getMonth() + 1).toString() : time.getMonth() + 1;
+        let date = ((time.getDate()) / 10 < 1) ?  "0" + (time.getDate()).toString() : time.getDate();
+        let hour = ((time.getHours()) / 10 < 1) ?  "0" + (time.getHours()).toString() : time.getHours();
+        let minute = ((time.getMinutes()) / 10 < 1) ?  "0" + (time.getMinutes()).toString() : time.getMinutes();
+
+        // Adds message to elements
+        nameEl.innerText = messageData.user;
+        nameEl.className = "message-name";
+        nameEl.style.color = (messageData.color) ? messageData.color : "white";
+
+        timeEl.innerText = month + "/" + date + "/" + time.getFullYear() + " at " + hour + ":" + minute;
+        timeEl.className = "message-time";
+
+        // Text formatting
+        let messageText = messageData.message;
+        let formattedText = formatText(messageText);
+        
+        if (formattedText[1]) {
+            messageEl.innerHTML = formattedText[0];
+        } else {
+            messageEl.innerText = formattedText[0];
+        }
+        
+        messageEl.className = "message";
+        
+        // Add message to elements
+        editMessageDivEl.style.display = "none";
+        editMessageInputEl.type = "text";
+        editMessageInputEl.style.display = "block";
+        editMessageTextEl.innerText = "escape to cancel, enter to save";
+        editMessageTextEl.className = "edit-message-description";
+
+        imgEl.src = (messageData.image) ? messageData.image : "/images/black-image.png";
+        imgEl.className = "userMessageImage";
+
+        // Message settings
+
+        let messageSettingsDivEl = document.createElement("div");
+
+        messageSettingsDivEl.style.display = "none";
+        messageSettingsDivEl.className = "message-settings-div"
+        
+        let editMessageSettingEl = document.createElement("p");
+        let deleteMessageSettingEl = document.createElement("p");
+
+        editMessageSettingEl.innerText = "Edit Message";
+        editMessageSettingEl.className = "message-settings-text";
+        editMessageSettingEl.addEventListener("click", editMessage);
+
+        deleteMessageSettingEl.innerText = "Delete Message";
+        deleteMessageSettingEl.className = "delete-message-text";
+        deleteMessageSettingEl.addEventListener("click", deleteMessage);
+
+        // Shows messages on page
+        messageSettingsDivEl.appendChild(editMessageSettingEl);
+        messageSettingsDivEl.appendChild(deleteMessageSettingEl);
+
+        editMessageDivEl.appendChild(editMessageInputEl);
+        editMessageDivEl.appendChild(editMessageTextEl);
+        
+        topDivEl.appendChild(nameEl);
+        topDivEl.appendChild(timeEl);
+
+        divEl.appendChild(imgEl);
+        divEl.appendChild(topDivEl);
+        divEl.appendChild(messageEl);
+        divEl.appendChild(editMessageDivEl);
+        
+        divEl.appendChild(messageSettingsDivEl);
+
+        messageListEl.appendChild(divEl);
+
+        if (userScroll) {   
+            messageListEl.scrollTop = messageListEl.scrollHeight;
+        }
+    }
+
+    function sendMessage() {
+        if (messageInputEl.value) {
+            db.collection("games").add({
+                user: auth.currentUser.displayName,
+                message: messageInputEl.value,
+                date: Date.now(),
+                color: userColor,
+                image: auth.currentUser.photoURL
+            });
+
+            messageInputEl.value = "";
+        }
+    }
+
+    function addUserToList(userToAdd) {
+        let userData = userToAdd.data();
+
+        let divEl = document.createElement("div");
+
+        divEl.className = "user-div";
+
+        let nameEl = document.createElement("p");
+
+        let pfpEl = document.createElement("img");
+
+        nameEl.innerText = userData.name;
+        nameEl.className = "user-name";
+        nameEl.style.color = userData.color;
+
+        pfpEl.src = (userData.image) ? userData.image : "/images/black-image.png";
+        pfpEl.className = "user-image";
+
+        divEl.appendChild(pfpEl);
+        divEl.appendChild(nameEl);
+
+        userListEl.appendChild(divEl);
+    }
+
+    function messageSettings(e) {
+        if (e.className == "message-div") {
+            setTimeout(function () {e.lastChild.style.display = "block"}, 50);
+        } else {
+            messageSettings(e.parentElement);
+        }
+        
+    }
+
+    function hideMessageSettings() {
+        for (let message of messageListEl.children) {
+            message.lastChild.style.display = "none";
+        }
+    }
+
+    function editMessage(e) {
+        let message = e.target.parentElement.parentElement;
+        let id = message.getAttribute("data-id");
+
+        if (message.children[1].children[0].innerText == auth.currentUser.displayName) {
+            let messageTextEl = message.children[2];
+            let editMessageDivEl = message.children[3];
+
+            messageTextEl.style.display = "none";
+
+            editMessageDivEl.children[0].value = messageTextEl.innerText;
+            editMessageDivEl.style.display = "block";
+
+            editMessageDivEl.addEventListener("keydown", editMessageKeyDown);
+        }
+    }
+
+    function editMessageKeyDown(e) {
+        let editMessageDivEl = e.target.parentElement;
+        let messageTextEl = editMessageDivEl.parentElement.children[2];
+        let id = messageTextEl.parentElement.getAttribute("data-id");
+
+        if (e.keyCode === 13) {
+
+            // Text formatting
+            let messageText = editMessageDivEl.children[0].value;
+            let formattedText = formatText(messageText);
+            
+            if (formattedText[1]) {
+                messageTextEl.innerHTML = formattedText[0];
+            } else {
+                messageTextEl.innerText = formattedText[0];
+            }
+
+            messageTextEl.style.display = "block";
+
+            editMessageDivEl.style.display = "none";
+
+            db.collection("games").doc(id).update({
+                message: messageText
+            });
+
+        } else if (e.keyCode === 27) {
+            messageTextEl.style.display = "block";
+            editMessageDivEl.style.display = "none";
+        }
+    }
+
+    function deleteMessage(e) {
+        let message = e.target.parentElement.parentElement;
+        let id = message.getAttribute("data-id");
+
+        if (message.children[1].children[0].innerText == auth.currentUser.displayName || auth.currentUser.displayName == "Mira The Cat") {
+            db.collection("games").doc(id).delete();
+        }
+    }
+
+    function formatText(messageText) {
+        let useInnerHTML = false;
+        let numberOfBold = 0;
+        let underlined = false;
+        let strikethrough = false;
+        let newMessageText = "";
+
+        // Replace HTML tags in text
+        messageText = messageText.replace(/<\/?[a-z][\s\S]*>/i, '');
+
+        // If the message is an image
+        if (messageText.indexOf("image:") >= 0) {
+            let imageSrc = "";
+            let indexStart = messageText.indexOf("image:") + 6;
+
+            for (let i = indexStart; i < messageText.length; i++) {
+                imageSrc += messageText[i];
+            }
+
+            newMessageText = "<img src='" + imageSrc + "'>";
+            useInnerHTML = true;
+            return [newMessageText, useInnerHTML];
+        }
+
+        // If the message is a link
+        if (messageText.indexOf("link:") >= 0) {
+            let linkHref = "";
+            let indexStart = messageText.indexOf("link:") + 5;
+
+            for (let i = indexStart; i < messageText.length; i++) {
+                linkHref += messageText[i];
+            }
+
+            newMessageText = "<a href='" + linkHref + "'>" + linkHref + "</a>";
+            useInnerHTML = true;
+            return [newMessageText, useInnerHTML];
+        }
+
+        // For every letter in text
+        for (let i = 0; i < messageText.length; i++) {
+            // Italics
+            if (messageText[i] == "*") {
+
+                // Bold
+                if (messageText[i+1] == "*") {
+                    i += 1;
+
+                    // Bold italics
+                    if (messageText[i+1] == "*") {
+                        i += 1;
+                        if (numberOfBold == 3) {
+                            newMessageText += "</b></i>";
+                            numberOfBold -= 3;
+                        } else {
+                            newMessageText += "<b><i>";
+                            numberOfBold = 3;
+                        }
+                        useInnerHTML = true;
+                    }
+
+                    // Only bold
+                    else {
+                        if (numberOfBold >= 2) {
+                            newMessageText += "</b>";
+                            numberOfBold -= 2;
+                        } else {
+                            newMessageText += "<b>";
+                            numberOfBold = 2;
+                        }
+                        useInnerHTML = true;
+                    }
+                }
+
+                // Only italics
+                else {
+                    if (numberOfBold >= 1) {
+                        newMessageText += "</i>";
+                        numberOfBold -= 1;
+                    } else {
+                        newMessageText += "<i>";
+                        numberOfBold = 1;
+                    }
+                    useInnerHTML = true;
+                }
+            }
+            // Underlined
+            else if (messageText[i] == "_" && messageText[i+1] == "_") {
+                i += 1;
+
+                if (underlined) {
+                    newMessageText += "</u>";
+                    underlined = false;
+                } else {
+                    newMessageText += "<u>";
+                    underlined = true;
+                }
+                useInnerHTML = true;
+            }
+
+            // Strikethrough
+            else if (messageText[i] == "~" && messageText[i+1] == "~") {
+                i += 1;
+                
+                if (strikethrough) {
+                    newMessageText += "</s>";
+                    strikethrough = false;
+                } else {
+                    newMessageText += "<s>";
+                    strikethrough = true;
+                }
+                useInnerHTML = true;
+            }
+
+            // If the letter doesn't contain any text formatting symbols
+            else {
+                newMessageText += messageText[i];
+            }
+        }
+        
+        return [newMessageText, useInnerHTML];
+    }
+
+</script>
+
+</body>
+</html>

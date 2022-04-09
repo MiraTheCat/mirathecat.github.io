@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Reset Password</title>
+        <link rel="icon" href="/images/discord.png">
+
+        <link rel="stylesheet" type="text/css" href="/css/authentication.css">
+
+        <script src="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.js"></script>
+        <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.css" />
+
+    </head>
+
+    <body>
+        <div class="authentication-div">
+            <h2 class="sign-in-text">Reset Password</h2>
+
+            <section class="container reset-container">
+                <fieldset>
+                    <div>
+                        <label for="mail">Email</label> <br>
+                        <input type="email" id="mail" name="mail"/>
+                    </div>
+                    <p class="auth-info-message">Clicking Confirm will send you an email with instructions for how to change your password</p>
+                    <button id="resetPassword">Confirm</button>
+                </fieldset>
+            </section>
+        </div>
+        
+
+        <!-- The core Firebase JS SDK is always required and must be listed first -->
+        <script src="https://www.gstatic.com/firebasejs/8.6.2/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.6.2/firebase-auth.js"></script>
+
+        <!-- TODO: Add SDKs for Firebase products that you want to use
+            https://firebase.google.com/docs/web/setup#available-libraries -->
+
+        <script>
+            // Your web app's Firebase configuration
+            const firebaseConfig = {
+                apiKey: "AIzaSyAw_dXDTLEw5X9VBnD9PCh78z-GfxF9Vh8",
+                authDomain: "discord-2fc56.firebaseapp.com",
+                projectId: "discord-2fc56",
+                storageBucket: "discord-2fc56.appspot.com",
+                messagingSenderId: "186189307358",
+                appId: "1:186189307358:web:bbf3a14156023aef56114f"
+            };
+
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig);
+
+            // Initialize Firebase Authentication and get a reference to the service
+            const auth = firebase.auth();
+
+            let mailFieldEl = document.getElementById('mail');
+            let labelsEl = document.getElementsByTagName('label');
+            let resetPasswordEl = document.getElementById('resetPassword');
+            let successModalEl = document.querySelector('.success');
+            let failureModalEl = document.querySelector('.failure');
+
+            function resetPassword() {
+                let email = mailFieldEl.value;
+
+                auth.sendPasswordResetEmail(email)
+                .then(() => {
+                    console.log('Password Reset Email Sent Successfully!');
+                    window.location.assign('authentication-test.html');
+                })
+                .catch(error => {
+                    console.error(error);
+                })
+            }
+
+            resetPasswordEl.addEventListener('click', resetPassword);
+
+        </script>
+
+    </body>
+</html>

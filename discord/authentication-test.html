@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Authentication</title>
+        <link rel="icon" href="/images/discord.png">
+
+        <link rel="stylesheet" type="text/css" href="/css/authentication.css">
+
+        <script src="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.js"></script>
+        <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.css" />
+
+    </head>
+
+    <body>
+        
+        <div class="authentication-div">
+            <h2 class="sign-in-text">Sign In with Email & Password</h2>
+
+            <fieldset>
+                <div>
+                    <label for="mail">Email</label> <br>
+                    <input type="email" id="mail" name="mail"/>
+                </div>
+                
+                <div>
+                    <label for="password">Password</label> <br>
+                    <form>
+                        <input type="password" id="password" name="password"/>
+                    </form>
+                </div>
+
+                <a href="reset.html">I forgot my password</a>
+
+                <p>Important Info:</p>
+
+                <p class="auth-info-message">
+                    I will be able to see the email you use for your account. However, I will not know which account each
+                    email belongs to, and i will also not be able to see your passwords. Because of this, you should probably
+                    just make a new email for the account, and also not use your main password (cuz you shouldn't trust random
+                    people on the internet). You don't <em>have</em> to use a real email for the account, but using a real email will
+                    allow you to change your password later if you forget it.
+                </p>
+                <p class="auth-info-message">
+                    For those interested, I am using Firebase Authentication, which is made by Google, for the authentication.
+                    I also use the Firebase database to store all the messages that have been sent, and to store the user info
+                    that isn't already stored in the authentication, like color and the autoScroll setting.
+                </p>
+                <button id="signIn">Login</button>
+                <button id="signUp">Sign up</button>
+            </fieldset>
+
+            <p id="errorMessage" style="display: none;"></p>
+        </div>
+
+        <!-- The core Firebase JS SDK is always required and must be listed first -->
+        <script src="https://www.gstatic.com/firebasejs/8.6.2/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.6.2/firebase-auth.js"></script>
+
+        <!-- TODO: Add SDKs for Firebase products that you want to use
+            https://firebase.google.com/docs/web/setup#available-libraries -->
+
+        <script>
+            let mailFieldEl = document.querySelector("#mail");
+            let passwordFieldEl = document.querySelector("#password");
+            let signInButtonEl = document.querySelector("#signIn");
+            let signUpButtonEl = document.querySelector("#signUp");
+            let errorMessageEl = document.querySelector("#errorMessage");
+
+            let state = 0;
+
+            signInButtonEl.addEventListener("click", signIn);
+            signUpButtonEl.addEventListener("click", signUp);
+
+            // Your web app's Firebase configuration
+            const firebaseConfig = {
+                apiKey: "AIzaSyAw_dXDTLEw5X9VBnD9PCh78z-GfxF9Vh8",
+                authDomain: "discord-2fc56.firebaseapp.com",
+                projectId: "discord-2fc56",
+                storageBucket: "discord-2fc56.appspot.com",
+                messagingSenderId: "186189307358",
+                appId: "1:186189307358:web:bbf3a14156023aef56114f"
+            };
+
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig);
+
+            // Initialize Firebase Authentication and get a reference to the service
+            const auth = firebase.auth();
+
+            function signIn() {
+                const email = mailFieldEl.value;
+                const password = passwordFieldEl.value;
+
+                //Built in firebase function responsible for authentication
+                auth.signInWithEmailAndPassword(email, password)
+                .then(() => {
+                    //Signed in successfully
+                    window.location.assign('profile.html');
+                })
+                .catch(error => {
+                    //Something went wrong
+                    showErrorMessage(error.message);
+                })
+            }
+            
+            function signUp() {
+                const email = mailFieldEl.value;
+                const password = passwordFieldEl.value;
+
+                //Built in firebase function responsible for signing up a user
+                auth.createUserWithEmailAndPassword(email, password)
+                .then(() => {
+                    console.log('Signed Up Successfully !');
+                    sendVerificationEmail();
+                })
+                .catch(error => {
+                    //Something went wrong
+                    showErrorMessage(error.message);
+                })
+            }
+
+            function sendVerificationEmail() {
+                //Built in firebase function responsible for sending the verification email
+                auth.currentUser.sendEmailVerification()
+                .then(() => {
+                    console.log('Verification Email Sent Successfully !');
+                    state = 1;
+                    //redirecting the user to the profile page once everything is done correctly
+                    window.location.assign('profile.html');
+                })
+                .catch(error => {
+                    showErrorMessage(error.message);
+                })
+            }
+
+            function showErrorMessage(message) {
+                errorMessageEl.style.display = "block";
+                errorMessageEl.innerText = message;
+                setTimeout(() => {
+                    errorMessageEl.style.display = "none";
+                    errorMessageEl.innerText = "";
+                }, 1000);
+            }
+
+            auth.onAuthStateChanged(user => {
+                if (user && !state) {
+                    window.location.assign('profile.html');
+                }
+            })
+            
+        </script>
+
+    </body>
+</html>

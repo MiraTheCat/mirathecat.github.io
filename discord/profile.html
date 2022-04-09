@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>User Profile</title>
+        <link rel="icon" href="/images/discord.png">
+
+        <link rel="stylesheet" type="text/css" href="/css/authentication.css">
+
+        <script src="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.js"></script>
+        <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.css" />
+
+    </head>
+
+    <body>
+
+        <div class="main-div">
+            <div class="left-div">
+                <div class="setting-list">
+                    <p class="setting-category">SETTINGS AND INFO</p>
+                    <p id="myAccountText" class="selected-setting">My Account</p>
+                    <p id="textFormattingText" class="setting-name">Text Formatting</p>
+                    <div class="border-div"></div>
+                    <p class="setting-name" id="back">Back to General</p>
+                    <p class="setting-name" id="logOut">Log Out</p>
+                </div>
+            </div>
+            
+            <div class="mid-div" id="myAccountDiv">
+                <h3 class="my-account-text">My Account</h3>
+
+                <div class="profile-div">
+                    <img class="profile-pfp" src="/images/black-image.png" id="profilePfp">
+
+                    <p class="edit-profile-button">Edit Account</p>
+
+                    <div class="user-info-div">
+                        <p class="user-info-type">USERNAME</p>
+                        <p id="username" class="user-info-text">User</p>
+                        <input id="usernameInput" type="text" style="display: none;">
+
+                        <p class="user-info-type">EMAIL</p>
+                        <p id="email" class="user-info-text">Email</p>
+                        <input id="emailInput" type="email" style="display: none;">
+
+                        <p class="user-info-type">COLOR</p>
+                        <p id="color" class="user-info-text">#FFFFFF</p>
+                        <input id="colorInput" type="text" style="display: none;">
+
+                        <p class="user-info-type" id="newPfpText" style="display: none;">PROFILE PICTURE URL</p>
+                        <input id="pfpInput" type="text" style="display: none;">
+
+                        <p class="user-info-type" id="newPasswordText" style="display: none;">NEW PASSWORD (ONLY NEEDED IF YOU WANT TO CHANGE IT)</p>
+                        <form>
+                            <input id="passwordInput" type="password" style="display: none;">
+                        </form>
+
+                        <p class="save-profile-button">Save Changes</p>
+                    </div>
+                    
+                    <p id="notVerifiedText">Your email has not been verified!</p>
+                </div>
+
+                <p class="account-removal-text">OTHER SETTINGS</p>
+                <label class="account-removal-description checkbox-container">Automatically scroll down to the bottom of the screen when a new message is sent
+                    <input id="autoScrollCheckbox" type="checkbox">
+                    <span class="checkmark"></span>
+                </label>
+
+                <p class="account-removal-text">ACCOUNT REMOVAL</p>
+                <p class="account-removal-description">Deleting your account means it will be gone forever</p>
+                <p class="delete-account-button">Delete Account</p>
+            </div>
+
+            <div class="mid-div" id="textFormattingDiv" style="display: none;">
+                <h3 class="my-account-text">Text Formatting</h3>
+
+                <p class="account-removal-text">ITALIC</p>
+                <p class="account-removal-description">
+                    To make your text italic, type " * " on each side of the text. <b>Example:</b> *This text is italic!* - <i>This text is italic!</i>
+                </p>
+
+                <p class="account-removal-text">BOLD</p>
+                <p class="account-removal-description">
+                    To make your text bold, type " ** " on each side of the text. <b>Example:</b> **This text is bold!** - <b>This text is bold!</b>
+                </p>
+                <br>
+                <p class="account-removal-description">
+                    You can also combine these to make your text both bold and italic. <b>Example:</b> ***This text is bold and italic!*** - <b><i>This text is bold and italic!</i></b>
+                </p>
+
+                <p class="account-removal-text">UNDERLINED</p>
+                <p class="account-removal-description">
+                    To make your text underlined, type " __ " on each side of the text. <b>Example:</b> __This text is underlined!__ - <u>This text is underlined!</u>
+                </p>
+
+                <p class="account-removal-text">STRIKETHROUGH</p>
+                <p class="account-removal-description">
+                    To make your text strikethrough, type " ~~ " on each side of the text. <b>Example:</b> ~~This text is strikethrough!~~ - <s>This text is strikethrough!</s>
+                </p>
+
+                <p class="account-removal-text">IMAGES</p>
+                <p class="account-removal-description">
+                    To send images, type " image: " and then a link to the image. <b>Example:</b> image:https://cdn.discordapp.com/attachments/578577256700575755/959540956145778818/pfp.png
+                </p>
+                <br>
+                <p class="account-removal-description">
+                    When sending an image, you can't have any other text!
+                </p>
+
+                <p class="account-removal-text">LINKS</p>
+                <p class="account-removal-description">
+                    To send links, type " link: " and then the link you want to send. <b>Example:</b> link:https://mirathecat.github.io/
+                </p>
+                <br>
+                <p class="account-removal-description">
+                    Just like when sending an image, you can't have any other text when sending a link
+                </p>
+            </div>
+        </div>
+
+        <!-- The core Firebase JS SDK is always required and must be listed first -->
+        <script src="https://www.gstatic.com/firebasejs/8.6.2/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.6.2/firebase-auth.js"></script>
+
+        <!-- TODO: Add SDKs for Firebase products that you want to use
+            https://firebase.google.com/docs/web/setup#available-libraries -->
+        <script src="https://www.gstatic.com/firebasejs/8.6.2/firebase-firestore.js"></script>
+
+        <script>
+            let signOutButtonEl = document.querySelector("#logOut");
+            let backButtonEl = document.querySelector("#back");
+            let editButtonEl = document.querySelector(".edit-profile-button");
+            let saveButtonEl = document.querySelector(".save-profile-button");
+            let deleteButtonEl = document.querySelector(".delete-account-button");
+            let profilePfpEl = document.querySelector("#profilePfp");
+
+            let usernameTextEl = document.querySelector("#username");
+            let emailTextEl = document.querySelector("#email");
+            let colorTextEl = document.querySelector("#color");
+            let newPasswordTextEl = document.querySelector("#newPasswordText");
+            let newPfpTextEl = document.querySelector("#newPfpText");
+
+            let usernameInputEl = document.querySelector("#usernameInput");
+            let emailInputEl = document.querySelector("#emailInput");
+            let colorInputEl = document.querySelector("#colorInput");
+            let passwordInputEl = document.querySelector("#passwordInput");
+            let pfpInputEl = document.querySelector("#pfpInput");
+            let autoScrollCheckboxEl = document.querySelector("#autoScrollCheckbox");
+
+            let notVerifiedTextEl = document.querySelector("#notVerifiedText");
+
+            let myAccountDivEl = document.querySelector("#myAccountDiv");
+            let myAccountTextEl = document.querySelector("#myAccountText");
+
+            let textFormattingDivEl = document.querySelector("#textFormattingDiv");
+            let textFormattingTextEl = document.querySelector("#textFormattingText");
+
+            signOutButtonEl.addEventListener("click", signOut);
+            editButtonEl.addEventListener("click", editProfile);
+            saveButtonEl.addEventListener("click", saveProfile);
+            deleteButtonEl.addEventListener("click", deleteAccount);
+            autoScrollCheckboxEl.addEventListener("change", changeDatabaseInfo);
+
+            myAccountTextEl.addEventListener("click", showMyAccountDiv);
+            textFormattingTextEl.addEventListener("click", showTextFormattingDiv);
+
+            backButtonEl.addEventListener("click", () => {
+                window.location.assign('general.html');
+            })
+
+            notVerifiedTextEl.style.display = "none";
+
+            // Your web app's Firebase configuration
+            const firebaseConfig = {
+                apiKey: "AIzaSyAw_dXDTLEw5X9VBnD9PCh78z-GfxF9Vh8",
+                authDomain: "discord-2fc56.firebaseapp.com",
+                projectId: "discord-2fc56",
+                storageBucket: "discord-2fc56.appspot.com",
+                messagingSenderId: "186189307358",
+                appId: "1:186189307358:web:bbf3a14156023aef56114f"
+            };
+
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig);
+
+            // Reference to database
+            let db = firebase.firestore();
+
+            // Initialize Firebase Authentication and get a reference to the service
+            const auth = firebase.auth();
+
+            let userListID;
+            let userVerified;
+            let listOfUsers = [];
+
+            // Get userInfo from database
+            function getUsers(user) {
+                db.collection("users").get().then((snapshot) => {
+                    let userList = snapshot.docs;
+                    let userName = (user.displayName) ? user.displayName : "User";
+
+                    listOfUsers = [];
+
+                    profilePfpEl.src = (user.photoURL) ? user.photoURL : "/images/black-image.png";
+                    pfpInputEl.value = (profilePfpEl.src !== "/images/black-image.png") ? profilePfpEl.src : "";
+
+                    usernameTextEl.innerText = (userName) ? userName : "User";
+                    emailTextEl.innerText = user.email;
+
+                    for (i = 0; i < userList.length; i++) {
+                        let userData = userList[i].data();
+
+                        listOfUsers.push(userData.name);
+
+                        if (userData.name == userName && !userListID) {
+                            
+                            userListID = userList[i].id;
+                            
+                            colorTextEl.innerText = userData.color;
+                            colorTextEl.style.color = colorTextEl.innerText;
+                            autoScrollCheckboxEl.checked = userData.autoScroll;
+                        }
+                    }
+                    if (!userListID) {
+                        db.collection("users").add({
+                            autoScroll: true,
+                            color: "#FFFFFF",
+                            image: profilePfpEl.src,
+                            name: usernameTextEl.innerText
+                        });
+
+                        getUsers(user);
+                    }
+                });
+            }
+
+            function changeDatabaseInfo() {
+
+                if (!userListID) {
+                    getUsers(auth.currentUser);
+                }
+
+                // Gets document of that id
+                db.collection("users").doc(userListID).get().then(doc => {
+
+                    db.collection("users").doc(userListID).update({
+                        autoScroll: autoScrollCheckboxEl.checked,
+                        color: (colorTextEl.innerText) ? colorTextEl.innerText : "#FFFFFF",
+                        image: (profilePfpEl.src) ? profilePfpEl.src : "/images/black-image.png",
+                        name: (usernameTextEl.innerText) ? usernameTextEl.innerText : "User",
+                    });
+
+                    setTimeout(() => {
+                        getUsers(auth.currentUser);
+                    }, 200);
+                });
+            }
+
+            function signOut() {
+                //signOut() is a built in firebase function responsible for signing a user out
+                auth.signOut()
+                .then(() => {
+                    window.location.assign('authentication-test.html');
+                })
+                .catch(error => {
+                    console.error(error);
+                })
+            }
+
+            function deleteAccount() {
+                let user = auth.currentUser;
+                let credential = createCredential(user);
+
+                user.reauthenticateWithCredential(credential)
+                .then(() => {
+                    user.delete();
+                    console.log("Your Account Has Been Deleted!");
+
+                    setTimeout(() => {
+                        window.location.assign('authentication-test.html');
+                    }, 100)
+                })
+                .catch((error) => {
+                    console.error(error);
+                })
+            }
+
+            auth.onAuthStateChanged(user => {
+                if (!user) {
+                    window.location.assign('authentication-test.html');
+                }
+
+                if (!userListID) {
+                    getUsers(user);
+                }
+
+                if (!userVerified) {
+                    if (!user.emailVerified) {
+                        notVerifiedTextEl.style.display = "block";
+                    } else {
+                        notVerifiedTextEl.style.display = "none";
+                        userVerified = true;
+                    }
+                }
+            })
+
+            function editProfile() {
+                usernameTextEl.style.display = "none";
+                emailTextEl.style.display = "none";
+                colorTextEl.style.display = "none";
+
+                newPasswordTextEl.style.display = "block";
+                newPfpTextEl.style.display = "block";
+
+                usernameInputEl.style.display = "block";
+                emailInputEl.style.display = "block";
+                colorInputEl.style.display = "block";
+                passwordInputEl.style.display = "block";
+                pfpInputEl.style.display = "block";
+
+                saveButtonEl.style.display = "block";
+
+                usernameInputEl.value = usernameTextEl.innerText;
+                emailInputEl.value = emailTextEl.innerText;
+                colorInputEl.value = colorTextEl.innerText;
+            }
+
+            function saveProfile() {
+                usernameTextEl.style.display = "block";
+                emailTextEl.style.display = "block";
+                colorTextEl.style.display = "block";
+
+                newPasswordTextEl.style.display = "none";
+                newPfpTextEl.style.display = "none";
+
+                usernameInputEl.style.display = "none";
+                emailInputEl.style.display = "none";
+                colorInputEl.style.display = "none";
+                passwordInputEl.style.display = "none";
+                pfpInputEl.style.display = "none";
+
+                saveButtonEl.style.display = "none";
+
+                let newPfp;
+                let newUsername;
+                let newColor;
+
+                if (colorInputEl.value) {
+                    colorTextEl.innerText = colorInputEl.value;
+                    colorTextEl.style.color = colorInputEl.value;
+                    newColor = colorInputEl.value;
+                }
+
+                let duplicateName = false;
+
+                for (userInList of listOfUsers) {
+                    if (usernameInputEl.value == userInList) {
+                        duplicateName = true;
+                    }
+                }
+
+                if (usernameInputEl.value && !duplicateName) {
+                    usernameTextEl.innerText = usernameInputEl.value;
+                    newUsername = usernameInputEl.value;
+                }
+
+                if (pfpInputEl.value) {
+                    profilePfpEl.src = pfpInputEl.value;
+                    newPfp = pfpInputEl.value;
+                }
+
+                let user = auth.currentUser;
+
+                changeNamePhotoColor(user, newUsername, newPfp, newColor);
+
+                if (passwordInputEl.value || emailInputEl.value !== user.email) {
+                    let credential = createCredential(user);
+
+                    if (passwordInputEl.value) {
+                        let newPassword = passwordInputEl.value;
+                        
+                        passwordInputEl.value = "";
+
+                        changePassword(user, credential, newPassword);
+                    }
+
+                    if (emailInputEl.value !== user.email) {
+                        let newEmail = emailInputEl.value;
+
+                        changeEmail(user, credential, newEmail);
+                    }
+                }
+            }
+
+            function createCredential(user) {
+                let password = prompt('Current Password:');
+                let credential = firebase.auth.EmailAuthProvider.credential(
+                    user.email,
+                    password
+                );
+
+                return credential;
+            }
+
+            function changePassword(user, credential, password) {
+                user.reauthenticateWithCredential(credential)
+                .then(() => {
+                    user.updatePassword(password);
+                    console.log("Password Updated!");
+                })
+                .catch((error) => {
+                    console.error(error);
+                })
+            }
+
+            function changeEmail(user, credential, email) {
+
+                console.log(emailInputEl.value);
+
+                user.reauthenticateWithCredential(credential)
+                .then(() => {
+                    user.updateEmail(email);
+
+                    emailTextEl.innerText = emailInputEl.value;
+
+                    console.log("Email Updated!");
+                })
+                .catch((error) => {
+                    console.error(error);
+                })
+            }
+
+            function changeNamePhotoColor(user, username, photo, color) {
+                if (color) {
+                    console.log("Color Updated Successfully!");
+                }
+
+                if (username && photo) {
+                    user.updateProfile({
+                        displayName: username,
+                        photoURL: photo
+                    })
+                    .then(() => {
+                        console.log("Profile Updated Successfully!");
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    })
+                } else if (username) {
+                    user.updateProfile({
+                        displayName: username
+                    })
+                    .then(() => {
+                        console.log("Username Updated Successfully!");
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    })
+                } else if (photo) {
+                    user.updateProfile({
+                        photoURL: photo
+                    })
+                    .then(() => {
+                        console.log("Profile Picture Updated Successfully!");
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    })
+                }
+
+                if (username || color || photo) {
+                    changeDatabaseInfo();
+                }
+            }
+        
+            function showMyAccountDiv() {
+                myAccountDivEl.style.display = "block";
+                myAccountTextEl.className = "selected-setting";
+
+                textFormattingDivEl.style.display = "none";
+                textFormattingTextEl.className = "setting-name";
+            }
+
+            function showTextFormattingDiv() {
+                myAccountDivEl.style.display = "none";
+                myAccountTextEl.className = "setting-name";
+
+                textFormattingDivEl.style.display = "block";
+                textFormattingTextEl.className = "selected-setting";
+            }
+
+        </script>
+    </body>
+</html>
