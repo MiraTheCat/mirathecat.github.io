@@ -74,7 +74,7 @@ var reloadText = document.querySelector("#reloadText");
 
 var missingPageImage = document.querySelector("#pageImage");
 var killoiImage = document.querySelector("#killoiImage");
-var glitchSound = document.querySelector("#glitchSound")
+var glitchSound = document.querySelector("#glitchSound");
 
 //Creating classes
 class Item {

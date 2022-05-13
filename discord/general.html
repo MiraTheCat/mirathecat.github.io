@@ -83,6 +83,7 @@
     let topDivEl = document.querySelector(".top-div");
 
     leftDivEl.style.gridTemplateRows = (screen.availHeight - topDivEl.offsetHeight - 50 - 72) + "px 50px";
+    messageListEl.style.height = (screen.availHeight - topDivEl.offsetHeight - 58 - 72) + "px";
 
     sendButtonEl.addEventListener("click", sendMessage);
     messageInputEl.addEventListener("keydown", (e) => {
