@@ -613,7 +613,15 @@ addArea("p", {
         },
     ],
 
-    // Remember to add displayName, displayImage and unlockAreas properties to crafts
+    /* Properties to add:
+    
+     - displayName - string - X
+     - displayImage - string (link/name)
+     - unlockAreas - array of ids
+     - autoCraft - string (name)
+     - runFunction - function name
+    */
+
     // Add that negative numbers in cost will make materials not be used when crafted, but they will instead just be a requirement
 
     crafts: [

@@ -186,6 +186,8 @@ function setupGame() {
         let craft = areaCrafts[i];
         let craftName = craft.name;
 
+        let name = (craft.displayName) ? craft.displayName : craftName;
+
         if (!player.resources[craftName].amount) {
             player.resources[craftName].amount = 0;
         }
@@ -208,7 +210,7 @@ function setupGame() {
         }
 
         divEl.addEventListener("mouseover", () => {
-            showRecipe(craft);
+            showRecipe(craft, name);
         });
 
         divEl.addEventListener("mouseout", hideRecipe);
@@ -304,12 +306,12 @@ function craftResource(resource) {
     }
 }
 
-function showRecipe(resource) {
+function showRecipe(resource, name) {
     let area = player[player.areaList[player.currentArea]];
 
     let cost = resource.cost;
 
-    recipeNameEl.innerText = resource.name;
+    recipeNameEl.innerText = name;
     recipeDescEl.innerText = resource.desc;
 
     for (let mat of cost) {
@@ -703,7 +705,7 @@ function screenUpdate(diff) {
 
         if (player.autoSave) {
             saveGame();
-        }    
+        }
     }
 
     setTimeout(() => {
