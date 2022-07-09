@@ -13,6 +13,25 @@ let player = {
 
 let bodyEl = document.querySelector("body");
 
+bodyEl.addEventListener("mousedown", (e) => {
+    e=e || window.event;
+    pauseEvent(e);
+});
+
+bodyEl.addEventListener("mousemove", (e) => {
+    e=e || window.event;
+    pauseEvent(e);
+});
+
+
+function pauseEvent(e){
+    if(e.stopPropagation) e.stopPropagation();
+    if(e.preventDefault) e.preventDefault();
+    e.cancelBubble=true;
+    e.returnValue=false;
+    return false;
+}
+
 bodyEl.addEventListener("mousemove", moveRecipe);
 bodyEl.addEventListener("mousemove", moveGrindResources);
 
