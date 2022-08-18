@@ -98,9 +98,11 @@ addLayer("c", {
 
                 eff = softcap(eff, new Decimal("e3800"), capPow);
 
+                if (eff.gte("e10000")) eff = new Decimal("e10000");
+
                 return eff.max(1);
             },
-            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" + ((upgradeEffect("c", 13).gte("e3800")) ? " (softcapped)" : "") }, // Add formatting to the effect
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" + ((upgradeEffect("c", 13).gte("e3800")) ? ((upgradeEffect("c", 13).gte("e10000")) ? " (hardcapped)" : " (softcapped)") : "") }, // Add formatting to the effect
         },
 
         14: {
