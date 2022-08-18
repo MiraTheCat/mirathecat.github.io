@@ -7822,7 +7822,7 @@ addLayer("ab", {
         total: new Decimal(0),
         best: new Decimal(0),
         resets: new Decimal(0),
-        davzatium: new Decimal(1),
+        davzatium: new Decimal(2),
         auto: false,
         autoAbominations: false,
     }},
