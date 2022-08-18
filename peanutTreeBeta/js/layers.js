@@ -19,7 +19,7 @@ addLayer("c", {
     gainMult() {
         let mult = new Decimal(1)
 
-        if (hasUpgrade('c', 21)) mult = mult.times(upgradeEffect('c', 21))
+        if (hasUpgrade('c', 21)) mult = mult.times(upgradeEffect('c', 21));
         if (hasUpgrade("f", 11)) mult = mult.times(upgradeEffect("f", 11));
         if (hasUpgrade("t", 11)) mult = mult.times(upgradeEffect("t", 11));
         if (hasUpgrade("ms", 12)) mult = mult.times(tmp.ms.effect2);
@@ -40,7 +40,7 @@ addLayer("c", {
         return exp;
     },
     passiveGeneration() {
-        return (hasMilestone("sg", 2)) ? 1 : 0
+        return (hasMilestone("sg", 2)) ? new Decimal(1).times(tmp.ab.timeSpeed) : 0
     },
     row: 0, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
@@ -89,13 +89,37 @@ addLayer("c", {
             effect() {
                 let eff = player.c.points.plus(1).pow(0.35);
 
+                let capPow = new Decimal(1).div(upgradeEffect("c", 13).log(1e300).sub(11).max(1.666666));
+
                 if (hasUpgrade("f", 11) && player.c.points.gt(0)) eff = eff.times(upgradeEffect("f", 11));
+                if (hasUpgrade("c", 14) && player.c.points.gt(0)) eff = eff.pow(upgradeEffect("c", 14));
 
                 if (player.b.unlocked) eff = eff.times(tmp.b.buyables[21].effect);
 
+                eff = softcap(eff, new Decimal("e3800"), capPow);
+
+                return eff.max(1);
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" + ((upgradeEffect("c", 13).gte("e3800")) ? " (softcapped)" : "") }, // Add formatting to the effect
+        },
+
+        14: {
+            title: "Massive Payment",
+            description: "Boost the upgrade to the left by the amount of Helium",
+            cost: new Decimal("e7810"),
+
+            unlocked() {
+                return hasUpgrade('o', 11) && hasUpgrade("c", 13);
+            },
+
+            effect() {
+                let base = player.p.helium;
+
+                let eff = base.add(1).log10().add(1).log10().max(1).sqrt();
+
                 return eff;
             },
-            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+            effectDisplay() { return "^" +  format(upgradeEffect(this.layer, this.id)) }, // Add formatting to the effect
         },
 
         21: {
@@ -113,9 +137,11 @@ addLayer("c", {
                 if (hasUpgrade("sg", 11)) eff = eff.times(upgradeEffect("sg", 11));
                 if (hasUpgrade("n", 13)) eff = eff.times(player.points.pow(0.05));
 
+                eff = softcap(eff, new Decimal("e20000", 0.2));
+
                 return eff;
             },
-            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" + ((player.points.gte("e20000")) ? " (softcapped)" : "") }, // Add formatting to the effect
         },
 
         22: {
@@ -138,11 +164,33 @@ addLayer("c", {
             },
 
             effect() {
-                if (hasUpgrade("c", 32)) return (player.c.upgrades.length +1) ** 2
-                return player.c.upgrades.length +1;
+                let eff = new Decimal(player.c.upgrades.length).add(1);
+
+                if (hasUpgrade("c", 32)) eff = eff.pow(2);
+
+                if (hasUpgrade("c", 24)) eff = eff.pow(upgradeEffect("c", 24));
+
+                return eff;
                 
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+
+        24: {
+            title: "Upgrade Power ^3",
+            description: "Boost the upgrade to the left by the amount of upgrades bought",
+            cost: new Decimal("e7920"),
+
+            unlocked() {
+                return hasUpgrade('o', 11) && hasUpgrade("c", 23);
+            },
+
+            effect() {
+                let eff = new Decimal(player.c.upgrades.length).add(1);
+
+                return eff;
+            },
+            effectDisplay() { return "^" +  format(upgradeEffect(this.layer, this.id)) }, // Add formatting to the effect
         },
 
         31: {
@@ -154,7 +202,10 @@ addLayer("c", {
             },
 
             effect() {
-                let eff = player.points.add(1).log10().add(1)
+                let eff = player.points.add(1).log10().add(1);
+
+                if (hasUpgrade("c", 34) && player.points.gt(0)) eff = eff.pow(upgradeEffect("c", 34));
+
                 return eff;
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
@@ -181,6 +232,22 @@ addLayer("c", {
                 return player.points.add(1).log10().add(1).log10().add(1).sqrt();
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+
+        34: {
+            title: "Self Boost Again",
+            description: "Boost the \"Peanut Seeds\" upgrade by the current amount of peanuts",
+            cost: new Decimal("e8000"),
+
+            unlocked() {
+                return hasUpgrade('o', 11) && hasUpgrade("c", 33);
+            },
+
+            effect() {
+                let eff = player.points.add(1).log10().add(1).log(5).max(1);
+                return eff;
+            },
+            effectDisplay() { return "^" +  format(upgradeEffect(this.layer, this.id)) }, // Add formatting to the effect
         },
     },
 })
@@ -221,21 +288,23 @@ addLayer("f", {
         return hasMilestone("f", 1)
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
-        return new Decimal(1)
+        let exp = new Decimal(1);
+
+        return exp;
     },
     row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
         {key: "f", description: "F: Perform a Farm reset", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown() {
-        return hasAchievement("a", 14)
+        return hasAchievement("a", 14);
     },
     addToBase() {
         let base = new Decimal(0);
-        if (hasUpgrade("f", 12))
-            base = base.plus(upgradeEffect("f", 12));
-        if (hasUpgrade("f", 13))
-            base = base.plus(upgradeEffect("f", 13));
+
+        if (hasUpgrade("f", 12)) base = base.plus(upgradeEffect("f", 12));
+        if (hasUpgrade("f", 13)) base = base.plus(upgradeEffect("f", 13));
+        
         return base;
     },
     effectBase() {
@@ -250,12 +319,12 @@ addLayer("f", {
         if (tmp.b.buyables[13].unlocked) base = base.times(tmp.b.buyables[13].effect);
         if (player.n.unlocked) base = base.times(tmp.n.clickables[11].effect);
         if (player.l.unlocked) base = base.times(tmp.l.buyables[13].effect);
+        if (player.ab.unlocked) base = base.times(tmp.ab.buyables[21].effect);
 
-        return base.pow(tmp.f.power);
+        return base;
     },
     power() {
-        let power = new Decimal(1);
-        return power;
+        return new Decimal(1).div(player.f.points.sub(1100).div(44));
     },
     effect() {
         let pow = player.f.points.sqrt();
@@ -274,7 +343,7 @@ addLayer("f", {
         return eff;
     },
     effectDescription() {
-        return "which are boosting Peanut production by " + format(tmp.f.effect) + "x"
+        return "which are boosting Peanut production by " + format(tmp.f.effect) + "x";
     },
 
     doReset(resettingLayer) {
@@ -335,6 +404,9 @@ addLayer("f", {
 
             effect() {
                 let ret = player.f.best.pow(0.8).plus(1);
+
+                if (hasUpgrade("f", 31)) ret = ret.pow(upgradeEffect("f", 31));
+
                 return ret;
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
@@ -351,6 +423,9 @@ addLayer("f", {
 
             effect() {
                 let ret = player.sg.points.add(1).log10().add(1);
+
+                if (hasUpgrade("f", 32)) ret = ret.pow(upgradeEffect("f", 32));
+
                 return ret;
             },
             effectDisplay() { return "+" + format(upgradeEffect(this.layer, this.id)) }, // Add formatting to the effect
@@ -403,9 +478,66 @@ addLayer("f", {
 
             effect() {
                 let ret = player.points.add(1).log10().add(1).pow(2);
+
+                if (hasUpgrade("f", 33)) ret = ret.pow(upgradeEffect("f", 33));
+                
                 return ret;
             },
             effectDisplay() {return "/" + format(tmp.f.upgrades[23].effect)}, // Add formatting to the effect
+        },
+
+        31: {
+            title: "Greater Combo",
+            description: "Boost the Farm Combo upgrade by the amount of Farms",
+            cost() {
+                return (!hasUpgrade("sg", 31)) ? new Decimal(1128) : new Decimal(1236);
+            },
+
+            unlocked() {
+                return hasUpgrade(this.layer, 21) && hasUpgrade("o", 21);
+            },
+
+            effect() {
+                let ret = player.f.points.add(1).log10().add(1).pow(2);
+                return ret;
+            },
+            effectDisplay() {return "^" + format(tmp.f.upgrades[this.id].effect)}, // Add formatting to the effect
+        },
+
+        32: {
+            title: "Farm Production",
+            description: "Boost the Farm Generators upgrade by the amount of Factories",
+            cost() {
+                return (!hasUpgrade("sg", 32)) ? new Decimal(1145) : new Decimal(1240);
+            },
+
+            unlocked() {
+                return hasUpgrade(this.layer, 22) && hasUpgrade("o", 21);
+            },
+
+            effect() {
+                let ret = player.fa.points.add(1).log10().add(1).pow(1.8);
+                return ret;
+            },
+            effectDisplay() {return "^" + format(tmp.f.upgrades[this.id].effect)}, // Add formatting to the effect
+        },
+
+        33: {
+            title: "Farm Sales",
+            description: "Boost the Farm Discount upgrade by the amount of Coins, and boost The Bean's effect base by 2.7",
+            cost() {
+                return (!hasUpgrade("sg", 33)) ? new Decimal(1158) : new Decimal(1256);
+            },
+
+            unlocked() {
+                return hasUpgrade(this.layer, 22) && hasUpgrade("o", 21);
+            },
+
+            effect() {
+                let ret = player.c.points.add(1).log10().add(1).sqrt();
+                return ret;
+            },
+            effectDisplay() {return "^" + format(tmp.f.upgrades[this.id].effect)}, // Add formatting to the effect
         },
     },
 })
@@ -477,6 +609,7 @@ addLayer("sg", {
 
         if (player.n.unlocked) base = base.times(tmp.n.clickables[12].effect);
         if (tmp.b.buyables[13].unlocked) base = base.times(tmp.b.buyables[13].effect);
+        if (player.ab.unlocked) base = base.times(tmp.ab.buyables[22].effect);
 
         return base;
     },
@@ -493,10 +626,12 @@ addLayer("sg", {
         if (hasUpgrade("sg", 21)) eff = eff.times(4);
         if (player.fa.unlocked) eff = eff.times(tmp.fa.workerEff);
 
+        if (player.ab.unlocked) eff = eff.times(tmp.ab.timeSpeed);
+
         return eff;
     },
     effectDescription() {
-        return "which are generating " + format(tmp.sg.effect) + " Saplings/sec"
+        return "which are generating " + format(tmp.sg.effect) + " Saplings/sec";
     },
     update(diff) {
         if (player.sg.unlocked)
@@ -603,6 +738,9 @@ addLayer("sg", {
 
             effect() {
                 let ret = player.sg.best.pow(0.8).plus(1);
+
+                if (hasUpgrade("sg", 31)) ret = ret.pow(upgradeEffect("sg", 31));
+
                 return ret
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
@@ -619,6 +757,9 @@ addLayer("sg", {
 
             effect() {
                 let ret = player.f.points.add(1).log10().add(1);
+
+                if (hasUpgrade("sg", 32)) ret = ret.pow(upgradeEffect("sg", 32));
+
                 return ret
             },
             effectDisplay() { return "+" + format(upgradeEffect(this.layer, this.id)) }, // Add formatting to the effect
@@ -681,9 +822,66 @@ addLayer("sg", {
 
             effect() {
                 let ret = player.points.add(1).log10().add(1).pow(2);
+
+                if (hasUpgrade("sg", 33)) ret = ret.pow(upgradeEffect("sg", 33));
+
                 return ret;
             },
             effectDisplay() {return "/" + format(upgradeEffect(this.layer, this.id))}, // Add formatting to the effect
+        },
+
+        31: {
+            title: "Stronger Combo",
+            description: "Boost the Gen Combo upgrade by the amount of Sapling Generators",
+            cost() {
+                return (!hasUpgrade("f", 31)) ? new Decimal(1128) : new Decimal(1230);
+            },
+
+            unlocked() {
+                return hasUpgrade(this.layer, 21) && hasUpgrade("o", 22);
+            },
+
+            effect() {
+                let ret = player.sg.points.add(1).log10().add(1).pow(2.5);
+                return ret;
+            },
+            effectDisplay() {return "^" + format(tmp.sg.upgrades[this.id].effect)}, // Add formatting to the effect
+        },
+
+        32: {
+            title: "Sapling Forests",
+            description: "Boost the Sapling Farms upgrade by the amount of Towns",
+            cost() {
+                return (!hasUpgrade("f", 32)) ? new Decimal(1155) : new Decimal(1242);
+            },
+
+            unlocked() {
+                return hasUpgrade(this.layer, 22) && hasUpgrade("o", 22);
+            },
+
+            effect() {
+                let ret = player.t.points.add(1).log10().add(1).pow(2.2);
+                return ret;
+            },
+            effectDisplay() {return "^" + format(tmp.sg.upgrades[this.id].effect)}, // Add formatting to the effect
+        },
+
+        33: {
+            title: "Gen Sales",
+            description: "Boost the Gen Discount upgrade by the amount of Coins, and boost The Machine's effect base by 4",
+            cost() {
+                return (!hasUpgrade("f", 33)) ? new Decimal(1180) : new Decimal(1262);
+            },
+
+            unlocked() {
+                return hasUpgrade(this.layer, 22) && hasUpgrade("o", 22);
+            },
+
+            effect() {
+                let ret = player.c.points.add(1).log(10).add(1).root(3);
+                return ret;
+            },
+            effectDisplay() {return "^" + format(tmp.sg.upgrades[this.id].effect)}, // Add formatting to the effect
         },
     },
 })
@@ -714,27 +912,32 @@ addLayer("t", {
     },
     exponent: 1, // Prestige currency exponent
     gainMult() {
-        let mult = new Decimal(1)
-        return mult
+        let mult = new Decimal(1);
+
+        if (hasAchievement("a", 104)) mult = mult.times(0.855);
+        if (hasAchievement("a", 124)) mult = mult.times(0.98);
+        if (hasAchievement("a", 132)) mult = mult.times(0.945);
+
+        return mult;
     },
 
     automate() {},
     resetsNothing() {
-        return hasMilestone("n", 4)
+        return hasMilestone("n", 4);
     },
 
     autoPrestige() {
-        return player.t.auto;
+        return player.t.auto && hasMilestone("n", 4);
     },
 
     base() {
-        return new Decimal(1.1)
+        return new Decimal(1.1);
     },
     canBuyMax() {
-        return hasMilestone("t", 3)
+        return hasMilestone("t", 3);
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
-        return new Decimal(1)
+        return new Decimal(1);
     },
     row: 2, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
@@ -774,7 +977,14 @@ addLayer("t", {
         return "which are boosting the Farm effect base and Coin gain by " + format(tmp.t.effect) + "x"
     },
     update(diff) {
-        if (player.t.autoHouses && tmp.t.buyables[11].canAfford) tmp.t.buyables[11].buy();
+        if (player.t.autoHouses && hasMilestone("n", 3) && tmp.t.buyables[11].canAfford) {
+            if (hasMilestone("l", 3)) {
+                layers.t.buyables[11].buy100();
+                layers.t.buyables[11].buy10();
+            }
+
+            tmp.t.buyables[11].buy();
+        }
     },
 
     doReset(resettingLayer) {
@@ -790,8 +1000,6 @@ addLayer("t", {
         if (layers[resettingLayer].row > this.row)
             layerDataReset("t", keep)
     },
-
-
 
     milestones: {
         0: {
@@ -846,6 +1054,8 @@ addLayer("t", {
                 let pow = player.t.points;
                 let cap = new Decimal(20);
 
+                if (hasUpgrade("t", 14)) cap = cap.add(upgradeEffect("t", 14));
+
                 pow = softcap(pow, cap, 0.5);
 
                 let eff = player.t.points.pow(pow).add(1);
@@ -854,6 +1064,8 @@ addLayer("t", {
             },
             effectDisplay() {
                 let cap = new Decimal(20);
+
+                if (hasUpgrade("t", 14)) cap = cap.add(upgradeEffect("t", 14));
 
                 return format(upgradeEffect(this.layer, this.id)) + "x" + ((player.t.points.gte(cap) ? " (softcapped)" : ""))
             }, // Add formatting to the effect
@@ -902,6 +1114,8 @@ addLayer("t", {
                 let pow = player.t.points.div(1.2);
                 let cap = new Decimal(20);
 
+                if (hasUpgrade("t", 14)) cap = cap.add(upgradeEffect("t", 14));
+
                 pow = softcap(pow, cap, 0.5);
 
                 let eff = player.t.points.pow(pow).add(1);
@@ -910,8 +1124,30 @@ addLayer("t", {
             effectDisplay() {
                 let cap = new Decimal(20);
 
+                if (hasUpgrade("t", 14)) cap = cap.add(upgradeEffect("t", 14));
+
                 return "/" + format(upgradeEffect(this.layer, this.id)) + ((player.t.points.gte(cap) ? " (softcapped)" : ""))
             }, // Add formatting to the effect
+        },
+
+        14: {
+            title: "Vault Improvements",
+            description: "Removes the Bank and Shop softcaps",
+            cost() {
+                return new Decimal("e13900");
+            },
+
+            currencyDisplayName: "coins",
+            currencyInternalName: "points",
+            currencyLayer: "c",
+
+            unlocked() {
+                return hasUpgrade(this.layer, 13) && hasUpgrade("o", 31);
+            },
+
+            effect() {
+                return new Decimal(9999);
+            },
         },
 
         21: {
@@ -931,7 +1167,11 @@ addLayer("t", {
             },
 
             effect() {
-                return player.sg.points.sqrt().add(1);
+                let eff = player.sg.points.sqrt().add(1);
+
+                if (hasUpgrade("t", 24)) eff = eff.pow(upgradeEffect("t", 24));
+
+                return eff;
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
         },
@@ -953,7 +1193,11 @@ addLayer("t", {
             },
 
             effect() {
-                return player.f.points.pow(0.8).add(1);
+                let eff = player.f.points.pow(0.8).add(1);
+
+                if (hasUpgrade("t", 24)) eff = eff.pow(upgradeEffect("t", 24));
+                
+                return eff;
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
         },
@@ -978,6 +1222,27 @@ addLayer("t", {
                 return player.fa.workers.add(1).log10().add(1).log10().add(1);
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
+        },
+
+        24: {
+            title: "Even More Knowledge",
+            description: "Boosts the Library and Park upgrades by the current amount of Towns",
+            cost() {
+                return new Decimal("e14000");
+            },
+
+            currencyDisplayName: "coins",
+            currencyInternalName: "points",
+            currencyLayer: "c",
+
+            unlocked() {
+                return hasUpgrade(this.layer, 23) && hasUpgrade("o", 31);
+            },
+
+            effect() {
+                return player.t.points.add(1).root(5);
+            },
+            effectDisplay() {return "^" + format(tmp.t.upgrades[this.id].effect)}, // Add formatting to the effect
         },
 
         31: {
@@ -1048,6 +1313,27 @@ addLayer("t", {
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
         },
+
+        34: {
+            title: "Housing Estate",
+            description: "Boosts the second effect of the House buyable by the amount of Houses bought",
+            cost() {
+                return new Decimal("e14400");
+            },
+
+            currencyDisplayName: "coins",
+            currencyInternalName: "points",
+            currencyLayer: "c",
+
+            unlocked() {
+                return hasUpgrade(this.layer, 33) && hasUpgrade("o", 31);
+            },
+
+            effect() {
+                return player.t.buyables[11].add(1).root(2);
+            },
+            effectDisplay() {return "^" + format(tmp.t.upgrades[this.id].effect)}, // Add formatting to the effect
+        },
     },
 
     buyables: {
@@ -1079,6 +1365,8 @@ addLayer("t", {
                 eff.first = Decimal.pow(1.2, pow1).sub(0.2)
                 eff.second = x.add(1).pow(x.sqrt()).plus(x).pow((hasUpgrade("n", 12)) ? 2 : 1);
 
+                if (hasUpgrade("t", 34)) eff.second = eff.second.pow(upgradeEffect("t", 34));
+
                 return eff;
             },
             display() {
@@ -1097,6 +1385,24 @@ addLayer("t", {
                 cost = tmp[this.layer].buyables[this.id].cost
                 player.c.points = player.c.points.sub(cost)
                 player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
+            },
+            buy10() {
+                let x = player[this.layer].buyables[this.id].add(9);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.c.points.gte(cost)) {
+                    player.c.points = player.c.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(10);
+                }
+            },
+            buy100() {
+                let x = player[this.layer].buyables[this.id].add(99);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.c.points.gte(cost)) {
+                    player.c.points = player.c.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(100);
+                }
             },
             style: {
                 'height': '200px'
@@ -1163,8 +1469,10 @@ addLayer("fa", {
     },
     workerGainMult() {
         let mult = new Decimal(1);
-        if (hasUpgrade("fa", 21))
-            mult = mult.times(upgradeEffect("fa", 21))
+
+        if (hasUpgrade("fa", 21)) mult = mult.times(upgradeEffect("fa", 21))
+        if (player.ab.unlocked) mult = mult.times(tmp.ab.timeSpeed);
+
         return mult;
     },
     effBaseMult() {
@@ -1212,7 +1520,7 @@ addLayer("fa", {
         if (hasUpgrade("fa", 13)) eff = eff.times(upgradeEffect("fa", 13));
         if (player.s.unlocked) eff = eff.times(tmp.s.buyables[12].effect);
 
-        return eff;
+        return eff.max(1);
     },
     update(diff) {
         if (player.fa.unlocked)
@@ -1240,7 +1548,7 @@ addLayer("fa", {
     },
 
     autoPrestige() {
-        return player.fa.auto
+        return player.fa.auto && hasMilestone("b", 3);
     },
 
     tabFormat: ["main-display", "prestige-button", ["display-text", function() {
@@ -1326,6 +1634,8 @@ addLayer("fa", {
                 let pow = player.fa.points.div(1.2);
                 let cap = new Decimal(20);
 
+                if (hasUpgrade("fa", 14)) cap = new Decimal(9999);
+
                 pow = softcap(pow, cap, 0.5);
 
                 let eff = player.fa.points.pow(pow).add(1);
@@ -1333,6 +1643,8 @@ addLayer("fa", {
             },
             effectDisplay() {
                 let cap = new Decimal(20);
+
+                if (hasUpgrade("fa", 14)) cap = new Decimal(9999);
 
                 return "/" + format(upgradeEffect(this.layer, this.id)) + ((player.fa.points.gte(cap) ? " (softcapped)" : ""))
             }, // Add formatting to the effect
@@ -1352,9 +1664,33 @@ addLayer("fa", {
 
             effect() {
                 let eff = player.fa.points.pow(2);
+
+                if (hasUpgrade("fa", 14)) eff = eff.pow(upgradeEffect("fa", 14));
+
                 return eff;
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
+        },
+
+        14: {
+            title: "General Improvements",
+            description: "Removes the Cheaper Gen Design softcap and boosts the Factory Cooperation effect by the amount of workers",
+            cost() {
+                return new Decimal("e14760");
+            },
+
+            currencyDisplayName: "coins",
+            currencyInternalName: "points",
+            currencyLayer: "c",
+
+            unlocked() {
+                return hasUpgrade(this.layer, 13) && hasUpgrade("o", 33);
+            },
+
+            effect() {
+                return player.fa.workers.add(1).log(10).add(1).root(2);
+            },
+            effectDisplay() {return "^" + format(tmp.fa.upgrades[this.id].effect)}, // Add formatting to the effect
         },
 
         21: {
@@ -1375,16 +1711,20 @@ addLayer("fa", {
 
             effect() {
                 let cap = new Decimal(1e20);
+                let cap2 = (hasUpgrade("fa", 24)) ? upgradeEffect("fa", 24) : new Decimal(1e30);
 
                 let eff = tmp.fa.limit.pow(0.75).add(1);
 
                 eff = softcap(eff, cap, 0.5);
 
-                return eff.min(1e30);
+                return eff.min(cap2);
             },
             effectDisplay() {
                 let cap1 = new Decimal(1e20);
-                let cap2 = upgradeEffect(this.layer, this.id).gte(1e30)
+
+                let cap2val = (hasUpgrade("fa", 24)) ? upgradeEffect("fa", 24) : new Decimal(1e30);
+
+                let cap2 = upgradeEffect(this.layer, this.id).gte(cap2val);
 
                 return format(upgradeEffect(this.layer, this.id)) + "x" + ((cap2) ? " (hardcapped)" : ((upgradeEffect("fa", 21).gte(cap1) ? " (softcapped)" : "")))
             }, // Add formatting to the effect
@@ -1408,16 +1748,19 @@ addLayer("fa", {
 
             effect() {
                 let cap = new Decimal(1e20);
+                let cap2 = (hasUpgrade("fa", 24)) ? upgradeEffect("fa", 24) : new Decimal(1e30);
 
                 let eff = player.fa.workers.pow(0.75).add(1);
 
                 eff = softcap(eff, cap, 0.5);
 
-                return eff.min(1e30);
+                return eff.min(cap2);
             },
             effectDisplay() {
                 let cap1 = new Decimal(1e20);
-                let cap2 = upgradeEffect(this.layer, this.id).gte(1e30)
+                let cap2val = (hasUpgrade("fa", 24)) ? upgradeEffect("fa", 24) : new Decimal(1e30);
+
+                let cap2 = upgradeEffect(this.layer, this.id).gte(cap2val);
 
                 return format(upgradeEffect(this.layer, this.id)) + "x" + ((cap2) ? " (hardcapped)" : ((upgradeEffect("fa", 21).gte(cap1) ? " (softcapped)" : "")))
             }, // Add formatting to the effect
@@ -1440,6 +1783,26 @@ addLayer("fa", {
                 return eff;
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
+        },
+        
+        24: {
+            title: "No More Limits",
+            description: "Removes the Speed Recruitment and Expansion-Workers hardcaps",
+            cost() {
+                return new Decimal("e14850");
+            },
+
+            currencyDisplayName: "coins",
+            currencyInternalName: "points",
+            currencyLayer: "c",
+
+            unlocked() {
+                return hasUpgrade(this.layer, 23) && hasUpgrade("o", 33);
+            },
+
+            effect() {
+                return new Decimal("e9999");
+            },
         },
     },
 })
@@ -1485,7 +1848,7 @@ addLayer("ms", {
     },
 
     passiveGeneration() {
-        return (hasMilestone("ms", 5)) ? 1 : 0
+        return (hasMilestone("ms", 5)) ? new Decimal(1).times(tmp.ab.timeSpeed) : 0
     },
 
     row: 2, // Row the layer is in on the tree (0 is the first row)
@@ -1515,11 +1878,13 @@ addLayer("ms", {
         let cap = {};
         cap.first = new Decimal(30000);
         cap.second = new Decimal(1e9);
+        cap.third = new Decimal("e10000");
 
         if (hasUpgrade("b", 31)) cap.second = cap.second.times(upgradeEffect("b", 31));
+        if (hasUpgrade("o", 32)) cap.second = cap.second.times(upgradeEffect("o", 32));
         if (player.n.unlocked) cap.second = cap.second.times(tmp.n.clickables[23].effect);
         if (player.s.unlocked) cap.second = cap.second.times(tmp.s.buyables[11].effect);
-        if (player.l.unlocked) cap.second = cap.second.times(tmp.l.effect.first);
+        if (player.l.unlocked) cap.second = cap.second.times(tmp.l.effect);
 
         if (hasUpgrade("b", 14)) cap.first = cap.first.times(upgradeEffect("b", 14));
         if (player.n.unlocked) cap.first = cap.first.times(tmp.n.clickables[13].effect);
@@ -1570,13 +1935,28 @@ addLayer("ms", {
     },
 
     update(diff) {
-        if (player.ms.autoBuyables && tmp.ms.buyables[11].canAfford) tmp.ms.buyables[11].buy();
-        if (player.ms.autoBuyables && tmp.ms.buyables[12].canAfford) tmp.ms.buyables[12].buy();
+        if (player.ms.autoBuyables && hasMilestone("n", 3) && tmp.ms.buyables[11].canAfford) {
+            if (hasMilestone("l", 3)) {
+                layers.ms.buyables[11].buy100();
+                layers.ms.buyables[11].buy10();
+            }
 
-        if (hasMilestone("ms", 6)) {
-            player.ms.refined = player.ms.refined.add(tmp.ms.clickables[11].gain.times(diff));
-            player.ms.unstable = player.ms.unstable.add(tmp.ms.clickables[12].gain.times(diff));
+            tmp.ms.buyables[11].buy();
         }
+        if (player.ms.autoBuyables && hasMilestone("n", 3) && tmp.ms.buyables[12].canAfford) {
+            if (hasMilestone("l", 3)) {
+                layers.ms.buyables[12].buy100();
+                layers.ms.buyables[12].buy10();
+            }
+            
+            tmp.ms.buyables[12].buy();
+        }
+
+        if (hasMilestone("ms", 6) && hasUpgrade("ms", 21)) player.ms.refined = player.ms.refined.add(tmp.ms.clickables[11].gain.times(diff).times(tmp.ab.timeSpeed));
+        if (hasMilestone("ms", 6) && hasUpgrade("ms", 23)) player.ms.unstable = player.ms.unstable.add(tmp.ms.clickables[12].gain.times(diff).times(tmp.ab.timeSpeed));
+
+        if (player.ms.refined.gte(tmp.ms.clickables[11].newSpellReq) && player.s.spellsUnl.refined < 2) player.s.spellsUnl.refined += 1;
+        if (player.ms.unstable.gte(tmp.ms.clickables[12].newSpellReq) && player.s.spellsUnl.unstable < 2) player.s.spellsUnl.unstable += 1;
     },
 
 
@@ -1586,11 +1966,15 @@ addLayer("ms", {
             keep.push("milestones")
         }
         if (hasMilestone("n", 3)) {
-            keep.push("upgrades")
-            keep.push("refined")
-            keep.push("unstable")
+            keep.push("upgrades");
+
+            if (layers[resettingLayer].row <= layers.b.row) {
+                keep.push("refined");
+                keep.push("unstable");
+            }
         }
         keep.push("autoBuyables");
+
         if (layers[resettingLayer].row > this.row)
             layerDataReset("ms", keep)
     },
@@ -1662,7 +2046,9 @@ addLayer("ms", {
             done() {
                 return player.ms.best.gte(1500)
             },
-            effectDescription: "You gain 100% of MSPaintium gain every second and MSPaintium buyables don't cost anything",
+            effectDescription() {
+                return `You gain ${format(tmp.ab.timeSpeed.times(100))}% of MSPaintium gain every second and MSPaintium buyables don't cost anything`;
+            },
         },
 
         6: {
@@ -1673,7 +2059,9 @@ addLayer("ms", {
             unlocked() {
                 return hasUpgrade("ms", 23);
             },
-            effectDescription: "Gain 100% of Refined and Unstable MSPaintium gain every second",
+            effectDescription() {
+                return `Gain ${format(tmp.ab.timeSpeed.times(100))}% of Refined and Unstable MSPaintium gain every second`;
+            },
         },
     },
 
@@ -1718,7 +2106,7 @@ addLayer("ms", {
             cost: new Decimal(1e30),
 
             unlocked() {
-                return (tmp.n.clickables[31].unlocked) ? unl = tmp.n.clickables[31].effect.first >= 1 : false;
+                return ((tmp.n.clickables[31].unlocked) ? unl = tmp.n.clickables[31].effect.first >= 1 : false) || hasMilestone("p", 1);
             },
         },
         21: {
@@ -1727,7 +2115,7 @@ addLayer("ms", {
             cost: new Decimal(1e31),
 
             unlocked() {
-                return (tmp.n.clickables[31].unlocked) ? unl = tmp.n.clickables[31].effect.first >= 2 : false;
+                return ((tmp.n.clickables[31].unlocked) ? unl = tmp.n.clickables[31].effect.first >= 2 : false) || hasMilestone("p", 1);
             },
         },
         22: {
@@ -1736,7 +2124,7 @@ addLayer("ms", {
             cost: new Decimal(1e33),
 
             unlocked() {
-                return (tmp.n.clickables[31].unlocked) ? unl = tmp.n.clickables[31].effect.first >= 3 : false;
+                return ((tmp.n.clickables[31].unlocked) ? unl = tmp.n.clickables[31].effect.first >= 3 : false) || hasMilestone("p", 1);
             },
 
             effect() {
@@ -1749,7 +2137,7 @@ addLayer("ms", {
             cost: new Decimal(2e36),
 
             unlocked() {
-                return (tmp.n.clickables[31].unlocked) ? unl = tmp.n.clickables[31].effect.first >= 4 : false;
+                return ((tmp.n.clickables[31].unlocked) ? unl = tmp.n.clickables[31].effect.first >= 4 : false) || hasMilestone("p", 1);
             },
 
             effect() {
@@ -1762,7 +2150,7 @@ addLayer("ms", {
             cost: new Decimal(1e105),
 
             unlocked() {
-                return (tmp.n.clickables[31].unlocked) ? unl = tmp.n.clickables[31].effect.first >= 5 : false;
+                return ((tmp.n.clickables[31].unlocked) ? unl = tmp.n.clickables[31].effect.first >= 5 : false) || hasMilestone("p", 1);
             },
 
             effect() {
@@ -1825,6 +2213,24 @@ addLayer("ms", {
 
                 player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
             },
+            buy10() {
+                let x = player[this.layer].buyables[this.id].add(9);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.ms.points.gte(cost)) {
+                    if (!hasMilestone("ms", 5)) player.ms.points = player.ms.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(10);
+                }
+            },
+            buy100() {
+                let x = player[this.layer].buyables[this.id].add(99);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.ms.points.gte(cost)) {
+                    if (!hasMilestone("ms", 5)) player.ms.points = player.ms.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(100);
+                }
+            },
             style: {
                 'height': '200px'
             },
@@ -1884,6 +2290,24 @@ addLayer("ms", {
 
                 player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
             },
+            buy10() {
+                let x = player[this.layer].buyables[this.id].add(9);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.ms.points.gte(cost)) {
+                    if (!hasMilestone("ms", 5)) player.ms.points = player.ms.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(10);
+                }
+            },
+            buy100() {
+                let x = player[this.layer].buyables[this.id].add(99);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.ms.points.gte(cost)) {
+                    if (!hasMilestone("ms", 5)) player.ms.points = player.ms.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(100);
+                }
+            },
             style: {
                 'height': '200px'
             },
@@ -1897,17 +2321,24 @@ addLayer("ms", {
             title: "Refined MSPaintium",
             display() {
                 return "Click to turn 10% of your MSPaintium into " + formatWhole(tmp.ms.clickables[this.id].gain) + " Refined MSPaintium <br>" +
-                "Next at " + format(new Decimal(1e30).times(new Decimal(20).pow(tmp.ms.clickables[this.id].gain))) + " MSPaintium" + "<br> <br>" +
+                "Next at " + format(new Decimal(5e28).times(new Decimal(20).pow(tmp.ms.clickables[this.id].gain.div(tmp.ms.clickables[this.id].gainMult)))) + " MSPaintium" + "<br> <br>" +
                 ((player.s.spellsUnl.refined < 2) ? "Reach " + formatWhole(tmp.ms.clickables[this.id].newSpellReq) + " Refined MSPaintium to unlock a new Spell" : "");
+            },
+            gainMult() {
+                let mult = new Decimal(1);
+
+                if (hasUpgrade("n", 21)) mult = mult.times(upgradeEffect("n", 21));
+                if (hasUpgrade("l", 21)) mult = mult.times(upgradeEffect("l", 21));
+                if (hasUpgrade("ab", 12)) mult = mult.times(upgradeEffect("ab", 12));
+                if (hasUpgrade("ab", 35)) mult = mult.times(upgradeEffect("ab", 35));
+
+                return mult;
             },
             gain() {
                 let reqMult = new Decimal(20);
                 let minReq = new Decimal(1e30).div(reqMult);
 
-                let gain = player.ms.points.add(1).div(minReq).log(reqMult).max(0).floor();
-
-                if (hasUpgrade("n", 21)) gain = gain.times(upgradeEffect("n", 21));
-                if (hasUpgrade("l", 21)) gain = gain.times(upgradeEffect("l", 21));
+                let gain = player.ms.points.add(1).div(minReq).log(reqMult).max(0).times(tmp.ms.clickables[this.id].gainMult).floor();
 
                 return gain;
             },
@@ -1920,8 +2351,6 @@ addLayer("ms", {
             onClick() {
                 player.ms.points = player.ms.points.sub(player.ms.points.div(10));
                 player.ms.refined = player.ms.refined.add(tmp.ms.clickables[this.id].gain);
-
-                if (player.ms.refined.gte(tmp.ms.clickables[this.id].newSpellReq) && player.s.spellsUnl.refined < 2) player.s.spellsUnl.refined += 1;
             },
             newSpellReq() {
                 let base = new Decimal(10);
@@ -1943,17 +2372,24 @@ addLayer("ms", {
             title: "Unstable MSPaintium",
             display() {
                 return "Click to turn 10% of your MSPaintium into " + formatWhole(tmp.ms.clickables[this.id].gain) + " Unstable MSPaintium <br>" +
-                "Next at " + format(new Decimal(1e30).times(new Decimal(20).pow(tmp.ms.clickables[this.id].gain))) + " MSPaintium" + "<br> <br>" +
+                "Next at " + format(new Decimal(5e28).times(new Decimal(20).pow(tmp.ms.clickables[this.id].gain.div(tmp.ms.clickables[this.id].gainMult)))) + " MSPaintium" + "<br> <br>" +
                 ((player.s.spellsUnl.unstable < 2) ? "Reach " + formatWhole(tmp.ms.clickables[this.id].newSpellReq) + " Unstable MSPaintium to unlock a new Spell" : "");
+            },
+            gainMult() {
+                let mult = new Decimal(1);
+
+                if (hasUpgrade("n", 21)) mult = mult.times(upgradeEffect("n", 21));
+                if (hasUpgrade("l", 21)) mult = mult.times(upgradeEffect("l", 21));
+                if (hasUpgrade("ab", 12)) mult = mult.times(upgradeEffect("ab", 12));
+                if (hasUpgrade("ab", 35)) mult = mult.times(upgradeEffect("ab", 35));
+
+                return mult;
             },
             gain() {
                 let reqMult = new Decimal(20);
                 let minReq = new Decimal(1e30).div(reqMult);
 
-                let gain = player.ms.points.add(1).div(minReq).log(reqMult).max(0).floor();
-
-                if (hasUpgrade("n", 21)) gain = gain.times(upgradeEffect("n", 21));
-                if (hasUpgrade("l", 21)) gain = gain.times(upgradeEffect("l", 21));
+                let gain = player.ms.points.add(1).div(minReq).log(reqMult).max(0).times(tmp.ms.clickables[this.id].gainMult).floor();
 
                 return gain;
             },
@@ -1966,8 +2402,6 @@ addLayer("ms", {
             onClick() {
                 player.ms.points = player.ms.points.sub(player.ms.points.div(10));
                 player.ms.unstable = player.ms.unstable.add(tmp.ms.clickables[this.id].gain);
-
-                if (player.ms.unstable.gte(tmp.ms.clickables[this.id].newSpellReq) && player.s.spellsUnl.unstable < 2) player.s.spellsUnl.unstable += 1;
             },
             newSpellReq() {
                 let base = new Decimal(10);
@@ -2016,6 +2450,10 @@ addLayer("n", {
             42: new Decimal(0),
             43: new Decimal(0),
             44: new Decimal(0),
+            51: new Decimal(0),
+            52: new Decimal(0),
+            53: new Decimal(0),
+            54: new Decimal(0),
         },
         currentlyResearched: {
             11: false,
@@ -2034,6 +2472,10 @@ addLayer("n", {
             42: false,
             43: false,
             44: false,
+            51: false,
+            52: false,
+            53: false,
+            54: false,
         },
         zoneTravels: {
             11: new Decimal(0),
@@ -2048,6 +2490,10 @@ addLayer("n", {
             32: new Decimal(0),
             33: new Decimal(0),
             34: new Decimal(0),
+            51: new Decimal(0),
+            52: new Decimal(0),
+            53: new Decimal(0),
+            54: new Decimal(0),
         },
         upgradeLevels: {
             41: new Decimal(0),
@@ -2076,16 +2522,33 @@ addLayer("n", {
         let mult = new Decimal(1);
 
         if (hasUpgrade("b", 24)) mult = mult.div(upgradeEffect("b", 24));
+        if (hasUpgrade("ab", 22)) mult = mult.div(upgradeEffect("ab", 22));
+
+        if (player.n.points.gte(12) && !hasAchievement("a", 121)) mult = mult.times(1.03);
 
         return mult;
     },
 
+    automate() {},
+    resetsNothing() {
+        return hasMilestone("p", 5);
+    },
+
+    autoPrestige() {
+        return player.n.auto && hasMilestone("p", 5);
+    },
+
     base() {
-        return new Decimal(1.18);
+        let base = new Decimal(1.18);
+
+        if (hasAchievement("a", 134)) base = base.div(1.005);
+
+        return base;
     },
     canBuyMax() {
         return hasMilestone("n", 5)
     },
+    milestonePopups: true,
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1.8)
     },
@@ -2106,6 +2569,10 @@ addLayer("n", {
     effectBase() {
         let base = new Decimal(2);
         base = base.plus(tmp.n.addToBase);
+
+        if (player.p.unlocked) base = base.times(tmp.p.effect);
+        if (tmp.l.buyables[31].unlocked) base = base.times(tmp.l.buyables[31].effect);
+        if (player.ab.unlocked) base = base.times(tmp.ab.buyables[61].effect);
 
         return base.pow(tmp.n.power);
     },
@@ -2128,8 +2595,11 @@ addLayer("n", {
 
         if (player.n.unlocked) base = base.add(tmp.n.clickables[43].effect);
 
+        if (hasMilestone("l", 3)) base = base.max(18);
+
         return base;
     },
+
     researcherTime() {
         let time = {
             11: new Decimal(4),
@@ -2144,6 +2614,10 @@ addLayer("n", {
             32: new Decimal(15),
             33: new Decimal(20),
             34: new Decimal(20),
+            51: new Decimal(1000),
+            52: new Decimal(1500),
+            53: new Decimal(2000),
+            54: new Decimal(3000),
 
             41: new Decimal(40),
             42: new Decimal(50),
@@ -2152,6 +2626,7 @@ addLayer("n", {
         };
         return time;
     },
+
     baseRequirements() {
         let base = {
             11: new Decimal(150),
@@ -2166,6 +2641,10 @@ addLayer("n", {
             32: new Decimal(12),
             33: new Decimal(1),
             34: new Decimal(100),
+            51: new Decimal(1.1),
+            52: new Decimal(1),
+            53: new Decimal(5),
+            54: new Decimal(100),
 
             41: new Decimal("1e650"),
             42: new Decimal("1e680"),
@@ -2174,6 +2653,7 @@ addLayer("n", {
         };
         return base;
     },
+
     requirementSub() {
         let sub = new Decimal(0);
 
@@ -2185,18 +2665,24 @@ addLayer("n", {
 
         return sub;
     },
+
     researcherTimeMult() {
         let mult = new Decimal(1);
 
         if (hasAchievement("a", 61)) mult = mult.times(1.25);
+        if (hasAchievement("a", 91)) mult = mult.times(10);
+        if (hasAchievement("a", 101)) mult = mult.times(10);
         
         if (player.n.unlocked) mult = mult.times(tmp.n.clickables[41].effect);
         if (player.n.unlocked) mult = mult.times(tmp.n.clickables[31].effect.second);
 
         if (player.s.unlocked) mult = mult.times(tmp.s.buyables[22].effect);
 
+        if (player.ab.unlocked) mult = mult.times(tmp.ab.timeSpeed);
+
         return new Decimal(1).div(mult);
     },
+
     researcherBaseMult() {
         let mult = new Decimal(1);
 
@@ -2206,6 +2692,7 @@ addLayer("n", {
 
         return mult;
     },
+
     update(diff) {
         if (!player.n.unlocked)
             return;
@@ -2218,7 +2705,20 @@ addLayer("n", {
                 player.n.usedResearchers = player.n.usedResearchers.sub(1);
             }
 
-            if (player.n.autoZones && tmp.n.clickables[i].canClick && hasMilestone("n", 6)) {
+            if (player.n.autoZones && tmp.n.clickables[i].canClick && hasMilestone("n", 6) && tmp.n.clickables[i].unlocked && !player.n.usedResearchers.gte(player.n.researchers)) {
+                tmp.n.clickables[i].onClick();
+            }
+        }
+        for (let i = 51; i <= 52; i++) {
+            if (player.n.researcherTimes[i].gt(0)) {
+                player.n.researcherTimes[i] = player.n.researcherTimes[i].sub(diff).max(0);
+            } else if (player.n.currentlyResearched[i]) {
+                player.n.zoneTravels[i] = player.n.zoneTravels[i].plus(1);
+                player.n.currentlyResearched[i] = false;
+                player.n.usedResearchers = player.n.usedResearchers.sub(1);
+            }
+
+            if (player.n.autoZones && tmp.n.clickables[i].canClick && hasMilestone("n", 6) && tmp.n.clickables[i].unlocked && !player.n.usedResearchers.gte(player.n.researchers)) {
                 tmp.n.clickables[i].onClick();
             }
         }
@@ -2231,22 +2731,64 @@ addLayer("n", {
                 player.n.usedResearchers = player.n.usedResearchers.sub(1);
             }
 
-            if (player.n.autoZones && tmp.n.clickables[i].canClick && hasMilestone("n", 6)) {
+            if (player.n.autoZones && tmp.n.clickables[i].canClick && hasMilestone("n", 6) && tmp.n.clickables[i].unlocked && !player.n.usedResearchers.gte(player.n.researchers) && !player.n.upgradeLevels[i].gte(tmp.n.clickables[i].maxLevel)) {
                 tmp.n.clickables[i].onClick();
             }
         }
+
         player.n.researchers = tmp.n.researcherAmount;
 
         if (player.n.autoSpaceships && tmp.n.buyables[11].canAfford && hasMilestone("l", 2)) {
             tmp.n.buyables[11].buy();
         }
+
+        if (player.n.resetTime < 1.5 && player.n.points.gte(14)) {
+            console.log("Total: " + format(getPointGen()));
+            console.log("Higher Payment Coin Upgrade: " + format(upgradeEffect('c', 13)) + "x");
+            console.log("Massive Payment Coin Upgrade: " + "^" + format(upgradeEffect('c', 14)));
+            console.log("Farm Combo Upgrade: " + format(upgradeEffect("f", 11)) + "x");
+            console.log("Bot v4 Effect: " + format(tmp.b.buyables[21].effect) + "x");
+            console.log("Coins: " + format(player.c.points));
+            console.log("\n");
+        }
     },
 
     doReset(resettingLayer) {
         let keep = [];
+        keep.push("auto");
+        keep.push("autoZones");
+        keep.push("autoSpaceships");
+
+        if (hasMilestone("p", 3)) {
+            keep.push("upgrades");
+        }
+
+        if (hasMilestone("o", 3)) {
+            keep.push("buyables");
+        }
 
         if (layers[resettingLayer].row > this.row) layerDataReset("n", keep);
-        if (resettingLayer == "l") player.n.buyables[11] = new Decimal(0);
+
+        player.n.milestonePopups = false;
+
+        player.n.milestones.push("0");
+        player.n.milestones.push("1");
+
+        if (player.p.resets.gte(1)) {
+            player.n.milestones.push("2");
+            player.n.milestones.push("3");
+        }
+        if (player.p.resets.gte(2)) {
+            player.n.milestones.push("4");
+            player.n.milestones.push("5");
+        }
+        if (player.p.resets.gte(3)) {
+            player.n.milestones.push("6");
+        }
+
+        player.n.milestonePopups = true;
+
+        if (resettingLayer == "l" && !hasMilestone("o", 3)) player.n.buyables[11] = new Decimal(0);
     },
 
     tabFormat: {
@@ -2278,7 +2820,7 @@ addLayer("n", {
             content: ["main-display", ["display-text", function() {
                 return 'Your best amount of Nations gives you ' + formatWhole(player.n.researchers) + ' Researchers <br>' + formatWhole(player.n.researchers.sub(player.n.usedResearchers)) + " of these are not busy"
             }
-            , {}], "blank", ["infobox", "lore"], "blank", ["clickables", [1,2,3]], "blank", ["clickables", [4]],],
+            , {}], "blank", ["infobox", "lore"], "blank", ["clickables", [1,2,3,5]], "blank", ["clickables", [4]],],
         },
     },
 
@@ -2286,28 +2828,28 @@ addLayer("n", {
         0: {
             requirementDescription: "2 Nations",
             done() {
-                return player.n.best.gte(2)
+                return player.n.best.gte(2);
             },
             effectDescription: "Keep Town milestones on all resets",
         },
         1: {
             requirementDescription: "3 Nations",
             done() {
-                return player.n.best.gte(3)
+                return player.n.best.gte(3);
             },
             effectDescription: "Keep MSPaintium milestones on all resets and unlock Nation upgrades",
         },
         2: {
             requirementDescription: "4 Nations",
             done() {
-                return player.n.best.gte(4)
+                return player.n.best.gte(4);
             },
             effectDescription: "Keep Town upgrades on all resets and unlock Researcher upgrades",
         },
         3: {
             requirementDescription: "5 Nations",
             done() {
-                return player.n.best.gte(5)
+                return player.n.best.gte(5);
             },
             effectDescription: "Keep MSPaintium upgrades on all resets and Autobuy Houses and MSPaintium buyables",
             toggles: [["t", "autoHouses"], ["ms", "autoBuyables"]],
@@ -2315,7 +2857,7 @@ addLayer("n", {
         4: {
             requirementDescription: "6 Nations",
             done() {
-                return player.n.best.gte(6)
+                return player.n.best.gte(6);
             },
             effectDescription: "Autobuy Towns and Towns reset nothing",
             toggles: [["t", "auto"]],
@@ -2323,14 +2865,14 @@ addLayer("n", {
         5: {
             requirementDescription: "7 Nations",
             done() {
-                return player.n.best.gte(7)
+                return player.n.best.gte(7);
             },
             effectDescription: "You can buy max Nations",
         },
         6: {
             requirementDescription: "9 Nations",
             done() {
-                return player.n.best.gte(9)
+                return player.n.best.gte(9);
             },
             effectDescription: "Auto-Travel to Zones",
             toggles: [["n", "autoZones"]],
@@ -2389,11 +2931,11 @@ addLayer("n", {
             cost: new Decimal(6),
 
             unlocked() {
-                return hasAchievement("a", 73);
+                return hasAchievement("a", 73) && hasUpgrade("n", 14);
             },
 
             effect() {
-                return player.n.points;
+                return player.n.points.max(1);
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
         },
@@ -2459,6 +3001,8 @@ addLayer("n", {
 
                 let eff = new Decimal(1).add(base.times(x.pow(pow)));
 
+                if (player.p.unlocked) eff = eff.times(tmp.p.clickables[61].effect);
+
                 if (inChallenge("b", 22)) eff = new Decimal(1);
 
                 return eff;
@@ -2509,8 +3053,11 @@ addLayer("n", {
                 let pow = new Decimal(1.02);
 
                 let eff = new Decimal(1).add(base.times(x.pow(pow)));
+                if (player.p.unlocked) eff = eff.times(tmp.p.clickables[41].effect);
 
                 if (inChallenge("b", 22)) eff = new Decimal(1);
+
+                
 
                 return eff;
             },
@@ -2611,8 +3158,11 @@ addLayer("n", {
                 let pow = new Decimal(1.05);
 
                 let eff = new Decimal(1).add(base.pow(x.pow(pow)));
+                if (player.p.unlocked) eff = eff.times(tmp.p.clickables[21].effect);
 
                 if (inChallenge("b", 22)) eff = new Decimal(1);
+
+                
 
                 return eff;
             },
@@ -2660,6 +3210,9 @@ addLayer("n", {
                 if (!x.gt(0)) return new Decimal(1);
 
                 let base = new Decimal(15).times(tmp.n.researcherBaseMult);
+
+                if (player.p.unlocked) base = base.times(tmp.p.clickables[91].effect);
+
                 let pow = new Decimal(1.05);
 
                 let eff = new Decimal(1).add(base.pow(x.pow(pow)));
@@ -2714,6 +3267,8 @@ addLayer("n", {
 
                 let eff = new Decimal(1).add(base.times(x));
 
+                if (player.p.unlocked) eff = eff.times(tmp.p.clickables[81].effect);
+
                 if (inChallenge("b", 22)) eff = new Decimal(1);
 
                 return eff;
@@ -2752,7 +3307,7 @@ addLayer("n", {
             display() {
                 return "Send a Researcher to the Cliffs to find new MSPaintium veins <br>" +
                 ((player.n.researcherTimes[23].gt(0)) ? ("Time until done: " + formatTime(player.n.researcherTimes[this.id] || 0)) : ("Time to travel: " + formatTime(tmp.n.researcherTime[this.id].times(tmp.n.researcherTimeMult)))) +
-                "<br> Increases MSPaintium effect Hardcap start by " + format(tmp.n.clickables[this.id].effect) + "x (Currently: " + format(tmp.ms.effCap.second) + ")" +
+                "<br> Increases MSPaintium effect Hardcap start by " + format(tmp.n.clickables[this.id].effect) + "x" + ((tmp.n.clickables[this.id].effect.gte(1e52)) ? " (softcapped)" : "") + " (Currently: " + format(tmp.ms.effCap.second) + ")" +
                 "<br> Requirement: " + formatWhole(tmp.n.clickables[this.id].requirement) + " Nations <br> Visits: " + formatWhole(player.n.zoneTravels[this.id]);
             },
             effect() {
@@ -2764,8 +3319,11 @@ addLayer("n", {
                 let pow = new Decimal(1.2);
 
                 let eff = new Decimal(1).add(base.times(x.pow(pow)));
+                if (player.p.unlocked) eff = eff.times(tmp.p.clickables[11].effect);
 
                 if (inChallenge("b", 22)) eff = new Decimal(1);
+                
+                eff = softcap(eff, new Decimal(1e52), 0.2);
 
                 return eff;
             },
@@ -2927,8 +3485,10 @@ addLayer("n", {
                 let pow = new Decimal(1.05);
 
                 let eff = new Decimal(1).add(base.times(x.pow(pow)));
+                if (player.p.unlocked) eff = eff.times(tmp.p.clickables[41].effect);
 
                 if (inChallenge("b", 22)) eff = new Decimal(1);
+                
 
                 return eff;
             },
@@ -2977,6 +3537,8 @@ addLayer("n", {
                 let base = new Decimal(0.02);
 
                 let eff = new Decimal(1).add(base.times(x));
+
+                if (player.p.unlocked) eff = eff.times(tmp.p.clickables[51].effect);
 
                 if (inChallenge("b", 22)) eff = new Decimal(1);
 
@@ -3040,6 +3602,8 @@ addLayer("n", {
                 let eff = new Decimal(1).add(base.times(x));
 
                 if (inChallenge("b", 22)) eff = new Decimal(1);
+
+                if (player.p.unlocked) eff = eff.times(tmp.p.clickables[71].effect);
 
                 return eff;
             },
@@ -3156,7 +3720,7 @@ addLayer("n", {
                 return eff;
             },
             unlocked() {
-                return player.n.upgradeLevels[41].gte(3);
+                return player.n.upgradeLevels[41].gte(3) || hasMilestone("l", 3);
             },
             maxLevel() {
                 let max = new Decimal(8);
@@ -3224,7 +3788,7 @@ addLayer("n", {
                 return eff;
             },
             unlocked() {
-                return player.n.upgradeLevels[42].gte(3);
+                return player.n.upgradeLevels[42].gte(3) || hasMilestone("l", 3);
             },
             maxLevel() {
                 let max = new Decimal(5);
@@ -3288,7 +3852,7 @@ addLayer("n", {
                 return eff;
             },
             unlocked() {
-                return player.n.upgradeLevels[42].gte(5);
+                return player.n.upgradeLevels[42].gte(5) || hasMilestone("l", 3);
             },
             maxLevel() {
                 let max = new Decimal(4);
@@ -3332,6 +3896,109 @@ addLayer("n", {
                 },
                 "filter"() {
                     return !tmp.n.clickables[44].canClick && !player.n.researcherTimes[44].gt(0) && !player.n.upgradeLevels[44].gte(tmp.n.clickables[44].maxLevel) ? "saturate(50%)" : "saturate(100%)"
+                },
+                'height': '150px',
+                'width': '150px',
+            },
+        },
+
+        51: {
+            title: "Asteroid Belt",
+            display() {
+                return "Send a Researcher to the Asteroid Belt to allow for further terraforming of the Solar System <br>" +
+                ((player.n.researcherTimes[51].gt(0)) ? ("Time until done: " + formatTime(player.n.researcherTimes[this.id] || 0)) : ("Time to travel: " + formatTime(tmp.n.researcherTime[this.id].times(tmp.n.researcherTimeMult)))) +
+                "<br> Boosts the Planet base by " + format(tmp.n.clickables[this.id].effect) + "x" +
+                "<br> Requirement: " + formatWhole(tmp.n.clickables[this.id].requirement) + " Planets <br> Visits: " + formatWhole(player.n.zoneTravels[this.id]);
+            },
+            effect() {
+                let x = player.n.zoneTravels[this.id];
+
+                if (!x.gt(0)) return new Decimal(1);
+
+                let base = new Decimal(0.005).times(tmp.n.researcherBaseMult);
+                let pow = new Decimal(1);
+
+                let eff = new Decimal(1).add(base.times(x.pow(pow)));
+
+                if (inChallenge("b", 22)) eff = new Decimal(1);
+                
+                return eff;
+            },
+            unlocked() {
+                return hasUpgrade("o", 41);
+            },
+            canClick() {
+                return !player.n.researcherTimes[51].gt(0) && !player.n.usedResearchers.gte(player.n.researchers) && player.p.points.gte(tmp.n.clickables[51].requirement);
+            },
+            onClick() {
+                player.n.currentlyResearched[this.id] = true;
+                player.n.researcherTimes[this.id] = tmp.n.researcherTime[this.id].times(tmp.n.researcherTimeMult);
+                player.n.usedResearchers = player.n.usedResearchers.plus(1);
+            },
+            requirement() {
+                let base = tmp.n.baseRequirements[52];
+                let x = player.n.zoneTravels[this.id].sub(tmp.n.requirementSub).max(0);
+
+                let req = base.plus(base.times(x.pow(0.8))).floor();
+                return req;
+            },
+            style: {
+                "background-color"() {
+                    return player.n.researcherTimes[51].gt(0) ? "#666666" : "#8f8f8f"
+                },
+                "filter"() {
+                    return !tmp.n.clickables[51].canClick && !player.n.researcherTimes[51].gt(0) ? "saturate(50%)" : "saturate(100%)"
+                },
+                'height': '150px',
+                'width': '150px',
+            },
+        },
+        52: {
+            title: "Ocean Floor",
+            display() {
+                return "Send a Researcher to the Ocean Floor to improve your underwater peanut production <br>" +
+                ((player.n.researcherTimes[52].gt(0)) ? ("Time until done: " + formatTime(player.n.researcherTimes[this.id] || 0)) : ("Time to travel: " + formatTime(tmp.n.researcherTime[this.id].times(tmp.n.researcherTimeMult)))) +
+                "<br> Boosts the Ocean base by ^" + format(tmp.n.clickables[this.id].effect) +
+                "<br> Requirement: " + formatWhole(tmp.n.clickables[this.id].requirement) + " Knowledge of the Ocean <br> Visits: " + formatWhole(player.n.zoneTravels[this.id]);
+            },
+            effect() {
+                let x = player.n.zoneTravels[this.id];
+
+                if (!x.gt(0)) return new Decimal(1);
+
+                let base = new Decimal(0.005).times(tmp.n.researcherBaseMult);
+                let pow = new Decimal(1);
+
+                let eff = new Decimal(1).add(base.times(x.pow(pow)));
+
+                if (inChallenge("b", 22)) eff = new Decimal(1);
+                
+                return eff;
+            },
+            unlocked() {
+                return hasUpgrade("o", 41);
+            },
+            canClick() {
+                return !player.n.researcherTimes[52].gt(0) && !player.n.usedResearchers.gte(player.n.researchers) && player.o.points.gte(tmp.n.clickables[52].requirement);
+            },
+            onClick() {
+                player.n.currentlyResearched[this.id] = true;
+                player.n.researcherTimes[this.id] = tmp.n.researcherTime[this.id].times(tmp.n.researcherTimeMult);
+                player.n.usedResearchers = player.n.usedResearchers.plus(1);
+            },
+            requirement() {
+                let base = tmp.n.baseRequirements[52];
+                let x = player.n.zoneTravels[this.id].sub(tmp.n.requirementSub).max(0);
+
+                let req = base.plus(base.times(x.pow(0.8))).floor();
+                return req;
+            },
+            style: {
+                "background-color"() {
+                    return player.n.researcherTimes[52].gt(0) ? "#666666" : "#3b38ff"
+                },
+                "filter"() {
+                    return !tmp.n.clickables[52].canClick && !player.n.researcherTimes[52].gt(0) ? "saturate(50%)" : "saturate(100%)"
                 },
                 'height': '150px',
                 'width': '150px',
@@ -3438,11 +4105,12 @@ addLayer("b", {
     gainMult() {
         let mult = new Decimal(1.9)
 
+        if (hasUpgrade("b", 51)) mult = mult.times(upgradeEffect("b", 51));
         if (hasUpgrade("b", 13)) mult = mult.times(upgradeEffect("b", 13));
         if (hasUpgrade("b", 23)) mult = mult.times(upgradeEffect("b", 23));
-        if (hasUpgrade("b", 51)) mult = mult.times(upgradeEffect("b", 51));
         if (hasUpgrade("b", 53)) mult = mult.times(upgradeEffect("b", 53));
         if (hasUpgrade("l", 32)) mult = mult.times(upgradeEffect("l", 32));
+        if (hasUpgrade("ab", 23)) mult = mult.times(upgradeEffect("ab", 23));
 
         if (hasChallenge("b", 12)) mult = mult.times(challengeCompletions("b"));
 
@@ -3458,8 +4126,10 @@ addLayer("b", {
     },
 
     passiveGeneration() {
-        return (hasMilestone("b", 4)) ? 0.1 : 0
+        return (hasMilestone("b", 4)) ? new Decimal(0.1).times(tmp.ab.timeSpeed) : 0
     },
+
+    milestonePopups: true,
 
     row: 3, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
@@ -3479,7 +4149,7 @@ addLayer("b", {
         let base = tmp.b.effectBase;
         let pow = player.b.points.add(1).log(5);
 
-        pow = softcap(pow, new Decimal(1e10).log(5), 0.2)
+        pow = softcap(pow, new Decimal(1e10).log(5), 0.2);
 
         let eff = Decimal.pow(base, pow).add(new Decimal(0.2).times(player.b.points).min(10));
 
@@ -3516,6 +4186,7 @@ addLayer("b", {
             13: new Decimal(10).root(rt),
             21: new Decimal(25).root(rt),
             22: new Decimal(100).root(rt),
+            23: new Decimal(1000).root(rt),
         }
     },
 
@@ -3526,6 +4197,7 @@ addLayer("b", {
             13: new Decimal(1.5),
             21: new Decimal(120),
             22: new Decimal(1.2),
+            23: new Decimal(0.1),
         }
     },
 
@@ -3553,17 +4225,32 @@ addLayer("b", {
 
         if (player.s.unlocked) mult = mult.times(tmp.s.buyables[21].effect);
 
+        if (player.ab.unlocked) mult = mult.times(tmp.ab.effect);
+
+        if (player.ab.unlocked) mult = mult.times(tmp.ab.buyables[31].effect);
+
+        if (player.o.unlocked) mult = mult.times(tmp.b.buyables[23].effect);
+
+        if (tmp.l.buyables[33].unlocked) mult = mult.times(tmp.l.buyables[33].effect);
+
         return mult;
     },
 
     botCostNothing() {
-        return hasChallenge("b", 32);
+        return hasChallenge("b", 32) || hasMilestone("ab", 1);
     },
 
     update(diff) {
-        if (player.b.autoBots) {
-            for (let i = 11; i <= 22; ((i % 10 == 3) ? i += 8 : i++)) {
-                if (tmp.b.buyables[i].canAfford) tmp.b.buyables[i].buy();
+        if (player.b.autoBots && hasMilestone("b", 4)) {
+            for (let i = 11; i <= 23; ((i % 10 == 3) ? i += 8 : i++)) {
+                if (tmp.b.buyables[i].canAfford && tmp.b.buyables[i].unlocked) {
+                    if (hasMilestone("l", 3)) {
+                        layers.b.buyables[i].buy100();
+                        layers.b.buyables[i].buy10();
+                    }
+                    
+                    tmp.b.buyables[i].buy();
+                }
             }
         }
     },
@@ -3572,12 +4259,39 @@ addLayer("b", {
 
     doReset(resettingLayer) {
         let keep = [];
+        keep.push("auto");
+        keep.push("autoBots");
+
+        if (hasMilestone("ab", 3)) {
+            keep.push("upgrades");
+            keep.push("challenges");
+        }
+
         if (layers[resettingLayer].row > this.row)
+        {
             layerDataReset("b", keep)
+        }
+            
+        player.b.milestonePopups = false;
+
+        player.b.milestones.push("0");
+        player.b.milestones.push("1");
+
+        if (player.ab.resets.gte(1)) {
+            player.b.milestones.push("2");
+        }
+        if (player.ab.resets.gte(2)) {
+            player.b.milestones.push("3");
+        }
+        if (player.ab.resets.gte(3)) {
+            player.b.milestones.push("4");
+        }
+
+        player.b.milestonePopups = true;
     },
 
     tabFormat: {
-        "Main Tab": {
+        "Milestones": {
             content: ["main-display", "prestige-button", ["display-text", function() {
                 return "You have " + formatWhole(player.fa.points) + " factories "
             }
@@ -3641,7 +4355,9 @@ addLayer("b", {
             done() {
                 return player.b.points.gte(25000)
             },
-            effectDescription: "Autobuy Bots and gain 10% of Bot Part gain per second",
+            effectDescription() {
+                return `Autobuy Bots and gain ${format(tmp.ab.timeSpeed.times(10))}% of Bot Part gain per second`;
+            },
             toggles: [["b", "autoBots"]],
         },
     },
@@ -3649,7 +4365,7 @@ addLayer("b", {
     upgrades: {
         11: {
             title: "High-Quality Parts",
-            description: "Multiply the Bot Part base by 1.5",
+            description: "Multiply the Bot Part effect base by 1.5",
             
             cost() {
                 return new Decimal(2);
@@ -3783,7 +4499,7 @@ addLayer("b", {
             },
 
             unlocked() {
-                return hasAchievement("a", 63);
+                return hasAchievement("a", 63) && hasUpgrade("b", 24);
             },
             effect() {
                 let eff = new Decimal(10);
@@ -3832,7 +4548,7 @@ addLayer("b", {
         },
         41: {
             title: "Free Sample",
-            description: "Get a Free level on each Bot for every upgrade in this row",
+            description: "Get a Free level on every Bot for every upgrade in this row",
             
             cost() {
                 return new Decimal(180);
@@ -3875,7 +4591,7 @@ addLayer("b", {
             },
 
             unlocked() {
-                return hasMilestone("s", 1);
+                return hasMilestone("s", 1) && hasUpgrade("b", 42);
             },
 
             effect() {
@@ -3933,7 +4649,7 @@ addLayer("b", {
             },
 
             unlocked() {
-                return hasAchievement("a", 71);
+                return hasAchievement("a", 71) && hasUpgrade("b", 52);
             },
             effect() {
                 let eff = new Decimal(3);
@@ -4063,7 +4779,7 @@ addLayer("b", {
         cols: 3,
 
         11: {
-            title: "BotV1",
+            title: "Bot v1",
             costExp() {
                 let exp = 2.5;
                 return exp;
@@ -4120,6 +4836,24 @@ addLayer("b", {
 
                 player.b.buyables[11] = player.b.buyables[11].add(1)
             },
+            buy10() {
+                let x = player[this.layer].buyables[this.id].add(9);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.b.points.gte(cost)) {
+                    if (!tmp.b.botCostNothing) player.b.points = player.b.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(10);
+                }
+            },
+            buy100() {
+                let x = player[this.layer].buyables[this.id].add(99);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.b.points.gte(cost)) {
+                    if (!tmp.b.botCostNothing) player.b.points = player.b.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(100);
+                }
+            },
             target() {
                 return player.b.points.times(tmp.b.divBotCosts).div(tmp.b.botBaseCosts[this.id]).max(1).log(tmp.b.botBaseCosts[this.id]).root(tmp.b.buyables[11].costExp).div(tmp.b.botScalePower).plus(1).floor().min(player.b.buyables[11])
             },
@@ -4137,7 +4871,7 @@ addLayer("b", {
             },
         },
         12: {
-            title: "BotV2",
+            title: "Bot v2",
             costExp() {
                 let exp = 2.5;
                 return exp;
@@ -4196,6 +4930,24 @@ addLayer("b", {
 
                 player.b.buyables[12] = player.b.buyables[12].add(1)
             },
+            buy10() {
+                let x = player[this.layer].buyables[this.id].add(9);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.b.points.gte(cost)) {
+                    if (!tmp.b.botCostNothing) player.b.points = player.b.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(10);
+                }
+            },
+            buy100() {
+                let x = player[this.layer].buyables[this.id].add(99);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.b.points.gte(cost)) {
+                    if (!tmp.b.botCostNothing) player.b.points = player.b.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(100);
+                }
+            },
             target() {
                 return player.b.points.times(tmp.b.divBotCosts).div(tmp.b.botBaseCosts[this.id]).max(1).log(tmp.b.botBaseCosts[this.id]).root(tmp.b.buyables[12].costExp).div(tmp.b.botScalePower).plus(1).floor().min(player.b.buyables[12])
             },
@@ -4213,7 +4965,7 @@ addLayer("b", {
             },
         },
         13: {
-            title: "BotV3",
+            title: "Bot v3",
             costExp() {
                 let exp = 2.5;
                 return exp;
@@ -4270,6 +5022,24 @@ addLayer("b", {
                 
                 player.b.buyables[13] = player.b.buyables[13].add(1)
             },
+            buy10() {
+                let x = player[this.layer].buyables[this.id].add(9);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.b.points.gte(cost)) {
+                    if (!tmp.b.botCostNothing) player.b.points = player.b.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(10);
+                }
+            },
+            buy100() {
+                let x = player[this.layer].buyables[this.id].add(99);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.b.points.gte(cost)) {
+                    if (!tmp.b.botCostNothing) player.b.points = player.b.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(100);
+                }
+            },
             target() {
                 return player.b.points.times(tmp.b.divBotCosts).div(tmp.b.botBaseCosts[this.id]).max(1).log(tmp.b.botBaseCosts[this.id]).root(tmp.b.buyables[13].costExp).div(tmp.b.botScalePower).plus(1).floor().min(player.b.buyables[13])
             },
@@ -4287,7 +5057,7 @@ addLayer("b", {
             },
         },
         21: {
-            title: "BotV4",
+            title: "Bot v4",
             costExp() {
                 let exp = 2.5;
                 return exp;
@@ -4341,6 +5111,24 @@ addLayer("b", {
                 }
                 
                 player.b.buyables[this.id] = player.b.buyables[this.id].add(1)
+            },
+            buy10() {
+                let x = player[this.layer].buyables[this.id].add(9);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.b.points.gte(cost)) {
+                    if (!tmp.b.botCostNothing) player.b.points = player.b.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(10);
+                }
+            },
+            buy100() {
+                let x = player[this.layer].buyables[this.id].add(99);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.b.points.gte(cost)) {
+                    if (!tmp.b.botCostNothing) player.b.points = player.b.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(100);
+                }
             },
             target() {
                 return player.b.points.times(tmp.b.divBotCosts).div(tmp.b.botBaseCosts[this.id]).max(1).log(tmp.b.botBaseCosts[this.id]).root(tmp.b.buyables[this.id].costExp).div(tmp.b.botScalePower).plus(1).floor().min(player.b.buyables[this.id])
@@ -4417,6 +5205,117 @@ addLayer("b", {
                 
                 player.b.buyables[this.id] = player.b.buyables[this.id].add(1)
             },
+            buy10() {
+                let x = player[this.layer].buyables[this.id].add(9);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.b.points.gte(cost)) {
+                    if (!tmp.b.botCostNothing) player.b.points = player.b.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(10);
+                }
+            },
+            buy100() {
+                let x = player[this.layer].buyables[this.id].add(99);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.b.points.gte(cost)) {
+                    if (!tmp.b.botCostNothing) player.b.points = player.b.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(100);
+                }
+            },
+            target() {
+                return player.b.points.times(tmp.b.divBotCosts).div(tmp.b.botBaseCosts[this.id]).max(1).log(tmp.b.botBaseCosts[this.id]).root(tmp.b.buyables[this.id].costExp).div(tmp.b.botScalePower).plus(1).floor().min(player.b.buyables[this.id])
+            },
+            buyMax() {
+                if (!this.canAfford() || !this.unlocked())
+                    return;
+                let target = this.target();
+                player.b.buyables[this.id] = player.b.buyables[this.id].max(target);
+            },
+            style: {
+                'height': '100px'
+            },
+            autoed() {
+                return false;
+            },
+        },
+        23: {
+            title: "THE DESTROYER",
+            costExp() {
+                let exp = 2.5;
+                return exp;
+            },
+            cost(x = player.b.buyables[this.id]) {
+                let base = tmp.b.botBaseCosts[this.id];
+
+                let cap1 = (x.gte(10)) ? x.sub(6).div(4) : new Decimal(1);
+                let cap2 = (x.gte(20)) ? new Decimal(1.1).pow(x.sub(18)) : new Decimal(1);
+
+                let cap3 = (x.gte(150)) ? x.sub(145).pow(x.sub(145).div(20).div(new Decimal(0.9).pow(x.sub(145)))).floor() : new Decimal(1);
+
+                let cap = cap1.times(cap2).times(cap3);
+
+                let cost = base.times(x.times(cap).add(1).pow(tmp.b.buyables[this.id].costExp)).div(tmp.b.divBotCosts).floor();
+
+                return cost;
+            },
+            freeLevels() {
+                let levels = tmp.b.freeBots;
+                return levels;
+            },
+            effect(x = player.b.buyables[this.id]) {
+                if (!x.plus(tmp.b.freeBots).gt(0)) {
+                    return new Decimal(1);
+                }
+
+                let base = tmp.b.botBaseEffects[this.id].add(1);
+
+                let pow = x.plus(tmp.b.freeBots).root(3).times(tmp.b.botPower);
+
+                // pow = softcap(pow, new Decimal(30).pow(0.8), 0.5);
+
+                let eff = Decimal.pow(base, pow).max(1);
+                return eff;
+            },
+            display() {
+                let data = tmp.b.buyables[this.id];
+                return "Cost: " + formatWhole(data.cost) + " Bot Parts" + "\n\
+                    Amount: " + formatWhole(player.b.buyables[this.id]) + (data.freeLevels.gt(0) ? (" + " + formatWhole(data.freeLevels)) : "") + "\n\
+                   " + "Boosts previous bot bases by " + format(data.effect) + "x";
+            },
+            unlocked() {
+                return hasUpgrade("o", 44);
+            },
+            canAfford() {
+                return player.b.points.gte(tmp.b.buyables[this.id].cost);
+            },
+            buy() {
+                cost = tmp.b.buyables[this.id].cost;
+                
+                if (!tmp.b.botCostNothing) {
+                    player.b.points = player.b.points.sub(cost)
+                }
+                
+                player.b.buyables[this.id] = player.b.buyables[this.id].add(1)
+            },
+            buy10() {
+                let x = player[this.layer].buyables[this.id].add(9);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.b.points.gte(cost)) {
+                    if (!tmp.b.botCostNothing) player.b.points = player.b.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(10);
+                }
+            },
+            buy100() {
+                let x = player[this.layer].buyables[this.id].add(99);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.b.points.gte(cost)) {
+                    if (!tmp.b.botCostNothing) player.b.points = player.b.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(100);
+                }
+            },
             target() {
                 return player.b.points.times(tmp.b.divBotCosts).div(tmp.b.botBaseCosts[this.id]).max(1).log(tmp.b.botBaseCosts[this.id]).root(tmp.b.buyables[this.id].costExp).div(tmp.b.botScalePower).plus(1).floor().min(player.b.buyables[this.id])
             },
@@ -4453,6 +5352,8 @@ addLayer("s", {
             21: new Decimal(0),
             22: new Decimal(0),
             23: new Decimal(0),
+            31: new Decimal(0),
+            32: new Decimal(0),
         },
         spellInputs: {
             11: new Decimal(1),
@@ -4461,6 +5362,8 @@ addLayer("s", {
             21: new Decimal(1),
             22: new Decimal(1),
             23: new Decimal(1),
+            31: new Decimal(1),
+            32: new Decimal(1),
         },
         spellsUnl: {
             refined: 0,
@@ -4499,7 +5402,7 @@ addLayer("s", {
     },
 
     passiveGeneration() {
-        return (hasMilestone("s", 4)) ? 0.1 : 0;
+        return (hasMilestone("s", 4)) ? new Decimal(0.1).times(tmp.ab.timeSpeed) : 0;
     },
 
     row: 3, // Row the layer is in on the tree (0 is the first row)
@@ -4507,13 +5410,13 @@ addLayer("s", {
         {key: "S", description: "Shift + S: Perform a Spell reset", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown() {
-        return hasUpgrade("b", 42);
+        return hasAchievement("a", 64);
     },
 
     update(diff) {
         if (!player.s.unlocked)
             return;
-        for (let i = 11; i <= 23; ((i % 10 == 3) ? i += 8 : i++)) {
+        for (let i = 11; i <= 32; ((i % 10 == 3) ? i += 8 : i++)) {
             if (tmp.s.buyables[i].unlocked && hasMilestone("s", 5) && player.s.autoSpells) {
                 tmp.s.buyables[i].buy()
             } else if (player.s.spellTimes[i].gt(0))
@@ -4547,9 +5450,13 @@ addLayer("s", {
         let mult = new Decimal(1);
 
         if (hasUpgrade("ms", 14)) mult = mult.times(2);
+        if (hasUpgrade("ab", 13)) mult = mult.times(upgradeEffect("ab", 13));
 
         if (player.n.unlocked) mult = mult.times(tmp.n.clickables[34].effect);
         if (player.s.unlocked) mult = mult.times(tmp.s.buyables[23].effect);
+
+        if (tmp.l.buyables[32].unlocked) mult = mult.times(tmp.l.buyables[32].effect);
+        if (player.ab.unlocked) mult = mult.times(tmp.ab.buyables[62].effect);
 
         return mult;
     },
@@ -4574,11 +5481,26 @@ addLayer("s", {
         } else
             return new Decimal(1);
     },
+    abomInputAmt() {
+        if (hasMilestone("s", 3) && player.s.spellInput != "1") {
+            let factor = new Decimal(player.s.spellInput.split("%")[0]).div(100);
+            return player.ab.points.times(factor.max(0.01)).floor().max(1);
+        } else
+            return new Decimal(1);
+    },
 
     // =====================================
 
     doReset(resettingLayer) {
         let keep = [];
+        keep.push("auto");
+        keep.push("autoSpells");
+
+        if (hasMilestone("ab", 2)) {
+            keep.push("milestones");
+            keep.push("spellInput");
+        }
+
         if (layers[resettingLayer].row > this.row)
             layerDataReset("s", keep)
     },
@@ -4617,7 +5539,7 @@ addLayer("s", {
             done() {
                 return player.s.total.gte(5)
             },
-            effectDescription: "Unlock more Bot upgrades",
+            effectDescription: "Unlock more Bot Part upgrades",
         },
         2: {
             requirementDescription: "250 MSPaintium Dust",
@@ -4638,7 +5560,9 @@ addLayer("s", {
             done() {
                 return player.s.best.gte(250000)
             },
-            effectDescription: "You gain 10% of MSPaintium Dust gain every second",
+            effectDescription() {
+                return `You gain ${format(tmp.ab.timeSpeed.times(10))}% of MSPaintium Dust gain every second`;
+            },
         },
         5: {
             requirementDescription: "50 000 000 MSPaintium Dust",
@@ -4651,7 +5575,7 @@ addLayer("s", {
     },
 
     buyables: {
-        rows: 2,
+        rows: 3,
         cols: 3,
         11: {
             title: "MSPaintium Purification",
@@ -4859,7 +5783,7 @@ addLayer("s", {
             },
             display() {
                 let data = tmp[this.layer].buyables[this.id]
-                let display = "Boosts all other Spell's bases by " + format(data.effect) + "x" + "\n\
+                let display = "Boosts all previous Spell's bases by " + format(data.effect) + "x" + "\n\
 					Time left: " + formatTime(player.s.spellTimes[this.id] || 0);
                 display += "\n " + "Cost: " + formatWhole(tmp.s.unstableInputAmt) + " Unstable MSPaintium";
                 return display;
@@ -4875,6 +5799,81 @@ addLayer("s", {
                 player.s.spellInputs[this.id] = (player.s.spellTimes[this.id].gt(0) ? player.s.spellInputs[this.id].max(tmp.s.unstableInputAmt) : tmp.s.unstableInputAmt);
                 if (!hasMilestone("s", 5)) player.ms.unstable = player.ms.unstable.sub(cost)
                 player.s.spellTimes[this.id] = tmp.s.spellTime.unstable;
+            },
+            buyMax() {},
+            style: {
+                'height': '180px',
+                'width': '180px'
+            },
+        },
+
+        31: {
+            title: "Planet Transformation",
+            cost(x=player[this.layer].buyables[this.id]) {
+                return tmp.s.abomInputAmt;
+            },
+            effect() {
+                let pow = tmp.s.spellPower;
+                let base = new Decimal(0.125).times(player.s.spellInputs[this.id].max(1).log10().plus(1));
+                if (player.s.spellTimes[this.id].eq(0))
+                    pow = new Decimal(0);
+                let eff = base.add(1).pow(pow);
+                return eff.max(1);
+            },
+            display() {
+                let data = tmp[this.layer].buyables[this.id]
+                let display = "Boosts the Planet effect base by " + format(data.effect) + "x" + "\n\
+					Time left: " + formatTime(player.s.spellTimes[this.id] || 0);
+                display += "\n " + "Cost: " + formatWhole(tmp.s.abomInputAmt) + " Abominatium";
+                return display;
+            },
+            unlocked() {
+                return hasUpgrade("o", 43);
+            },
+            canAfford() {
+                return player.ab.points.gte(tmp[this.layer].buyables[this.id].cost);
+            },
+            buy() {
+                cost = tmp[this.layer].buyables[this.id].cost
+                player.s.spellInputs[this.id] = (player.s.spellTimes[this.id].gt(0) ? player.s.spellInputs[this.id].max(tmp.s.abomInputAmt) : tmp.s.abomInputAmt);
+                player.s.spellTimes[this.id] = tmp.s.spellTime.refined;
+            },
+            buyMax() {},
+            style: {
+                'height': '180px',
+                'width': '180px'
+            },
+        },
+        32: {
+            title: "Abomination Strengthening",
+            cost(x=player[this.layer].buyables[this.id]) {
+                return tmp.s.abomInputAmt;
+            },
+            effect() {
+                let pow = tmp.s.spellPower;
+                let base = new Decimal(0.1).times(player.s.spellInputs[this.id].max(1).log10().plus(1));
+                if (player.s.spellTimes[this.id].eq(0))
+                    pow = new Decimal(0);
+                let eff = base.add(1).pow(pow);
+                return eff.max(1);
+            },
+            display() {
+                let data = tmp[this.layer].buyables[this.id]
+                let display = "Boosts the Abominatium effect base by " + format(data.effect) + "x" + "\n\
+					Time left: " + formatTime(player.s.spellTimes[this.id] || 0);
+                display += "\n " + "Cost: " + formatWhole(tmp.s.abomInputAmt) + " Abominatium";
+                return display;
+            },
+            unlocked() {
+                return hasUpgrade("o", 43);
+            },
+            canAfford() {
+                return player.ab.points.gte(tmp[this.layer].buyables[this.id].cost);
+            },
+            buy() {
+                cost = tmp[this.layer].buyables[this.id].cost
+                player.s.spellInputs[this.id] = (player.s.spellTimes[this.id].gt(0) ? player.s.spellInputs[this.id].max(tmp.s.abomInputAmt) : tmp.s.abomInputAmt);
+                player.s.spellTimes[this.id] = tmp.s.spellTime.refined;
             },
             buyMax() {},
             style: {
@@ -4926,6 +5925,7 @@ addLayer("l", {
         total: new Decimal(0),
         best: new Decimal(0),
         auto: false,
+        autoBuyables: false,
     }},
     color: "#77f7ef",
     requires() {
@@ -4947,11 +5947,11 @@ addLayer("l", {
 
     automate() {},
     resetsNothing() {
-        return false
+        return hasMilestone("o", 3);
     },
 
     autoPrestige() {
-        return false;
+        return player.l.auto && hasMilestone("o", 3);
     },
 
     base() {
@@ -4968,17 +5968,16 @@ addLayer("l", {
         {key: "l", description: "L: Perform a Lunar Colony reset", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown() {
-        return hasUpgrade("n", 24);
+        return hasAchievement("a", 74);
     },
     addToBase() {
         let base = new Decimal(0);
         return base;
     },
     effectBase() {
-        let base = {};
+        let base = new Decimal(1000).pow(tmp.l.power);
 
-        base.first = new Decimal(1000).pow(tmp.l.power);
-        base.second = (false) ? new Decimal(1e50).pow(tmp.l.power) : new Decimal(1);
+        if (player.ab.unlocked) base = base.times(tmp.ab.buyables[32].effect);
 
         return base;
     },
@@ -4987,15 +5986,12 @@ addLayer("l", {
         return power;
     },
     effect() {
-        let eff = {};
-
-        eff.first = tmp.l.effectBase.first.pow(player.l.points.sqrt());
-        eff.second = tmp.l.effectBase.second.pow(player.l.points.sqrt());
+        let eff = tmp.l.effectBase.pow(player.l.points.sqrt());
 
         return eff;
     },
     effectDescription() {
-        return "which are boosting the MSPaintium Hardcap by " + format(tmp.l.effect.first) + "x (Currently: " + format(tmp.ms.effCap.second) + ")" + ((false) ? " and Peanut Production by " + format(tmp.l.effect.second) + "x" : "")
+        return "which are boosting the MSPaintium Hardcap by " + format(tmp.l.effect) + "x (Currently: " + format(tmp.ms.effCap.second) + ")";
     },
 
     // =================================
@@ -5008,6 +6004,9 @@ addLayer("l", {
             21: new Decimal("1e750"),
             22: new Decimal(35),
             23: new Decimal(35),
+            31: new Decimal(8),
+            32: new Decimal(1e25),
+            33: new Decimal(1e40),
         };
 
         return cost;
@@ -5027,8 +6026,29 @@ addLayer("l", {
 
     // =================================
 
+    update(diff) {
+        if (player.l.autoBuyables && hasMilestone("o", 1)) {
+            for (let i = 11; i <= 33; ((i % 10 == 3) ? i += 8 : i++)) {
+                if (tmp.l.buyables[i].canAfford && tmp.l.buyables[i].unlocked) {
+                    if (hasMilestone("l", 3)) {
+                        layers.l.buyables[i].buy100();
+                        layers.l.buyables[i].buy10();
+                    }
+                    
+                    tmp.l.buyables[i].buy();
+                }
+            }
+        }
+    },
+
     doReset(resettingLayer) {
         let keep = [];
+        keep.push("auto");
+        keep.push("autoBuyables");
+
+        if (hasMilestone("p", 2)) keep.push("milestones");
+        
+        if (hasMilestone("p", 4)) keep.push("upgrades");
 
         if (layers[resettingLayer].row > this.row)
             layerDataReset("l", keep)
@@ -5054,7 +6074,7 @@ addLayer("l", {
             content: ["main-display", ["display-text", function() {
                 return 'Your best Lunar Colonies is ' + formatWhole(player.l.best) + '<br>You have started a total of ' + formatWhole(player.l.total) + " Lunar Colonies"
             }
-            , {}], "blank", "upgrades", "blank", "buyables",],
+            , {}], "blank", "upgrades", "blank", "buyables", "blank"],
         },
     },
 
@@ -5080,6 +6100,16 @@ addLayer("l", {
             },
             effectDescription: "Autobuy Spaceships and Spaceships cost nothing",
             toggles: [["n", "autoSpaceships"]],
+        },
+        3: {
+            requirementDescription: "4 Lunar Colonies",
+            done() {
+                return player.l.best.gte(4)
+            },
+            unlocked() {
+                return hasAchievement("a", 141);
+            },
+            effectDescription: "All Row 3 and 4 buyable autobuyers will now bulk and you will now always have at least 18 researchers",
         },
     },
 
@@ -5136,7 +6166,7 @@ addLayer("l", {
             },
 
             effect() {
-                return player.l.buyables[11].max(1).log(1.5);
+                return player.l.buyables[11].max(1).log(1.5).max(1);
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
         },
@@ -5162,11 +6192,11 @@ addLayer("l", {
             currencyInternalName: "points",
 
             unlocked() {
-                return hasMilestone("l", 1);
+                return hasMilestone("l", 1) && hasUpgrade("l", 15);
             },
 
             effect() {
-                return player.l.buyables[11].max(1).log(1.5);
+                return player.n.buyables[11].add(1).log(1.3).add(1);
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
         },
@@ -5312,6 +6342,24 @@ addLayer("l", {
 
                 player.l.buyables[this.id] = player.l.buyables[this.id].add(1)
             },
+            buy10() {
+                let x = player[this.layer].buyables[this.id].add(9);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.points.gte(cost)) {
+                    if (!tmp.l.buyablesCostNothing) player.points = player.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(10);
+                }
+            },
+            buy100() {
+                let x = player[this.layer].buyables[this.id].add(99);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.points.gte(cost)) {
+                    if (!tmp.l.buyablesCostNothing) player.points = player.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(100);
+                }
+            },
             style: {
                 'height': '200px',
                 "background-color"() {
@@ -5360,6 +6408,24 @@ addLayer("l", {
 
                 player.l.buyables[this.id] = player.l.buyables[this.id].add(1)
             },
+            buy10() {
+                let x = player[this.layer].buyables[this.id].add(9);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.c.points.gte(cost)) {
+                    if (!tmp.l.buyablesCostNothing) player.c.points = player.c.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(10);
+                }
+            },
+            buy100() {
+                let x = player[this.layer].buyables[this.id].add(99);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.c.points.gte(cost)) {
+                    if (!tmp.l.buyablesCostNothing) player.c.points = player.c.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(100);
+                }
+            },
             style: {
                 'height': '200px',
                 "background-color"() {
@@ -5407,6 +6473,24 @@ addLayer("l", {
                 if (!tmp.l.buyablesCostNothing) player.f.points = player.f.points.sub(cost)
 
                 player.l.buyables[this.id] = player.l.buyables[this.id].add(1)
+            },
+            buy10() {
+                let x = player[this.layer].buyables[this.id].add(9);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.f.points.gte(cost)) {
+                    if (!tmp.l.buyablesCostNothing) player.f.points = player.f.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(10);
+                }
+            },
+            buy100() {
+                let x = player[this.layer].buyables[this.id].add(99);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.f.points.gte(cost)) {
+                    if (!tmp.l.buyablesCostNothing) player.f.points = player.f.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(100);
+                }
             },
             style: {
                 'height': '200px',
@@ -5457,6 +6541,24 @@ addLayer("l", {
 
                 player.l.buyables[this.id] = player.l.buyables[this.id].add(1)
             },
+            buy10() {
+                let x = player[this.layer].buyables[this.id].add(9);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.sg.points.gte(cost)) {
+                    if (!tmp.l.buyablesCostNothing) player.sg.points = player.sg.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(10);
+                }
+            },
+            buy100() {
+                let x = player[this.layer].buyables[this.id].add(99);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.sg.points.gte(cost)) {
+                    if (!tmp.l.buyablesCostNothing) player.sg.points = player.sg.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(100);
+                }
+            },
             style: {
                 'height': '200px',
                 "background-color"() {
@@ -5504,6 +6606,24 @@ addLayer("l", {
                 if (!tmp.l.buyablesCostNothing) player.t.points = player.t.points.sub(cost)
 
                 player.l.buyables[this.id] = player.l.buyables[this.id].add(1)
+            },
+            buy10() {
+                let x = player[this.layer].buyables[this.id].add(9);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.t.points.gte(cost)) {
+                    if (!tmp.l.buyablesCostNothing) player.t.points = player.t.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(10);
+                }
+            },
+            buy100() {
+                let x = player[this.layer].buyables[this.id].add(99);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.t.points.gte(cost)) {
+                    if (!tmp.l.buyablesCostNothing) player.t.points = player.t.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(100);
+                }
             },
             style: {
                 'height': '200px',
@@ -5553,6 +6673,24 @@ addLayer("l", {
 
                 player.l.buyables[this.id] = player.l.buyables[this.id].add(1)
             },
+            buy10() {
+                let x = player[this.layer].buyables[this.id].add(9);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.fa.points.gte(cost)) {
+                    if (!tmp.l.buyablesCostNothing) player.fa.points = player.fa.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(10);
+                }
+            },
+            buy100() {
+                let x = player[this.layer].buyables[this.id].add(99);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.fa.points.gte(cost)) {
+                    if (!tmp.l.buyablesCostNothing) player.fa.points = player.fa.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(100);
+                }
+            },
             style: {
                 'height': '200px',
                 "background-color"() {
@@ -5560,6 +6698,3313 @@ addLayer("l", {
                 },
             },
         },
+
+        31: {
+            title: "Lunar Nations",
+            cost(x=player.l.buyables[this.id]) {
+
+                let base = tmp.l.buyableBaseCosts[this.id]
+
+                let cost = base.times(base.pow(x.div(100).div(new Decimal(0.95).pow(x)))).floor();
+
+                return cost;
+            },
+            effect(x=player.l.buyables[this.id]) {
+                if (!player.l.unlocked) x = new Decimal(0);
+
+                let base = new Decimal(1.1);
+                let y = tmp.l.freeLevels;
+
+                eff = base.pow(x.plus(y).sqrt());
+
+                return eff;
+            },
+            display() {
+                let y = tmp.l.freeLevels;
+                let data = tmp.l.buyables[this.id]
+                return "Found Nations on the Moon to further boost your peanut production" +
+                "<br> Boosts the Nation effect base by " + format(data.effect) + "x" +
+                "<br> Cost: " + formatWhole(data.cost) + " Nations" +
+                "<br> Level: " + formatWhole(player.l.buyables[this.id]) + ((y.gte(1)) ? " + " + formatWhole(y) : "")
+            },
+            unlocked() {
+                return hasUpgrade("o", 42);
+            },
+            canAfford() {
+                return player.n.points.gte(tmp.l.buyables[this.id].cost)
+            },
+            buy() {
+                cost = tmp.l.buyables[this.id].cost
+
+                if (!tmp.l.buyablesCostNothing) player.n.points = player.n.points.sub(cost)
+
+                player.l.buyables[this.id] = player.l.buyables[this.id].add(1)
+            },
+            buy10() {
+                let x = player[this.layer].buyables[this.id].add(9);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.n.points.gte(cost)) {
+                    if (!tmp.l.buyablesCostNothing) player.n.points = player.n.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(10);
+                }
+            },
+            buy100() {
+                let x = player[this.layer].buyables[this.id].add(99);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.n.points.gte(cost)) {
+                    if (!tmp.l.buyablesCostNothing) player.n.points = player.n.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(100);
+                }
+            },
+            style: {
+                'height': '200px',
+                "background-color"() {
+                    return (!tmp.l.buyables[31].canAfford) ? "#777777" : "#77f7ef"
+                },
+            },
+        },
+        32: {
+            title: "Lunar Breweries",
+            cost(x=player.l.buyables[this.id]) {
+
+                let base = tmp.l.buyableBaseCosts[this.id]
+
+                let cost = base.times(base.pow(x.div(75).div(new Decimal(0.95).pow(x)))).floor();
+
+                return cost;
+            },
+            effect(x=player.l.buyables[this.id]) {
+                if (!player.l.unlocked) x = new Decimal(0);
+
+                let base = new Decimal(1.04);
+                let y = tmp.l.freeLevels;
+
+                eff = base.pow(x.plus(y).sqrt());
+
+                return eff;
+            },
+            display() {
+                let y = tmp.l.freeLevels;
+                let data = tmp.l.buyables[this.id]
+                return "Build Spell Breweries on the Moon to help improve the Spell effects" +
+                "<br> Boosts the Spell bases by " + format(data.effect) + "x" +
+                "<br> Cost: " + formatWhole(data.cost) + " MSPaintium Dust" +
+                "<br> Level: " + formatWhole(player.l.buyables[this.id]) + ((y.gte(1)) ? " + " + formatWhole(y) : "")
+            },
+            unlocked() {
+                return hasUpgrade("o", 42);
+            },
+            canAfford() {
+                return player.s.points.gte(tmp.l.buyables[this.id].cost)
+            },
+            buy() {
+                cost = tmp.l.buyables[this.id].cost
+
+                if (!tmp.l.buyablesCostNothing) player.s.points = player.s.points.sub(cost)
+
+                player.l.buyables[this.id] = player.l.buyables[this.id].add(1)
+            },
+            buy10() {
+                let x = player[this.layer].buyables[this.id].add(9);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.s.points.gte(cost)) {
+                    if (!tmp.l.buyablesCostNothing) player.s.points = player.s.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(10);
+                }
+            },
+            buy100() {
+                let x = player[this.layer].buyables[this.id].add(99);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.s.points.gte(cost)) {
+                    if (!tmp.l.buyablesCostNothing) player.s.points = player.s.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(100);
+                }
+            },
+            style: {
+                'height': '200px',
+                "background-color"() {
+                    return (!tmp.l.buyables[32].canAfford) ? "#777777" : "#77f7ef"
+                },
+            },
+        },
+        33: {
+            title: "Lunar Automation",
+            cost(x=player.l.buyables[this.id]) {
+
+                let base = tmp.l.buyableBaseCosts[this.id]
+
+                let cost = base.times(base.pow(x.div(20).div(new Decimal(0.92).pow(x)))).floor();
+
+                return cost;
+            },
+            effect(x=player.l.buyables[this.id]) {
+                if (!player.l.unlocked) x = new Decimal(0);
+
+                let base = new Decimal(1.1);
+                let y = tmp.l.freeLevels;
+
+                eff = base.pow(x.plus(y).sqrt());
+
+                return eff;
+            },
+            display() {
+                let y = tmp.l.freeLevels;
+                let data = tmp.l.buyables[this.id]
+                return "Build Bots on the Moon to automate your lunar factories" +
+                "<br> Boosts the Bot bases by " + format(data.effect) + "x" +
+                "<br> Cost: " + formatWhole(data.cost) + " Bot Parts" +
+                "<br> Level: " + formatWhole(player.l.buyables[this.id]) + ((y.gte(1)) ? " + " + formatWhole(y) : "")
+            },
+            unlocked() {
+                return hasUpgrade("o", 42);
+            },
+            canAfford() {
+                return player.b.points.gte(tmp.l.buyables[this.id].cost)
+            },
+            buy() {
+                cost = tmp.l.buyables[this.id].cost
+
+                if (!tmp.l.buyablesCostNothing) player.b.points = player.b.points.sub(cost)
+
+                player.l.buyables[this.id] = player.l.buyables[this.id].add(1)
+            },
+            buy10() {
+                let x = player[this.layer].buyables[this.id].add(9);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.b.points.gte(cost)) {
+                    if (!tmp.l.buyablesCostNothing) player.b.points = player.b.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(10);
+                }
+            },
+            buy100() {
+                let x = player[this.layer].buyables[this.id].add(99);
+                let cost = layers[this.layer].buyables[this.id].cost(x);
+
+                if (player.b.points.gte(cost)) {
+                    if (!tmp.l.buyablesCostNothing) player.b.points = player.b.points.sub(cost);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(100);
+                }
+            },
+            style: {
+                'height': '200px',
+                "background-color"() {
+                    return (!tmp.l.buyables[33].canAfford) ? "#777777" : "#77f7ef"
+                },
+            },
+        },
+    },
+})
+
+addLayer("p", {
+    name: "Planets", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "P", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: false,
+		points: new Decimal(0),
+        total: new Decimal(0),
+        best: new Decimal(0),
+        resets: new Decimal(0),
+        helium: new Decimal(0),
+        planetsBought: {
+            11: false,
+            21: false,
+            41: false,
+            51: false,
+            61: false,
+            71: false,
+            81: false,
+            91: false,
+        },
+        auto: false,
+        autoSun: false,
+    }},
+    color: "#de9a57",
+    requires() {
+        return new Decimal(9);
+    }, // Can be a function that takes requirement increases into account
+    roundUpCost: true,
+    resource: "planets", // Name of prestige currency
+    baseResource: "nations", // Name of resource prestige is based on
+    branches: ["n", "l"],
+    baseAmount() {return player.n.points}, // Get the current amount of baseResource
+    type() {
+        return "static"
+    },
+    exponent: 1, // Prestige currency exponent
+    gainMult() {
+        let mult = new Decimal(1);
+
+        if (hasAchievement("a", 132)) mult = mult.times(0.95);
+        if (hasUpgrade("p", 34)) mult = mult.times(0.95);
+
+        return mult;
+    },
+
+    base() {
+        return new Decimal(1.2);
+    },
+    canBuyMax() {
+        return hasMilestone("p", 6);
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1.75)
+    },
+    row: 4, // Row the layer is in on the tree (0 is the first row)
+    hotkeys: [
+        {key: "p", description: "P: Perform a Planet reset", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    layerShown() {
+        return hasAchievement("a", 84)
+    },
+    addToBase() {
+        let base = new Decimal(0);
+
+        return base;
+    },
+    effectBase() {
+        let base = new Decimal(2);
+        base = base.plus(tmp.p.addToBase);
+
+        if (hasUpgrade("p", 11)) base = base.times(upgradeEffect("p", 11));
+        if (hasUpgrade("p", 34)) base = base.times(upgradeEffect("p", 34));
+        
+        base = base.times(tmp.s.buyables[31].effect);
+        base = base.times(tmp.ab.buyables[63].effect);
+
+        base = base.times(tmp.n.clickables[51].effect);
+
+        return base.pow(tmp.p.power);
+    },
+    power() {
+        let power = new Decimal(1);
+        return power;
+    },
+    effect() {
+        let eff = Decimal.pow(tmp.p.effectBase, player.p.points.sqrt());
+        return eff;
+    },
+    effectDescription() {
+        return "which are boosting the Nation base by " + format(tmp.p.effect) + "x"
+    },
+
+    // =================================
+
+    heliumGain() {
+        let base = tmp.p.buyables[11].effect;
+
+        return base;
+    },
+
+    // =================================
+    
+    update(diff) {
+        if (!player.p.unlocked) return;
+
+        player.p.helium = player.p.helium.add(tmp.p.heliumGain.times(diff));
+
+        if (player.p.autoSun && hasMilestone("p", 7) && tmp.p.buyables[11].canAfford) {
+            tmp.p.buyables[11].buy();
+        }
+    },
+
+    doReset(resettingLayer) {
+        let keep = [];
+        keep.push("auto");
+        keep.push("autoSun");
+
+        if (resettingLayer == "p") player.p.resets = player.p.resets.add(1);
+
+        if (layers[resettingLayer].row > this.row) layerDataReset("p", keep);
+    },
+
+    tabFormat: {
+        "Milestones": {
+            unlocked() {
+                return true
+            },
+            content: ["main-display", "prestige-button", ["display-text", function() {
+                return "You have " + formatWhole(player.p.points) + " planets "
+            }
+            , {}], "blank", ["display-text", function() {
+                return 'Your best Planets is ' + formatWhole(player.p.best) + '<br>You have made a total of ' + formatWhole(player.p.total) + " Planets"
+            }
+            , {}], "blank", "milestones",],
+        },
+        "Upgrades": {
+            unlocked() {
+                return hasAchievement("a", 103);
+            },
+            content: ["main-display", ["display-text", function() {
+                return 'Your best Planets is ' + formatWhole(player.p.best) + '<br>You have made a total of ' + formatWhole(player.p.total) + " Planets"
+            }
+            , {}], "blank", "upgrades",],
+        },
+        "Solar System": {
+            unlocked() {
+                return hasMilestone("p", 1);
+            },
+            content: ["main-display", ["display-text", function() {
+                return 'You have ' + format(player.p.helium) + ' helium, and you\'re generating ' + format(tmp.p.heliumGain) + " helium/second"
+            }
+            , {}], "blank", "buyables", "blank", ["clickables", [1]], "blank", ["clickables", [2]], "blank",
+            ["clickables", [3]], "blank", ["clickables", [4]], "blank", ["clickables", [5]], "blank",
+            ["clickables", [6]], "blank", ["clickables", [7]], "blank", ["clickables", [8]], "blank", ["clickables", [9]], "blank"],
+        },
+    },
+
+    milestones: {
+        0: {
+            requirementDescription: "1 Planet",
+            done() {
+                return player.p.best.gte(1)
+            },
+            effectDescription()  {
+                return "Keep +2 Nation milestones per Planet reset <br> Currently: " + player.p.resets.times(2).min(5).add(2);
+            },
+        },
+        1: {
+            requirementDescription: "2 Planets",
+            done() {
+                return player.p.best.gte(2)
+            },
+            effectDescription: "Unlock the Solar System",
+        },
+        2: {
+            requirementDescription: "3 Planets",
+            done() {
+                return player.p.best.gte(3)
+            },
+            effectDescription: "Keep Lunar Colony milestones on all resets",
+        },
+        3: {
+            requirementDescription: "4 Planets",
+            done() {
+                return player.p.best.gte(4)
+            },
+            effectDescription: "Keep Nation upgrades on all resets",
+        },
+        4: {
+            requirementDescription: "5 Planets",
+            done() {
+                return player.p.best.gte(5)
+            },
+            effectDescription: "Keep Lunar Colony upgrades on all resets",
+        },
+        5: {
+            requirementDescription: "6 Planets",
+            done() {
+                return player.p.best.gte(6)
+            },
+            effectDescription: "Autobuy Nations and Nations reset nothing",
+            toggles: [["n", "auto"]],
+        },
+        6: {
+            requirementDescription: "7 Planets",
+            done() {
+                return player.p.best.gte(7)
+            },
+            effectDescription: "You can buy max Planets",
+        },
+        7: {
+            requirementDescription: "8 Planets",
+            done() {
+                return player.p.best.gte(8)
+            },
+            effectDescription: "Autobuy The Sun buyable",
+            toggles: [["p", "autoSun"]],
+        },
+    },
+
+    upgrades: {
+        11: {
+            title: "Planet Colonization",
+            description: "The Planet effect base is doubled",
+            
+            cost() {
+                return new Decimal(2);
+            },
+
+            unlocked() {
+                return hasAchievement("a", 103);
+            },
+
+            effect() {
+                let eff = new Decimal(2);
+                return eff;
+            }
+        },
+        12: {
+            title: "Hot Tourist Destinations",
+            description: "Square Mercury's and Venus' effects",
+            
+            cost() {
+                return new Decimal(1);
+            },
+
+            unlocked() {
+                return hasUpgrade("p", 11);
+            },
+
+            effect() {
+                let eff = new Decimal(2);
+                return eff;
+            },
+        },
+        13: {
+            title: "Fusion Boost",
+            description: "Multiply The Sun's effect exponent by 1.5",
+            
+            cost() {
+                return new Decimal(1);
+            },
+
+            unlocked() {
+                return hasUpgrade("p", 12);
+            },
+
+            effect() {
+                let eff = new Decimal(1.5);
+                return eff;
+            },
+        },
+        14: {
+            title: "Underwater Exploration",
+            description: "Unlock the Ocean",
+            
+            cost() {
+                return new Decimal(2);
+            },
+
+            unlocked() {
+                return hasUpgrade("p", 13);
+            },
+        },
+
+        21: {
+            title: "Martial Base Preparations",
+            description: "Square Mars' effect base",
+            
+            cost() {
+                return new Decimal(3);
+            },
+
+            unlocked() {
+                return hasAchievement("a", 123) && hasUpgrade("p", 14);
+            },
+
+            effect() {
+                let eff = new Decimal(2);
+                return eff;
+            }
+        },
+        22: {
+            title: "Gas Trades",
+            description: "Boost Jupiter's effect base by 1.2x",
+            
+            cost() {
+                return new Decimal(3);
+            },
+
+            unlocked() {
+                return hasUpgrade("p", 21);
+            },
+
+            effect() {
+                let eff = new Decimal(1.2);
+                return eff;
+            }
+        },
+        23: {
+            title: "Ring Visitors",
+            description: "Improve Saturn's effect formula",
+            
+            cost() {
+                return new Decimal(4);
+            },
+
+            unlocked() {
+                return hasAchievement("a", 131) && hasUpgrade("p", 22);
+            },
+
+            effect() {
+                let eff = new Decimal(4);
+                return eff;
+            }
+        },
+        24: {
+            title: "Abominatium Asteroids",
+            description: "Mine Abominatium Asteroids to double your Abominatium gain",
+            
+            cost() {
+                return new Decimal(5);
+            },
+
+            unlocked() {
+                return hasUpgrade("p", 23);
+            },
+
+            effect() {
+                let eff = new Decimal(2);
+                return eff;
+            }
+        },
+
+        31: {
+            title: "Freezing Labs",
+            description: "Boost Uranus' effect base by 1.5x",
+            
+            cost() {
+                return new Decimal(6);
+            },
+
+            unlocked() {
+                return hasAchievement("a", 142) && hasUpgrade("p", 24);
+            },
+
+            effect() {
+                let eff = new Decimal(1.5);
+                return eff;
+            }
+        },
+        32: {
+            title: "Even Faster Winds",
+            description: "Boost Neptune' effect base by 1.18x",
+            
+            cost() {
+                return new Decimal(6);
+            },
+
+            unlocked() {
+                return hasUpgrade("p", 31);
+            },
+
+            effect() {
+                let eff = new Decimal(1.18);
+                return eff;
+            }
+        },
+        33: {
+            title: "Fusion Magnification",
+            description: "Boost The Sun's effect base by 1.8x",
+            
+            cost() {
+                return new Decimal(7);
+            },
+
+            unlocked() {
+                return hasUpgrade("p", 32);
+            },
+
+            effect() {
+                let eff = new Decimal(1.8);
+                return eff;
+            }
+        },
+        34: {
+            title: "Alien Civilizations",
+            description: "Planets are cheaper and boost the Planet effect base by 2x",
+            
+            cost() {
+                return new Decimal(7);
+            },
+
+            unlocked() {
+                return hasUpgrade("p", 33);
+            },
+
+            effect() {
+                let eff = new Decimal(2);
+                return eff;
+            }
+        },
+    },
+
+    /* Planet Ideas:
+     - The Sun - Generates Helium, which is the base of all Planet boosts - X
+
+     - Mercury - Boost Cliffs Zone - X
+     - Venus - Boost Jungle Zone - X
+     - Mars - Boost Factories & Mr. Sheep's Castle Zones - X
+     - Jupiter - Boost Cloud City Zone - X
+     - Saturn - Boost Farms Zone - X
+     - Uranus - Boost MSPaintium Shrine Zone - X
+     - Neptune - Boost Tropical Island Zone - X
+     - Pluto - Boost North Pole Zone - X
+    */
+
+    clickables: {
+        11: {
+            title: "Mercury",
+            display() {
+                let x = tmp.p.clickables[this.id];
+                
+                return "Boosts the \"Cliffs\" Zone by the amount of Helium <br>" +
+                "Currently: " + format(tmp.p.clickables[this.id].effect) + "x " + (x.effect.gte(x.cap) ? "(softcapped)" : "") + "<br> <br>" +
+                "Cost: " + format(tmp.p.clickables[this.id].cost) + " planets";
+            },
+            cap() {
+                return new Decimal(1e41);
+            },
+            effect() {
+                if (!player.p.planetsBought[this.id]) {
+                    return new Decimal(1);
+                }
+
+                let base = player.p.helium.sqrt().add(1);
+                let mult = new Decimal(1);
+                let pow = new Decimal(1);
+
+                let cap = tmp.p.clickables[this.id].cap;
+
+                if (hasUpgrade("p", 12)) pow = pow.times(upgradeEffect("p", 12));
+
+                let eff = base.times(mult).pow(pow);
+
+                eff = softcap(eff, cap, 0.3);
+
+                return eff;
+            },
+            unlocked() {
+                return hasMilestone("p", 1);
+            },
+            canClick() {
+                return player.p.points.gte(tmp.p.clickables[this.id].cost) && !player.p.planetsBought[this.id];
+            },
+            onClick() {
+                player.p.planetsBought[this.id] = true;
+                player.p.points = player.p.points.sub(tmp.p.clickables[this.id].cost);
+            },
+            cost() {
+                return new Decimal(1);
+            },
+            style: {
+                "background-color"() {
+                    return tmp.p.clickables[11].canClick ? "#34eb6b" : (!player.p.planetsBought[11] ? "#c4afaf" : "#adadad");
+                },
+                'height': '130px',
+                'width': '130px',
+            },
+        },
+        21: {
+            title: "Venus",
+            display() {
+                return "Boosts the \"Jungle\" Zone by the amount of Helium <br>" +
+                "Currently: " + format(tmp.p.clickables[this.id].effect) + "x <br> <br>" +
+                "Cost: " + format(tmp.p.clickables[this.id].cost) + " planets";
+            },
+            effect() {
+                if (!player.p.planetsBought[this.id]) {
+                    return new Decimal(1);
+                }
+
+                let base = player.p.helium.add(1);
+                let mult = new Decimal(1);
+                let pow = new Decimal(5);
+
+                if (hasUpgrade("p", 12)) pow = pow.times(upgradeEffect("p", 12));
+
+                let eff = base.pow(pow).times(mult);
+
+                return eff;
+            },
+            unlocked() {
+                return player.p.planetsBought[11];
+            },
+            canClick() {
+                return player.p.points.gte(tmp.p.clickables[this.id].cost) && !player.p.planetsBought[this.id];
+            },
+            onClick() {
+                player.p.planetsBought[this.id] = true;
+                player.p.points = player.p.points.sub(tmp.p.clickables[this.id].cost);
+            },
+            cost() {
+                return new Decimal(2);
+            },
+            style: {
+                "background-color"() {
+                    return tmp.p.clickables[21].canClick ? "#34eb6b" : (!player.p.planetsBought[21] ? "#c4afaf" : "#cc801d");
+                },
+                'height': '160px',
+                'width': '160px',
+            },
+        },
+        // Placeholder to make Earth stay in the center
+        31: {
+            style: {
+                "background-color"() {
+                    return "inherit";
+                },
+                'height': '120px',
+                'width': '120px',
+                'border': 'transparent',
+            },
+        },
+        32: {
+            title: "Earth",
+            display() {
+                return "Current Peanut Production: " + format(getPointGen()) + "/sec";
+            },
+            unlocked() {
+                return player.p.planetsBought[21];
+            },
+            canClick() {
+                return false;
+            },
+            onClick() {
+                
+            },
+            style: {
+                "background-color"() {
+                    return "#263fd1";
+                },
+                'height': '160px',
+                'width': '160px',
+            },
+        },
+        33: {
+            title: "Moon",
+            display() {
+                return "Current amount of Spaceships: " + formatWhole(player.n.buyables[11].add(tmp.n.buyables[11].freeLevels));
+            },
+            unlocked() {
+                return player.p.planetsBought[21];
+            },
+            canClick() {
+                return false;
+            },
+            onClick() {
+                
+            },
+            style: {
+                "background-color"() {
+                    return "#d4d4d4";
+                },
+                'height': '120px',
+                'width': '120px',
+            },
+        },
+        41: {
+            title: "Mars",
+            display() {
+                return "Boosts the \"Factories\" and \"Mr. Sheep's Castle\" Zones by the amount of Helium <br>" +
+                "Currently: " + format(tmp.p.clickables[this.id].effect) + "x <br> <br>" +
+                "Cost: " + format(tmp.p.clickables[this.id].cost) + " planets";
+            },
+            effect() {
+                if (!player.p.planetsBought[this.id]) {
+                    return new Decimal(1);
+                }
+
+                let base = player.p.helium.root(4).add(1);
+                let mult = new Decimal(1);
+
+                let eff = base.times(mult);
+
+                if (hasUpgrade("p", 21)) eff = eff.pow(upgradeEffect("p", 21));
+
+                return eff;
+            },
+            unlocked() {
+                return player.p.planetsBought[21];
+            },
+            canClick() {
+                return player.p.points.gte(tmp.p.clickables[this.id].cost) && !player.p.planetsBought[this.id];
+            },
+            onClick() {
+                player.p.planetsBought[this.id] = true;
+                player.p.points = player.p.points.sub(tmp.p.clickables[this.id].cost);
+            },
+            cost() {
+                return new Decimal(3);
+            },
+            style: {
+                "background-color"() {
+                    return tmp.p.clickables[41].canClick ? "#34eb6b" : (!player.p.planetsBought[41] ? "#c4afaf" : "#e66d45");
+                },
+                'height': '140px',
+                'width': '140px',
+            },
+        },
+        51: {
+            title: "Jupiter",
+            display() {
+                return "Boosts the \"Cloud City\" Zone by the amount of Helium <br>" +
+                "Currently: " + format(tmp.p.clickables[this.id].effect) + "x <br> <br>" +
+                "Cost: " + format(tmp.p.clickables[this.id].cost) + " planets";
+            },
+            effect() {
+                if (!player.p.planetsBought[this.id]) {
+                    return new Decimal(1);
+                }
+
+                let base = player.p.helium.add(1).log10().add(1).log10().add(1).root(7);
+                let mult = new Decimal(1);
+
+                let eff = base.times(mult);
+
+                if (hasUpgrade("p", 22)) eff = eff.times(upgradeEffect("p", 22));
+
+                return eff;
+            },
+            unlocked() {
+                return player.p.planetsBought[41];
+            },
+            canClick() {
+                return player.p.points.gte(tmp.p.clickables[this.id].cost) && !player.p.planetsBought[this.id];
+            },
+            onClick() {
+                player.p.planetsBought[this.id] = true;
+                player.p.points = player.p.points.sub(tmp.p.clickables[this.id].cost);
+            },
+            cost() {
+                return new Decimal(4);
+            },
+            style: {
+                "background-color"() {
+                    return tmp.p.clickables[51].canClick ? "#34eb6b" : (!player.p.planetsBought[51] ? "#c4afaf" : "#c79d61");
+                },
+                'height': '220px',
+                'width': '220px',
+            },
+        },
+        61: {
+            title: "Saturn",
+            display() {
+                return "Boosts the \"Farms\" Zone by the amount of Helium <br>" +
+                "Currently: " + format(tmp.p.clickables[this.id].effect) + "x <br> <br>" +
+                "Cost: " + format(tmp.p.clickables[this.id].cost) + " planets";
+            },
+            effect() {
+                if (!player.p.planetsBought[this.id]) {
+                    return new Decimal(1);
+                }
+
+                let base;
+                let mult = new Decimal(1);
+
+                if (hasUpgrade("p", 23)) {
+                    base = player.p.helium.add(1).root(3);
+                } else {
+                    base = player.p.helium.add(1).log(10).add(1);
+                }
+
+                let eff = base.times(mult);
+
+                return eff;
+            },
+            unlocked() {
+                return player.p.planetsBought[51];
+            },
+            canClick() {
+                return player.p.points.gte(tmp.p.clickables[this.id].cost) && !player.p.planetsBought[this.id];
+            },
+            onClick() {
+                player.p.planetsBought[this.id] = true;
+                player.p.points = player.p.points.sub(tmp.p.clickables[this.id].cost);
+            },
+            cost() {
+                return new Decimal(5);
+            },
+            style: {
+                "background-color"() {
+                    return tmp.p.clickables[61].canClick ? "#34eb6b" : (!player.p.planetsBought[61] ? "#c4afaf" : "#c2bf7a");
+                },
+                'height': '200px',
+                'width': '200px',
+            },
+        },
+        71: {
+            title: "Uranus",
+            display() {
+                return "Boosts the \"MSPaintium Shrine\" Zone by the amount of Helium <br>" +
+                "Currently: " + format(tmp.p.clickables[this.id].effect) + "x <br> <br>" +
+                "Cost: " + format(tmp.p.clickables[this.id].cost) + " planets";
+            },
+            effect() {
+                if (!player.p.planetsBought[this.id]) {
+                    return new Decimal(1);
+                }
+
+                let base = player.p.helium.add(1).log10().add(1).log10().add(1).root(3);
+                let mult = new Decimal(1);
+
+                if (hasUpgrade("p", 31)) base = base.times(upgradeEffect("p", 31));
+
+                let eff = base.times(mult);
+
+                return eff;
+            },
+            unlocked() {
+                return player.p.planetsBought[61];
+            },
+            canClick() {
+                return player.p.points.gte(tmp.p.clickables[this.id].cost) && !player.p.planetsBought[this.id];
+            },
+            onClick() {
+                player.p.planetsBought[this.id] = true;
+                player.p.points = player.p.points.sub(tmp.p.clickables[this.id].cost);
+            },
+            cost() {
+                return new Decimal(6);
+            },
+            style: {
+                "background-color"() {
+                    return tmp.p.clickables[71].canClick ? "#34eb6b" : (!player.p.planetsBought[71] ? "#c4afaf" : "#b6c2d1");
+                },
+                'height': '180px',
+                'width': '180px',
+            },
+        },
+        81: {
+            title: "Neptune",
+            display() {
+                return "Boosts the \"Tropical Island\" Zone by the amount of Helium <br>" +
+                "Currently: " + format(tmp.p.clickables[this.id].effect) + "x <br> <br>" +
+                "Cost: " + format(tmp.p.clickables[this.id].cost) + " planets";
+            },
+            effect() {
+                if (!player.p.planetsBought[this.id]) {
+                    return new Decimal(1);
+                }
+
+                let base = player.p.helium.add(1).log10().add(1).log10().add(1).root(6);
+                let mult = new Decimal(1);
+
+                if (hasUpgrade("p", 32)) base = base.times(upgradeEffect("p", 32));
+
+                let eff = base.times(mult);
+
+                return eff;
+            },
+            unlocked() {
+                return player.p.planetsBought[71];
+            },
+            canClick() {
+                return player.p.points.gte(tmp.p.clickables[this.id].cost) && !player.p.planetsBought[this.id];
+            },
+            onClick() {
+                player.p.planetsBought[this.id] = true;
+                player.p.points = player.p.points.sub(tmp.p.clickables[this.id].cost);
+            },
+            cost() {
+                return new Decimal(7);
+            },
+            style: {
+                "background-color"() {
+                    return tmp.p.clickables[81].canClick ? "#34eb6b" : (!player.p.planetsBought[81] ? "#c4afaf" : "#3f54ba");
+                },
+                'height': '180px',
+                'width': '180px',
+            },
+        },
+        91: {
+            title: "Pluto",
+            display() {
+                return "Boosts the \"North Pole\" Zone base by the amount of Helium <br>" +
+                "Currently: " + format(tmp.p.clickables[this.id].effect) + "x <br> <br>" +
+                "Cost: " + format(tmp.p.clickables[this.id].cost) + " planets";
+            },
+            effect() {
+                if (!player.p.planetsBought[this.id]) {
+                    return new Decimal(1);
+                }
+
+                let base = player.p.helium.add(1).root(2);
+                let mult = new Decimal(1);
+
+                let eff = base.times(mult);
+
+                return eff;
+            },
+            unlocked() {
+                return player.p.planetsBought[81];
+            },
+            canClick() {
+                return player.p.points.gte(tmp.p.clickables[this.id].cost) && !player.p.planetsBought[this.id];
+            },
+            onClick() {
+                player.p.planetsBought[this.id] = true;
+                player.p.points = player.p.points.sub(tmp.p.clickables[this.id].cost);
+            },
+            cost() {
+                return new Decimal(8);
+            },
+            style: {
+                "background-color"() {
+                    return tmp.p.clickables[91].canClick ? "#34eb6b" : (!player.p.planetsBought[91] ? "#c4afaf" : "#bfa77c");
+                },
+                'height': '120px',
+                'width': '120px',
+            },
+        },
+    },
+
+    buyables: {
+        11: {
+            title: "The Sun",
+            cost(x = player.ab.buyables[this.id]) {
+                let base = new Decimal("1e6300");
+                let pow = x.times(0.08).add(1);
+
+                if (x.gte(32)) pow = pow.pow(x.sub(30).times(0.02).add(1));
+
+                let cost = base.pow(pow);
+
+                if (x.eq(0)) cost = new Decimal("1e6000");
+
+                return cost;
+            },
+            freeLevels() {
+                let levels = new Decimal(0);
+                return levels;
+            },
+            effect(x = player.p.buyables[this.id]) {
+                if (!x.plus(tmp.p.buyables[this.id].freeLevels).gt(0)) {
+                    return new Decimal(0);
+                }
+
+                let base = new Decimal(15);
+                let pow = x.pow(0.8);
+
+                if (hasUpgrade("p", 13)) pow = pow.times(upgradeEffect("p", 13));
+                if (hasUpgrade("ab", 43)) base = base.add(upgradeEffect("ab", 43));
+                if (hasUpgrade("p", 33)) base = base.times(upgradeEffect("p", 33));
+
+                let eff = base.pow(pow);
+
+                eff = eff.times(tmp.ab.timeSpeed);
+
+                return eff;
+            },
+            display() {
+                let data = tmp.p.buyables[this.id];
+                return "Cost: " + formatWhole(data.cost) + " peanuts" + "\n\
+                    Level: " + formatWhole(player.p.buyables[this.id]) + (data.freeLevels.gt(0) ? (" + " + formatWhole(data.freeLevels)) : "") + "\n\
+                   " + "Generates " + format(data.effect) + " helium/second"
+            },
+            unlocked() {
+                return hasMilestone("p", 1);
+            },
+            canAfford() {
+                return player.points.gte(tmp.p.buyables[this.id].cost);
+            },
+            buy() {
+                cost = tmp.p.buyables[this.id].cost
+
+                if (!false) {
+                    player.points = player.points.sub(cost);
+                }
+
+                player.p.buyables[this.id] = player.p.buyables[this.id].add(1)
+            },
+            style: {
+                'height': '300px',
+                'width': '300px',
+                'background-color': '#e1ff1f',
+            },
+        },
+    },
+})
+
+addLayer("ab", {
+    name: "Abominatium", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "AB", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 2, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: false,
+		points: new Decimal(0),
+        total: new Decimal(0),
+        best: new Decimal(0),
+        resets: new Decimal(0),
+        davzatium: new Decimal(1),
+        auto: false,
+        autoAbominations: false,
+    }},
+    color: "#00661a",
+    requires() {
+        return new Decimal(5e22)
+    }, // Can be a function that takes requirement increases into account
+    resource: "abominatium", // Name of prestige currency
+    baseResource: "bot parts", // Name of resource prestige is based on
+    roundUpCost: true,
+    branches: ["b", "s"],
+    baseAmount() {return player.b.points}, // Get the current amount of baseResource
+    type() {
+        return "normal"
+    },
+    exponent: 1, // Prestige currency exponent
+    gainMult() {
+        let mult = new Decimal(1);
+
+        mult = mult.times(tmp.ab.buyables[12].effect);
+        if (hasUpgrade("ab", 32)) mult = mult.times(upgradeEffect("ab", 32))
+        if (hasUpgrade("p", 24)) mult = mult.times(upgradeEffect("p", 24).pow(25))
+
+        return mult;
+    },
+
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        let exp = new Decimal(0.04);
+
+        return exp;
+    },
+
+    passiveGeneration() {
+        return (hasMilestone("ab", 5)) ? new Decimal(0.01).times(tmp.ab.timeSpeed) : 0
+    },
+
+    row: 4, // Row the layer is in on the tree (0 is the first row)
+    hotkeys: [
+        {key: "a", description: "A: Perform an Abominatium reset", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    layerShown() {
+        return hasAchievement("a", 84)
+    },
+    effectPow() {
+        let base = new Decimal(1);
+
+        return base;
+    },
+    effect() {
+        let pow = tmp.ab.effectPow;
+        let base = player.ab.points.add(1).log(10).add(1).log(10).add(1);
+
+        if (hasUpgrade("ab", 41)) base = base.add(upgradeEffect("ab", 41));
+        if (hasUpgrade("ab", 51)) base = base.add(upgradeEffect("ab", 51));
+
+        base = base.times(tmp.ab.buyables[42].effect);
+        base = base.times(tmp.s.buyables[32].effect);
+
+        let eff = Decimal.pow(base, pow);
+
+        if (hasUpgrade("ab", 11)) eff = eff.times(upgradeEffect("ab", 11));
+
+        if (!player.ab.points.gt(0)) eff = new Decimal(1);
+
+        return eff;
+    },
+
+    effectDescription() {
+        let desc = "which are boosting Bot effect bases by " + format(tmp.ab.effect) + "x";
+        return desc;
+    },
+
+    timeSpeed() {
+        let speed = new Decimal(1);
+
+        speed = speed.times(tmp.ab.buyables[51].effect);
+
+        return speed;
+    },
+
+    // ======================================================
+
+    freeAbominations() {
+        let x = new Decimal(0);
+
+        if (hasUpgrade("ab", 53)) x = x.add(upgradeEffect("ab", 53));
+
+        return x;
+    },
+
+    abominationBaseCosts() {
+        return {
+            11: new Decimal(2),
+            12: new Decimal(5),
+            13: new Decimal(200),
+            21: new Decimal(25),
+            22: new Decimal(25),
+            31: new Decimal(100),
+            32: new Decimal(150),
+            41: new Decimal(250),
+            42: new Decimal(350),
+            51: new Decimal(750),
+            52: new Decimal(1000),
+            61: new Decimal(3000),
+            62: new Decimal(8000),
+            63: new Decimal(15000),
+        }
+    },
+
+    abominationBaseEffects() {
+        return {
+            11: new Decimal(1.5),
+            12: new Decimal(2.2),
+            13: new Decimal(0.2),
+            21: new Decimal(2.5),
+            22: new Decimal(3),
+            31: new Decimal(0.1),
+            32: new Decimal(2.5),
+            41: new Decimal(1e15),
+            42: new Decimal(0.05),
+            51: new Decimal(0.35),
+            52: new Decimal(1),
+            61: new Decimal(0.28),
+            62: new Decimal(0.14),
+            63: new Decimal(0.23),
+        }
+    },
+
+    divAbominationCosts() {
+        let div = new Decimal(1);
+
+        if (hasUpgrade("ab", 31)) div = div.times(upgradeEffect("ab", 31));
+
+        return div;
+    },
+
+    abominationBaseMult() {
+        let mult = new Decimal(1);
+        return mult;
+    },
+
+    abominationsCostNothing() {
+        return hasMilestone("ab", 4);
+    },
+
+    davzatiumGain() {
+        let eff = new Decimal(0);
+
+        eff = eff.add(tmp.ab.buyables[11].effect);
+
+        return eff;
+    },
+
+    update(diff) {
+        if (hasUpgrade("ab", 14)) player.ab.davzatium = player.ab.davzatium.plus(tmp.ab.davzatiumGain.times(diff));
+
+        if (player.ab.autoAbominations && hasMilestone("ab", 4)) {
+            for (let i in tmp.ab.buyables) {
+                if (tmp.ab.buyables[i].canAfford && tmp.ab.buyables[i].unlocked) tmp.ab.buyables[i].buy();
+            }
+        }
+    },
+
+    // ======================================================
+
+    doReset(resettingLayer) {
+        let keep = [];
+        keep.push("auto");
+        keep.push("autoAbominations");
+
+        if (resettingLayer == "ab") player.ab.resets = player.ab.resets.add(1);
+
+        if (layers[resettingLayer].row > this.row)
+            layerDataReset("ab", keep)
+    },
+
+    tabFormat: {
+        "Milestones": {
+            content: ["main-display", "prestige-button", ["display-text", function() {
+                return "You have " + formatWhole(player.b.points) + " bot parts "
+            }
+            , {}], "blank", ["display-text", function() {
+                return 'Your best Abominatium is ' + formatWhole(player.ab.best) + '<br>You have made a total of ' + formatWhole(player.ab.total) + " Abominatium"
+            }
+            , {}], "blank", "milestones",],
+        },
+        "Upgrades": {
+            unlocked() {
+                return hasMilestone("ab", 1);
+            },
+            content: ["main-display", ["display-text", function() {
+                return 'Your best Abominatium is ' + formatWhole(player.ab.best) + '<br>You have made a total of ' + formatWhole(player.ab.total) + " Abominatium"
+            }
+            , {}], "blank", ["upgrades", [1, 2, 3, 4, 5, 6, 7, 8, 9]],],
+        },
+        "Abominations": {
+            unlocked() {
+                return hasUpgrade("ab", 14);
+            },
+            content: [
+                "main-display", "blank", ["display-text", function() {
+                    return "You have " + format(player.ab.davzatium) + " davzatium and you're generating " + format(tmp.ab.davzatiumGain) + " davzatium per second";
+                }, {}], "blank", ["buyables", [1]], "blank", ["upgrades", [11]], ["buyables", [2]], "blank", ["upgrades", [12]],
+                ["buyables", [3]], "blank", ["upgrades", [13]], ["buyables", [4]], "blank", ["upgrades", [14]],
+                ["buyables", [5]], "blank", ["buyables", [6]], "blank",
+            ],
+        },
+    },
+
+    milestones: {
+        0: {
+            requirementDescription: "1 Abominatium",
+            done() {
+                return player.ab.points.gte(1)
+            },
+            effectDescription()  {
+                return "Keep +1 Bot Part milestone per Abominatium reset <br> Currently: " + player.ab.resets.min(3).add(2);
+            },
+        },
+        1: {
+            requirementDescription: "2 Abominatium",
+            done() {
+                return player.ab.points.gte(2)
+            },
+            effectDescription: "Unlock Abominatium upgrades and Bots cost nothing",
+        },
+        2: {
+            requirementDescription: "10 Abominatium",
+            done() {
+                return player.ab.points.gte(10)
+            },
+            effectDescription: "Keep Spell milestones on all resets",
+        },
+        3: {
+            requirementDescription: "100 Abominatium",
+            done() {
+                return player.ab.points.gte(100)
+            },
+            effectDescription: "Keep Bot Part upgrades and challenges on all resets",
+        },
+        4: {
+            requirementDescription: "5000 Abominatium",
+            done() {
+                return player.ab.points.gte(5000)
+            },
+            toggles: [["ab", "autoAbominations"]],
+            effectDescription: "Autobuy Abominations and abominations cost nothing",
+        },
+        5: {
+            requirementDescription: "1 000 000 Abominatium",
+            done() {
+                return player.ab.points.gte(1000000)
+            },
+            effectDescription() {
+                return `Gain ${format(tmp.ab.timeSpeed.times(1))}% of Abominatium gain every second`;
+            },
+            // And bot parts, mspaintium & mspaintium dust reset nothing
+        },
+    },
+
+    upgrades: {
+        11: {
+            title: "First Tests",
+            description: "Begin experimenting with Abominatium to find out what it could be used for. Boosts Abominatium effect by 20%",
+            
+            cost() {
+                return new Decimal(1);
+            },
+
+            unlocked() {
+                return hasMilestone("ab", 1);
+            },
+
+            effect() {
+                let eff = new Decimal(1.2);
+                return eff;
+            },
+        },
+        12: {
+            title: "Link to MSPaintium",
+            description: "Boost Refined and Unstable MSPaintium gain by the best amount of Abominatium",
+            
+            cost() {
+                return new Decimal(1);
+            },
+
+            unlocked() {
+                return hasUpgrade("ab", 11);
+            },
+
+            effect() {
+                let eff = player.ab.best.sqrt().add(1);
+                return eff;
+            },
+            effectDisplay() { return + format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
+        },
+        13: {
+            title: "Abnormal Spells",
+            description: "Boost all Spell effect bases by 20%",
+            
+            cost() {
+                return new Decimal(1);
+            },
+
+            unlocked() {
+                return hasUpgrade("ab", 12);
+            },
+
+            effect() {
+                let eff = new Decimal(1.2);
+                return eff;
+            },
+        },
+        14: {
+            title: "Chocolate Potato?",
+            description: "Unlock the first Abomination!",
+            
+            cost() {
+                return new Decimal(1);
+            },
+
+            unlocked() {
+                return hasUpgrade("ab", 13);
+            },
+        },
+        15: {
+            title: "Abomination Inflation",
+            description: "Boosts the Budget Abominations upgrade by the amount of Helium",
+            
+            cost() {
+                return new Decimal(10000);
+            },
+
+            unlocked() {
+                return hasUpgrade("ab", 54) && hasUpgrade("ab", 14);
+            },
+            effect() {
+                let eff = player.p.helium.add(1).log10().max(1);
+
+                return eff;
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
+        },
+
+        21: {
+            title: "Link to Davzatium",
+            description: "Triple Davzatium gain",
+            
+            cost() {
+                return new Decimal(1);
+            },
+
+            unlocked() {
+                return hasAchievement("a", 93) && hasUpgrade("ab", 14);
+            },
+
+            effect() {
+                return new Decimal(3);
+            },
+        },
+        22: {
+            title: "More Nations!",
+            description: "Divide the Nation price by 1.13",
+            
+            cost() {
+                return new Decimal(1);
+            },
+
+            effect() {
+                return new Decimal(1.13);
+            },
+
+            unlocked() {
+                return hasUpgrade("ab", 21);
+            },
+        },
+        23: {
+            title: "Link to Bots",
+            description: "Boosts Bot Part Gain by the best amount of Abominatium",
+            
+            cost() {
+                return new Decimal(1);
+            },
+
+            unlocked() {
+                return hasAchievement("a", 101) && hasUpgrade("ab", 22);
+            },
+
+            effect() {
+                let eff = player.ab.best.pow(0.9).add(1);
+                return eff;
+            },
+            effectDisplay() { return + format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
+        },
+        24: {
+            title: "Beans!",
+            description: "Unlock the third Abomination",
+            
+            cost() {
+                return new Decimal(1);
+            },
+
+            unlocked() {
+                return hasUpgrade("ab", 23);
+            },
+        },
+        25: {
+            title: "Filled With Knowledge",
+            description: "Unlock the eleventh Abomination",
+            
+            cost() {
+                return new Decimal(30000);
+            },
+
+            unlocked() {
+                return hasUpgrade("ab", 15) && hasUpgrade("ab", 24);
+            },
+        },
+
+        31: {
+            title: "Budget Abominations",
+            description: "Abomination costs are decreased based on the amount of Davzatium",
+            
+            cost() {
+                return new Decimal(2);
+            },
+
+            unlocked() {
+                return hasUpgrade("ab", 24);
+            },
+            effect() {
+                let eff = player.ab.davzatium.add(1).log(1.5).add(1);
+
+                if (hasUpgrade("ab", 33)) eff = eff.times(upgradeEffect("ab", 33));
+                if (hasUpgrade("ab", 15)) eff = eff.times(upgradeEffect("ab", 15));
+
+                return eff;
+            },
+            effectDisplay() { return "/" + format(upgradeEffect(this.layer, this.id)) }, // Add formatting to the effect
+        },
+        32: {
+            title: "Mining Improvements",
+            description: "Double Abominatium gain",
+            
+            cost() {
+                return new Decimal(3);
+            },
+
+            unlocked() {
+                return hasUpgrade("ab", 31);
+            },
+            effect() {
+                let eff = new Decimal(2).root(0.04);
+                return eff;
+            },
+        },
+        33: {
+            title: "Abomination Sales",
+            description: "Boosts the Budget Abominations upgrade based on the amount of Abominatium",
+            
+            cost() {
+                return new Decimal(8);
+            },
+
+            unlocked() {
+                return hasAchievement("a", 112) && hasUpgrade("ab", 32);
+            },
+            effect() {
+                let eff = player.ab.points.add(1).log(1.5).add(1);
+                return eff;
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
+        },
+        34: {
+            title: "Blob of Honey?",
+            description: "Unlock the fifth Abomination",
+            
+            cost() {
+                return new Decimal(10);
+            },
+
+            unlocked() {
+                return hasUpgrade("ab", 33);
+            },
+        },
+        35: {
+            title: "Unstable Refinements",
+            description: "Boosts Refined and Unstable MSPaintium gain by the best amount of Abominatium",
+            
+            cost() {
+                return new Decimal(120000);
+            },
+
+            unlocked() {
+                return hasUpgrade("ab", 25) && hasUpgrade("ab", 34) && hasAchievement("a", 141);
+            },
+            effect() {
+                let eff = player.ab.best.add(1).log(1.5).add(1).times(player.ab.best.min(1000));
+
+                return eff;
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
+        },
+
+        41: {
+            title: "Self Boost",
+            description: "Boosts the Abominatium effect base by the current amount of Abominatium",
+            
+            cost() {
+                return new Decimal(15);
+            },
+
+            unlocked() {
+                return hasUpgrade("ab", 34);
+            },
+            effect() {
+                let eff = (player.ab.points.gte(20)) ? player.ab.points.sub(10).log10().cbrt().sub(0.7) : new Decimal(0.3);
+
+                return eff;
+            },
+            effectDisplay() { return "+" + format(upgradeEffect(this.layer, this.id)) }, // Add formatting to the effect
+        },
+        42: {
+            title: "Say CHEESE",
+            description: "Unlock the sixth Abomination",
+            
+            cost() {
+                return new Decimal(25);
+            },
+
+            unlocked() {
+                return hasUpgrade("ab", 41);
+            },
+        },
+        43: {
+            title: "Link to The Sun",
+            description: "Boosts The Sun's effect base by the best amount of Abominatium",
+            
+            cost() {
+                return new Decimal(50);
+            },
+
+            unlocked() {
+                return hasUpgrade("ab", 42) && hasAchievement("a", 122);
+            },
+            effect() {
+                let eff = player.ab.best.add(1).root(4);
+
+                return eff;
+            },
+            effectDisplay() { return "+" + format(upgradeEffect(this.layer, this.id)) }, // Add formatting to the effect
+        },
+        44: {
+            title: "We Need More",
+            description: "Unlock the seventh Abomination and unlock more Davzatium upgrades",
+            
+            cost() {
+                return new Decimal(60);
+            },
+
+            unlocked() {
+                return hasUpgrade("ab", 43);
+            },
+        },
+        45: {
+            title: "Pea-Nut?",
+            description: "Unlock the twelfth Abomination",
+            
+            cost() {
+                return new Decimal(250000);
+            },
+
+            unlocked() {
+                return hasUpgrade("ab", 35) && hasUpgrade("ab", 44);
+            },
+        },
+
+        51: {
+            title: "Abominatium Automation",
+            description: "Boosts the Abominatium effect base by the current amount of Bot Parts",
+            
+            cost() {
+                return new Decimal(150);
+            },
+
+            unlocked() {
+                return hasAchievement("a", 124) && hasUpgrade("ab", 44);
+            },
+            effect() {
+                let eff = player.b.points.add(1).log10().add(1).log10().div(4);
+
+                return eff;
+            },
+            effectDisplay() { return "+" + format(upgradeEffect(this.layer, this.id)) }, // Add formatting to the effect
+        },
+        52: {
+            title: "A Friend of the King",
+            description: "Unlock the ninth Abomination",
+            
+            cost() {
+                return new Decimal(250);
+            },
+
+            unlocked() {
+                return hasUpgrade("ab", 51);
+            },
+        },
+        53: {
+            title: "Abomination Training",
+            description: "Gives 1 free level to every Abomination for every upgrade in this row",
+            
+            cost() {
+                return new Decimal(3000);
+            },
+
+            unlocked() {
+                return hasMilestone("o", 3) && hasUpgrade("ab", 52);
+            },
+            effect() {
+                let eff = new Decimal(0);
+
+                if (hasUpgrade("ab", 51)) eff = eff.add(1);
+                if (hasUpgrade("ab", 52)) eff = eff.add(1);
+                if (hasUpgrade("ab", 53)) eff = eff.add(1);
+                if (hasUpgrade("ab", 54)) eff = eff.add(1);
+
+                return eff;
+            },
+            effectDisplay() { return "+" + formatWhole(upgradeEffect(this.layer, this.id)) }, // Add formatting to the effect
+        },
+        54: {
+            title: "Wait, Is This Time Travel?",
+            description: "Unlock the tenth Abomination",
+            
+            cost() {
+                return new Decimal(6500);
+            },
+
+            unlocked() {
+                return hasUpgrade("ab", 53) && hasAchievement("a", 133);
+            },
+        },
+        55: {
+            title: "Link to Beyond",
+            description: "Unlock the last two Abominations",
+            
+            cost() {
+                return new Decimal(1000000);
+            },
+
+            unlocked() {
+                return hasUpgrade("ab", 45) && hasUpgrade("ab", 54);
+            },
+        },
+
+        // ====================================
+
+        111: {
+            title: "Strawberry Fluff?",
+            description: "Unlock the second Abomination",
+
+            currencyDisplayName: "davzatium",
+            currencyInternalName: "davzatium",
+            currencyLayer: "ab",
+            
+            cost() {
+                return new Decimal(50);
+            },
+
+            unlocked() {
+                return player.ab.buyables[11].gte(10);
+            },
+        },
+        112: {
+            title: "Tiny Armor",
+            description: "Shnilli gets some armor, boosting his effect base by 1.5x",
+
+            currencyDisplayName: "davzatium",
+            currencyInternalName: "davzatium",
+            currencyLayer: "ab",
+            
+            cost() {
+                return new Decimal(150);
+            },
+
+            effect() {
+                return new Decimal(1.5);
+            },
+
+            unlocked() {
+                return player.ab.buyables[11].gte(15);
+            },
+        },
+        113: {
+            title: "Obtain Divinity",
+            description: "Shnilli transforms into Divine Shnilli, boosting his effect base by 1.5x",
+
+            currencyDisplayName: "davzatium",
+            currencyInternalName: "davzatium",
+            currencyLayer: "ab",
+            
+            cost() {
+                return new Decimal(2e10);
+            },
+
+            effect() {
+                return new Decimal(1.5);
+            },
+
+            unlocked() {
+                return hasUpgrade("ab", 45);
+            },
+        },
+        114: {
+            title: "Day of Reckoning",
+            description: "Littina grows dark blades, tripling her effect base",
+
+            currencyDisplayName: "davzatium",
+            currencyInternalName: "davzatium",
+            currencyLayer: "ab",
+            
+            cost() {
+                return new Decimal(1e12);
+            },
+
+            effect() {
+                return new Decimal(3);
+            },
+
+            unlocked() {
+                return hasUpgrade("ab", 45);
+            },
+        },
+
+        121: {
+            title: "Inner Bean",
+            description: "The Bean harnesses the power of beans, doubling his effect exponent",
+
+            currencyDisplayName: "davzatium",
+            currencyInternalName: "davzatium",
+            currencyLayer: "ab",
+            
+            cost() {
+                return new Decimal(200000);
+            },
+
+            unlocked() {
+                return hasUpgrade("ab", 32);
+            },
+        },
+        122: {
+            title: "Living Factory?",
+            description: "Unlock the fourth Abomination",
+
+            currencyDisplayName: "davzatium",
+            currencyInternalName: "davzatium",
+            currencyLayer: "ab",
+            
+            cost() {
+                return new Decimal(400000);
+            },
+
+            unlocked() {
+                return hasUpgrade("ab", 121);
+            },
+        },
+        123: {
+            title: "Overclocked",
+            description: "The Machine is overclocked, doubling its effect exponent",
+
+            currencyDisplayName: "davzatium",
+            currencyInternalName: "davzatium",
+            currencyLayer: "ab",
+            
+            cost() {
+                return new Decimal(600000);
+            },
+
+            unlocked() {
+                return hasUpgrade("f", 33) || hasUpgrade("sg", 33);
+            },
+        },
+
+        131: {
+            title: "HoneyBot",
+            description: "The Honey builds a stickbot, which helps boost its effect exponent by 1.3x",
+
+            currencyDisplayName: "davzatium",
+            currencyInternalName: "davzatium",
+            currencyLayer: "ab",
+            
+            cost() {
+                return new Decimal(2000000);
+            },
+            effect() {
+                return new Decimal(1.3);
+            },
+
+            unlocked() {
+                return hasUpgrade("ab", 44);
+            },
+        },
+        132: {
+            title: "King of Peanuts",
+            description: "Unlock the eight Abomination",
+
+            currencyDisplayName: "davzatium",
+            currencyInternalName: "davzatium",
+            currencyLayer: "ab",
+            
+            cost() {
+                return new Decimal(1500000);
+            },
+
+            unlocked() {
+                return hasUpgrade("ab", 131);
+            },
+        },
+
+        141: {
+            title: "Advanced Robotics",
+            description: "GHP transforms into Giant Robotic Peanut, boosting his effect exponent by 1.8x",
+
+            currencyDisplayName: "davzatium",
+            currencyInternalName: "davzatium",
+            currencyLayer: "ab",
+            
+            cost() {
+                return new Decimal(3000000);
+            },
+            effect() {
+                return new Decimal(1.8);
+            },
+
+            unlocked() {
+                return hasUpgrade("o", 42) || hasUpgrade("o", 43);
+            },
+        },
+        142: {
+            title: "A Twisted Personality",
+            description: "The Pickle becomes twisted, doubling his effect base",
+
+            currencyDisplayName: "davzatium",
+            currencyInternalName: "davzatium",
+            currencyLayer: "ab",
+            
+            cost() {
+                return new Decimal(4000000);
+            },
+            effect() {
+                return new Decimal(2);
+            },
+
+            unlocked() {
+                return hasUpgrade("ab", 141);
+            },
+        },
+    },
+
+    /* Abominations (Total: 14):
+    
+     - Shnilli (Davz) - Boost Davzatium gain - Shnilli with Armor (X) & Divine Shnilli (X) - 1
+     - Littina (Davz) - Boost Abominatium gain - Reckoning-Bringer Littina (X) - 2
+     - Little Man (Davz) - Boost the bases of the above two Abominations - 7
+    
+     - The Bean (Starry) - Boost Farms - Inner Bean (X) - 3
+     - The Machine (Boss) - Boost Sapling Generators - Overclocked (X) - 4
+
+     - Honey (Goodnerwus) - Boost Bots - HoneyBot (X) - 5
+     - The Cheese (Tribot) - Boost Lunar Colonies - Lunar/Moon Cheese? - 6
+    
+     - GHP (Davz) - Boost Peanuts - GRP (X) - 8
+     - The Pickle (Davz) - Boost Abominatium effect - Twisted Pickle (X) - 9
+    
+     - The Clock (Mira) - Boost Time Speed (Everything goes faster) - 10
+     - The Spreadsheet (Mira) - Add extra levels to the previous Abominations - 11
+
+     - The Pea (Davz) - Boost Nations - 12
+     - The Macrophage (UMM) - Boost Spells
+     - The Planet (Mira) - Boost Planets
+
+    */
+
+    buyables: {
+        rows: 4,
+        cols: 3,
+        11: {
+            title() {
+                if (hasUpgrade("ab", 113)) {
+                    return "Divine Shnilli";
+                }
+
+                if (hasUpgrade("ab", 112)) {
+                    return "Shnilli with Armor";
+                }
+
+                return "Shnilli";
+            },
+            cost(x = player.ab.buyables[this.id]) {
+                let base = tmp.ab.abominationBaseCosts[this.id];
+                
+                let cost = base.pow(x.div(3).add(1)).div(tmp.ab.divAbominationCosts).floor();
+
+                return cost;
+            },
+            freeLevels() {
+                let levels = tmp.ab.freeAbominations;
+                
+                levels = levels.add(tmp.ab.buyables[52].effect);
+
+                return levels;
+            },
+            effect(x = player.ab.buyables[this.id]) {
+                if (!x.plus(tmp.ab.buyables[this.id].freeLevels).gt(0) || !tmp.ab.buyables[this.id].unlocked) {
+                    return new Decimal(0);
+                }
+
+                let base = tmp.ab.abominationBaseEffects[this.id].times(tmp.ab.abominationBaseMult);
+
+                base = base.times(tmp.ab.buyables[13].effect.first);
+
+                let pow = x.plus(tmp.ab.buyables[this.id].freeLevels).pow(0.5);
+
+                if (hasUpgrade("ab", 112)) base = base.times(upgradeEffect("ab", 112));
+                if (hasUpgrade("ab", 113)) base = base.times(upgradeEffect("ab", 113));
+
+                let eff = Decimal.pow(base, pow).max(1);
+
+                if (hasUpgrade("ab", 21)) eff = eff.times(upgradeEffect("ab", 21));
+
+                eff = eff.times(tmp.ab.timeSpeed);
+
+                return eff;
+            },
+            display() {
+                let data = tmp.ab.buyables[this.id]
+                return "Cost: " + formatWhole(data.cost) + " Davzatium" + "\n\
+                    Level: " + formatWhole(player.ab.buyables[this.id]) + (data.freeLevels.gt(0) ? (" + " + formatWhole(data.freeLevels)) : "") + "\n\
+                   " + "Generates " + format(data.effect) + " Davzatium per second" +
+                   "<br> <br> (Abomination by Davz)"
+            },
+            unlocked() {
+                return hasUpgrade("ab", 14);
+            },
+            canAfford() {
+                return player.ab.davzatium.gte(tmp.ab.buyables[this.id].cost);
+            },
+            buy() {
+                cost = tmp.ab.buyables[this.id].cost
+
+                if (!tmp.ab.abominationsCostNothing) {
+                    player.ab.davzatium = player.ab.davzatium.sub(cost)
+                }
+
+                player.ab.buyables[this.id] = player.ab.buyables[this.id].add(1)
+            },
+            style: {
+                'height': '100px'
+            },
+        },
+        12: {
+            title() {
+                if (hasUpgrade("ab", 114)) {
+                    return "Reckoning-Bringer Littina";
+                }
+
+                return "Littina";
+            },
+            cost(x = player.ab.buyables[this.id]) {
+                let base = tmp.ab.abominationBaseCosts[this.id];
+                
+                let cost = base.pow(x.div(3).add(1)).div(tmp.ab.divAbominationCosts).floor();
+
+                return cost;
+            },
+            freeLevels() {
+                let levels = tmp.ab.freeAbominations;
+
+                levels = levels.add(tmp.ab.buyables[52].effect);
+
+                return levels;
+            },
+            effect(x = player.ab.buyables[this.id]) {
+                if (!x.plus(tmp.ab.buyables[this.id].freeLevels).gt(0) || !tmp.ab.buyables[this.id].unlocked) {
+                    return new Decimal(1);
+                }
+
+                let base = tmp.ab.abominationBaseEffects[this.id].times(tmp.ab.abominationBaseMult);
+
+                if (hasUpgrade("ab", 114)) base = base.times(upgradeEffect("ab", 114));
+
+                base = base.times(tmp.ab.buyables[13].effect.second);
+                
+                let pow = x.plus(tmp.ab.buyables[this.id].freeLevels).pow(0.5);
+
+                let eff = Decimal.pow(base, pow).max(1);
+                return eff;
+            },
+            display() {
+                let data = tmp.ab.buyables[this.id]
+                return "Cost: " + formatWhole(data.cost) + " Davzatium" + "\n\
+                    Level: " + formatWhole(player.ab.buyables[this.id]) + (data.freeLevels.gt(0) ? (" + " + formatWhole(data.freeLevels)) : "") + "\n\
+                   " + "Divides Abominatium cost by /" + format(data.effect) +
+                   "<br> <br> (Abomination by Davz)"
+            },
+            unlocked() {
+                return hasUpgrade("ab", 111);
+            },
+            canAfford() {
+                return player.ab.davzatium.gte(tmp.ab.buyables[this.id].cost);
+            },
+            buy() {
+                cost = tmp.ab.buyables[this.id].cost
+
+                if (!tmp.ab.abominationsCostNothing) {
+                    player.ab.davzatium = player.ab.davzatium.sub(cost)
+                }
+
+                player.ab.buyables[this.id] = player.ab.buyables[this.id].add(1)
+            },
+            style: {
+                'height': '100px'
+            },
+        },
+        13: {
+            title: "Little Man",
+            cost(x = player.ab.buyables[this.id]) {
+                let base = tmp.ab.abominationBaseCosts[this.id];
+                
+                let cost = base.pow(x.div(3).add(1)).div(tmp.ab.divAbominationCosts).floor();
+
+                return cost;
+            },
+            freeLevels() {
+                let levels = tmp.ab.freeAbominations;
+
+                levels = levels.add(tmp.ab.buyables[52].effect);
+
+                return levels;
+            },
+            effect(x = player.ab.buyables[this.id]) {
+                if (!x.plus(tmp.ab.buyables[this.id].freeLevels).gt(0) || !tmp.ab.buyables[this.id].unlocked) {
+                    return {first: new Decimal(1), second: new Decimal(1)};
+                }
+
+                let base = tmp.ab.abominationBaseEffects[this.id].times(tmp.ab.abominationBaseMult);
+                let pow1 = x.plus(tmp.ab.buyables[this.id].freeLevels).pow(0.2);
+                let pow2 = x.plus(tmp.ab.buyables[this.id].freeLevels).pow(0.9);
+
+                let eff = {};
+
+                eff.first = Decimal.pow(base.add(1), pow1).max(1);
+                eff.second = Decimal.pow(base.add(1), pow2).max(1);
+                
+                return eff;
+            },
+            display() {
+                let data = tmp.ab.buyables[this.id]
+                return "Cost: " + formatWhole(data.cost) + " Davzatium" + "\n\
+                    Level: " + formatWhole(player.ab.buyables[this.id]) + (data.freeLevels.gt(0) ? (" + " + formatWhole(data.freeLevels)) : "") + "\n\
+                   " + "Boosts Shnilli's effect base by " + format(data.effect.first) + "x and Littina's effect base by " + format(data.effect.second) + "x" +
+                   "<br> <br> (Abomination by Davz)"
+            },
+            unlocked() {
+                return hasUpgrade("ab", 44);
+            },
+            canAfford() {
+                return player.ab.davzatium.gte(tmp.ab.buyables[this.id].cost);
+            },
+            buy() {
+                cost = tmp.ab.buyables[this.id].cost
+
+                if (!tmp.ab.abominationsCostNothing) {
+                    player.ab.davzatium = player.ab.davzatium.sub(cost)
+                }
+
+                player.ab.buyables[this.id] = player.ab.buyables[this.id].add(1)
+            },
+            style: {
+                'height': '100px'
+            },
+        },
+
+        21: {
+            title: "The Bean",
+            title() {
+                if (hasUpgrade("ab", 121)) {
+                    return "The Bean<br>(Inner Bean)";
+                }
+
+                return "The Bean";
+            },
+            cost(x = player.ab.buyables[this.id]) {
+                let base = tmp.ab.abominationBaseCosts[this.id];
+                
+                let cost = base.pow(x.div(4).add(1)).div(tmp.ab.divAbominationCosts).floor();
+
+                return cost;
+            },
+            freeLevels() {
+                let levels = tmp.ab.freeAbominations;
+
+                levels = levels.add(tmp.ab.buyables[52].effect);
+
+                return levels;
+            },
+            effect(x = player.ab.buyables[this.id]) {
+                if (!x.plus(tmp.ab.buyables[this.id].freeLevels).gt(0) || !tmp.ab.buyables[this.id].unlocked) {
+                    return new Decimal(1);
+                }
+
+                let base = tmp.ab.abominationBaseEffects[this.id].times(tmp.ab.abominationBaseMult);
+                let pow = x.plus(tmp.ab.buyables[this.id].freeLevels).pow(0.7);
+
+                if (hasUpgrade("ab", 121)) pow = pow.times(2);
+
+                if (hasUpgrade("f", 33)) base = base.times(2.7);
+
+                let eff = Decimal.pow(base, pow).max(1);
+                return eff;
+            },
+            display() {
+                let data = tmp.ab.buyables[this.id]
+                return "Cost: " + formatWhole(data.cost) + " Davzatium" + "\n\
+                    Level: " + formatWhole(player.ab.buyables[this.id]) + (data.freeLevels.gt(0) ? (" + " + formatWhole(data.freeLevels)) : "") + "\n\
+                   " + "Boosts the Farm base by " + format(data.effect) + "x" +
+                   "<br> <br> (Abomination by Starry)"
+            },
+            unlocked() {
+                return hasUpgrade("ab", 24);
+            },
+            canAfford() {
+                return player.ab.davzatium.gte(tmp.ab.buyables[this.id].cost);
+            },
+            buy() {
+                cost = tmp.ab.buyables[this.id].cost
+
+                if (!tmp.ab.abominationsCostNothing) {
+                    player.ab.davzatium = player.ab.davzatium.sub(cost)
+                }
+
+                player.ab.buyables[this.id] = player.ab.buyables[this.id].add(1)
+            },
+            style: {
+                'height': '100px'
+            },
+        },
+        22: {
+            title: "The Machine",
+            title() {
+                if (hasUpgrade("ab", 123)) {
+                    return "The Machine (Overclocked)";
+                }
+
+                return "The Machine";
+            },
+            cost(x = player.ab.buyables[this.id]) {
+                let base = tmp.ab.abominationBaseCosts[this.id];
+                
+                let cost = base.pow(x.div(3.5).add(1)).div(tmp.ab.divAbominationCosts).floor();
+
+                return cost;
+            },
+            freeLevels() {
+                let levels = tmp.ab.freeAbominations;
+
+                levels = levels.add(tmp.ab.buyables[52].effect);
+
+                return levels;
+            },
+            effect(x = player.ab.buyables[this.id]) {
+                if (!x.plus(tmp.ab.buyables[this.id].freeLevels).gt(0) || !tmp.ab.buyables[this.id].unlocked) {
+                    return new Decimal(1);
+                }
+
+                let base = tmp.ab.abominationBaseEffects[this.id].times(tmp.ab.abominationBaseMult);
+                let pow = x.plus(tmp.ab.buyables[this.id].freeLevels).pow(0.7);
+
+                if (hasUpgrade("ab", 123)) pow = pow.times(2);
+
+                if (hasUpgrade("sg", 33)) base = base.times(4);
+
+                let eff = Decimal.pow(base, pow).max(1);
+                return eff;
+            },
+            display() {
+                let data = tmp.ab.buyables[this.id]
+                return "Cost: " + formatWhole(data.cost) + " Davzatium" + "\n\
+                    Level: " + formatWhole(player.ab.buyables[this.id]) + (data.freeLevels.gt(0) ? (" + " + formatWhole(data.freeLevels)) : "") + "\n\
+                   " + "Boosts the Sapling Generator base by " + format(data.effect) + "x" +
+                   "<br> <br> (Abomination by Boss)"
+            },
+            unlocked() {
+                return hasUpgrade("ab", 122);
+            },
+            canAfford() {
+                return player.ab.davzatium.gte(tmp.ab.buyables[this.id].cost);
+            },
+            buy() {
+                cost = tmp.ab.buyables[this.id].cost
+
+                if (!tmp.ab.abominationsCostNothing) {
+                    player.ab.davzatium = player.ab.davzatium.sub(cost)
+                }
+
+                player.ab.buyables[this.id] = player.ab.buyables[this.id].add(1)
+            },
+            style: {
+                'height': '100px'
+            },
+        },
+
+        31: {
+            title() {
+                if (hasUpgrade("ab", 131)) {
+                    return "HoneyBot";
+                }
+
+                return "Honey";
+            },
+            cost(x = player.ab.buyables[this.id]) {
+                let base = tmp.ab.abominationBaseCosts[this.id];
+                
+                let cost = base.pow(x.div(4).add(1)).div(tmp.ab.divAbominationCosts).floor();
+
+                return cost;
+            },
+            freeLevels() {
+                let levels = tmp.ab.freeAbominations;
+
+                levels = levels.add(tmp.ab.buyables[52].effect);
+
+                return levels;
+            },
+            effect(x = player.ab.buyables[this.id]) {
+                if (!x.plus(tmp.ab.buyables[this.id].freeLevels).gt(0) || !tmp.ab.buyables[this.id].unlocked) {
+                    return new Decimal(1);
+                }
+
+                let base = tmp.ab.abominationBaseEffects[this.id].times(tmp.ab.abominationBaseMult);
+                let pow = x.plus(tmp.ab.buyables[this.id].freeLevels).pow(0.7);
+
+                if (hasUpgrade("ab", 131)) pow = pow.times(upgradeEffect("ab", 131));
+
+                let eff = Decimal.pow(base.add(1), pow).max(1);
+                return eff;
+            },
+            display() {
+                let data = tmp.ab.buyables[this.id]
+                return "Cost: " + formatWhole(data.cost) + " Davzatium" + "\n\
+                    Level: " + formatWhole(player.ab.buyables[this.id]) + (data.freeLevels.gt(0) ? (" + " + formatWhole(data.freeLevels)) : "") + "\n\
+                   " + "Boosts the Bot effect bases by " + format(data.effect) + "x" +
+                   "<br> <br> (Abomination by Goodnerwus)"
+            },
+            unlocked() {
+                return hasUpgrade("ab", 34);
+            },
+            canAfford() {
+                return player.ab.davzatium.gte(tmp.ab.buyables[this.id].cost);
+            },
+            buy() {
+                cost = tmp.ab.buyables[this.id].cost
+
+                if (!tmp.ab.abominationsCostNothing) {
+                    player.ab.davzatium = player.ab.davzatium.sub(cost)
+                }
+
+                player.ab.buyables[this.id] = player.ab.buyables[this.id].add(1)
+            },
+            style: {
+                'height': '100px'
+            },
+        },
+        32: {
+            title: "The Cheese",
+            cost(x = player.ab.buyables[this.id]) {
+                let base = tmp.ab.abominationBaseCosts[this.id];
+                
+                let cost = base.pow(x.div(4).add(1)).div(tmp.ab.divAbominationCosts).floor();
+
+                return cost;
+            },
+            freeLevels() {
+                let levels = tmp.ab.freeAbominations;
+
+                levels = levels.add(tmp.ab.buyables[52].effect);
+
+                return levels;
+            },
+            effect(x = player.ab.buyables[this.id]) {
+                if (!x.plus(tmp.ab.buyables[this.id].freeLevels).gt(0) || !tmp.ab.buyables[this.id].unlocked) {
+                    return new Decimal(1);
+                }
+
+                let base = tmp.ab.abominationBaseEffects[this.id].times(tmp.ab.abominationBaseMult);
+                let pow = x.plus(tmp.ab.buyables[this.id].freeLevels).pow(0.7);
+
+                let eff = Decimal.pow(base, pow).max(1);
+                return eff;
+            },
+            display() {
+                let data = tmp.ab.buyables[this.id]
+                return "Cost: " + formatWhole(data.cost) + " Davzatium" + "\n\
+                    Level: " + formatWhole(player.ab.buyables[this.id]) + (data.freeLevels.gt(0) ? (" + " + formatWhole(data.freeLevels)) : "") + "\n\
+                   " + "Boosts the Lunar Colony effect base by " + format(data.effect) + "x" +
+                   "<br> <br> (Abomination by Tribot)"
+            },
+            unlocked() {
+                return hasUpgrade("ab", 42);
+            },
+            canAfford() {
+                return player.ab.davzatium.gte(tmp.ab.buyables[this.id].cost);
+            },
+            buy() {
+                cost = tmp.ab.buyables[this.id].cost
+
+                if (!tmp.ab.abominationsCostNothing) {
+                    player.ab.davzatium = player.ab.davzatium.sub(cost)
+                }
+
+                player.ab.buyables[this.id] = player.ab.buyables[this.id].add(1)
+            },
+            style: {
+                'height': '100px'
+            },
+        },
+
+        41: {
+            title() {
+                if (hasUpgrade("ab", 141)) {
+                    return "Giant Robotic Peanut";
+                }
+
+                return "Giant Humanoid Peanut";
+            },
+            cost(x = player.ab.buyables[this.id]) {
+                let base = tmp.ab.abominationBaseCosts[this.id];
+                
+                let cost = base.pow(x.div(4).add(1)).div(tmp.ab.divAbominationCosts).floor();
+
+                return cost;
+            },
+            freeLevels() {
+                let levels = tmp.ab.freeAbominations;
+
+                levels = levels.add(tmp.ab.buyables[52].effect);
+
+                return levels;
+            },
+            effect(x = player.ab.buyables[this.id]) {
+                if (!x.plus(tmp.ab.buyables[this.id].freeLevels).gt(0) || !tmp.ab.buyables[this.id].unlocked) {
+                    return new Decimal(1);
+                }
+
+                let base = tmp.ab.abominationBaseEffects[this.id].times(tmp.ab.abominationBaseMult);
+                let pow = x.plus(tmp.ab.buyables[this.id].freeLevels).pow(1.5);
+
+                if (hasUpgrade("ab", 141)) pow = pow.times(upgradeEffect("ab", 141));
+
+                let eff = Decimal.pow(base, pow).max(1);
+                return eff;
+            },
+            display() {
+                let data = tmp.ab.buyables[this.id]
+                return "Cost: " + formatWhole(data.cost) + " Davzatium" + "\n\
+                    Level: " + formatWhole(player.ab.buyables[this.id]) + (data.freeLevels.gt(0) ? (" + " + formatWhole(data.freeLevels)) : "") + "\n\
+                   " + "Boosts peanut production by " + format(data.effect) + "x" +
+                   "<br> <br> (Abomination by Davz)"
+            },
+            unlocked() {
+                return hasUpgrade("ab", 132);
+            },
+            canAfford() {
+                return player.ab.davzatium.gte(tmp.ab.buyables[this.id].cost);
+            },
+            buy() {
+                cost = tmp.ab.buyables[this.id].cost
+
+                if (!tmp.ab.abominationsCostNothing) {
+                    player.ab.davzatium = player.ab.davzatium.sub(cost)
+                }
+
+                player.ab.buyables[this.id] = player.ab.buyables[this.id].add(1)
+            },
+            style: {
+                'height': '100px'
+            },
+        },
+        42: {
+            title() {
+                if (hasUpgrade("ab", 142)) {
+                    return "The Pickle (Twisted)";
+                }
+
+                return "The Pickle";
+            },
+            cost(x = player.ab.buyables[this.id]) {
+                let base = tmp.ab.abominationBaseCosts[this.id];
+                
+                let cost = base.pow(x.div(4).add(1)).div(tmp.ab.divAbominationCosts).floor();
+
+                return cost;
+            },
+            freeLevels() {
+                let levels = tmp.ab.freeAbominations;
+
+                levels = levels.add(tmp.ab.buyables[52].effect);
+
+                return levels;
+            },
+            effect(x = player.ab.buyables[this.id]) {
+                if (!x.plus(tmp.ab.buyables[this.id].freeLevels).gt(0) || !tmp.ab.buyables[this.id].unlocked) {
+                    return new Decimal(1);
+                }
+
+                let base = tmp.ab.abominationBaseEffects[this.id].times(tmp.ab.abominationBaseMult);
+                let pow = x.plus(tmp.ab.buyables[this.id].freeLevels).pow(0.6);
+
+                if (hasUpgrade("ab", 142)) base = base.times(upgradeEffect("ab", 142));
+
+                let eff = Decimal.pow(base.add(1), pow).max(1);
+                return eff;
+            },
+            display() {
+                let data = tmp.ab.buyables[this.id]
+                return "Cost: " + formatWhole(data.cost) + " Davzatium" + "\n\
+                    Level: " + formatWhole(player.ab.buyables[this.id]) + (data.freeLevels.gt(0) ? (" + " + formatWhole(data.freeLevels)) : "") + "\n\
+                   " + "Boosts the Abominatium effect base by " + format(data.effect) + "x" +
+                   "<br> <br> (Abomination by Davz)"
+            },
+            unlocked() {
+                return hasUpgrade("ab", 52);
+            },
+            canAfford() {
+                return player.ab.davzatium.gte(tmp.ab.buyables[this.id].cost);
+            },
+            buy() {
+                cost = tmp.ab.buyables[this.id].cost
+
+                if (!tmp.ab.abominationsCostNothing) {
+                    player.ab.davzatium = player.ab.davzatium.sub(cost)
+                }
+
+                player.ab.buyables[this.id] = player.ab.buyables[this.id].add(1)
+            },
+            style: {
+                'height': '100px'
+            },
+        },
+
+        51: {
+            title() {
+                return "The Clock";
+            },
+            cost(x = player.ab.buyables[this.id]) {
+                let base = tmp.ab.abominationBaseCosts[this.id];
+                
+                let cost = base.pow(x.div(4).add(1)).div(tmp.ab.divAbominationCosts).floor();
+
+                return cost;
+            },
+            freeLevels() {
+                let levels = tmp.ab.freeAbominations;
+
+                levels = levels.add(tmp.ab.buyables[52].effect);
+
+                return levels;
+            },
+            effect(x = player.ab.buyables[this.id]) {
+                if (!x.plus(tmp.ab.buyables[this.id].freeLevels).gt(0) || !tmp.ab.buyables[this.id].unlocked) {
+                    return new Decimal(1);
+                }
+
+                let base = tmp.ab.abominationBaseEffects[this.id].times(tmp.ab.abominationBaseMult);
+                let pow = x.plus(tmp.ab.buyables[this.id].freeLevels).pow(0.6);
+
+                let eff = Decimal.pow(base.add(1), pow).max(1);
+
+                return eff;
+            },
+            display() {
+                let data = tmp.ab.buyables[this.id]
+                return "Cost: " + formatWhole(data.cost) + " Davzatium" + "\n\
+                    Level: " + formatWhole(player.ab.buyables[this.id]) + (data.freeLevels.gt(0) ? (" + " + formatWhole(data.freeLevels)) : "") + "\n\
+                   " + "Boosts time speed by " + format(data.effect) + "x" +
+                   "<br> <br> (Abomination by Mira The Cat)"
+            },
+            unlocked() {
+                return hasUpgrade("ab", 54);
+            },
+            canAfford() {
+                return player.ab.davzatium.gte(tmp.ab.buyables[this.id].cost);
+            },
+            buy() {
+                cost = tmp.ab.buyables[this.id].cost
+
+                if (!tmp.ab.abominationsCostNothing) {
+                    player.ab.davzatium = player.ab.davzatium.sub(cost)
+                }
+
+                player.ab.buyables[this.id] = player.ab.buyables[this.id].add(1)
+            },
+            style: {
+                'height': '100px'
+            },
+        },
+        52: {
+            title() {
+                return "The Spreadsheet";
+            },
+            cost(x = player.ab.buyables[this.id]) {
+                let base = tmp.ab.abominationBaseCosts[this.id];
+                
+                let cost = base.pow(x.add(1)).div(tmp.ab.divAbominationCosts).floor();
+
+                return cost;
+            },
+            freeLevels() {
+                let levels = tmp.ab.freeAbominations;
+                return levels;
+            },
+            effect(x = player.ab.buyables[this.id]) {
+                if (!x.plus(tmp.ab.buyables[this.id].freeLevels).gt(0) || !tmp.ab.buyables[this.id].unlocked) {
+                    return new Decimal(0);
+                }
+
+                let base = tmp.ab.abominationBaseEffects[this.id];
+                let mult = x.plus(tmp.ab.buyables[this.id].freeLevels);
+
+                let eff = base.times(mult);
+
+                return eff;
+            },
+            display() {
+                let data = tmp.ab.buyables[this.id]
+                return "Cost: " + formatWhole(data.cost) + " Davzatium" + "\n\
+                    Level: " + formatWhole(player.ab.buyables[this.id]) + (data.freeLevels.gt(0) ? (" + " + formatWhole(data.freeLevels)) : "") + "\n\
+                   " + "Adds +" + formatWhole(data.effect) + " extra levels to the previous Abominations" +
+                   "<br> <br> (Abomination by Mira The Cat)"
+            },
+            unlocked() {
+                return hasUpgrade("ab", 25);
+            },
+            canAfford() {
+                return player.ab.davzatium.gte(tmp.ab.buyables[this.id].cost);
+            },
+            buy() {
+                cost = tmp.ab.buyables[this.id].cost
+
+                if (!tmp.ab.abominationsCostNothing) {
+                    player.ab.davzatium = player.ab.davzatium.sub(cost)
+                }
+
+                player.ab.buyables[this.id] = player.ab.buyables[this.id].add(1)
+            },
+            style: {
+                'height': '100px'
+            },
+        },
+
+        61: {
+            title() {
+                return "The Pea";
+            },
+            cost(x = player.ab.buyables[this.id]) {
+                let base = tmp.ab.abominationBaseCosts[this.id];
+                
+                let cost = base.pow(x.div(4).add(1)).div(tmp.ab.divAbominationCosts).floor();
+
+                return cost;
+            },
+            freeLevels() {
+                let levels = tmp.ab.freeAbominations;
+
+                return levels;
+            },
+            effect(x = player.ab.buyables[this.id]) {
+                if (!x.plus(tmp.ab.buyables[this.id].freeLevels).gt(0) || !tmp.ab.buyables[this.id].unlocked) {
+                    return new Decimal(1);
+                }
+
+                let base = tmp.ab.abominationBaseEffects[this.id].times(tmp.ab.abominationBaseMult);
+                let pow = x.plus(tmp.ab.buyables[this.id].freeLevels).pow(0.7);
+
+                let eff = Decimal.pow(base.add(1), pow).max(1);
+                return eff;
+            },
+            display() {
+                let data = tmp.ab.buyables[this.id]
+                return "Cost: " + formatWhole(data.cost) + " Davzatium" + "\n\
+                    Level: " + formatWhole(player.ab.buyables[this.id]) + (data.freeLevels.gt(0) ? (" + " + formatWhole(data.freeLevels)) : "") + "\n\
+                   " + "Boosts the Nation effect base by " + format(data.effect) + "x" +
+                   "<br> <br> (Abomination by Davz)"
+            },
+            unlocked() {
+                return hasUpgrade("ab", 45);
+            },
+            canAfford() {
+                return player.ab.davzatium.gte(tmp.ab.buyables[this.id].cost);
+            },
+            buy() {
+                cost = tmp.ab.buyables[this.id].cost
+
+                if (!tmp.ab.abominationsCostNothing) {
+                    player.ab.davzatium = player.ab.davzatium.sub(cost)
+                }
+
+                player.ab.buyables[this.id] = player.ab.buyables[this.id].add(1)
+            },
+            style: {
+                'height': '100px'
+            },
+        },
+        62: {
+            title() {
+                return "The Macrophage";
+            },
+            cost(x = player.ab.buyables[this.id]) {
+                let base = tmp.ab.abominationBaseCosts[this.id];
+                
+                let cost = base.pow(x.div(4).add(1)).div(tmp.ab.divAbominationCosts).floor();
+
+                return cost;
+            },
+            freeLevels() {
+                let levels = tmp.ab.freeAbominations;
+
+                return levels;
+            },
+            effect(x = player.ab.buyables[this.id]) {
+                if (!x.plus(tmp.ab.buyables[this.id].freeLevels).gt(0) || !tmp.ab.buyables[this.id].unlocked) {
+                    return new Decimal(1);
+                }
+
+                let base = tmp.ab.abominationBaseEffects[this.id].times(tmp.ab.abominationBaseMult);
+                let pow = x.plus(tmp.ab.buyables[this.id].freeLevels).pow(0.6);
+
+                let eff = Decimal.pow(base.add(1), pow).max(1);
+                return eff;
+            },
+            display() {
+                let data = tmp.ab.buyables[this.id]
+                return "Cost: " + formatWhole(data.cost) + " Davzatium" + "\n\
+                    Level: " + formatWhole(player.ab.buyables[this.id]) + (data.freeLevels.gt(0) ? (" + " + formatWhole(data.freeLevels)) : "") + "\n\
+                   " + "Boosts the Spell effect bases by " + format(data.effect) + "x" +
+                   "<br> <br> (Abomination by UMM)"
+            },
+            unlocked() {
+                return hasUpgrade("ab", 55);
+            },
+            canAfford() {
+                return player.ab.davzatium.gte(tmp.ab.buyables[this.id].cost);
+            },
+            buy() {
+                cost = tmp.ab.buyables[this.id].cost
+
+                if (!tmp.ab.abominationsCostNothing) {
+                    player.ab.davzatium = player.ab.davzatium.sub(cost)
+                }
+
+                player.ab.buyables[this.id] = player.ab.buyables[this.id].add(1)
+            },
+            style: {
+                'height': '100px'
+            },
+        },
+        63: {
+            title() {
+                return "The Planet";
+            },
+            cost(x = player.ab.buyables[this.id]) {
+                let base = tmp.ab.abominationBaseCosts[this.id];
+                
+                let cost = base.pow(x.div(4).add(1)).div(tmp.ab.divAbominationCosts).floor();
+
+                return cost;
+            },
+            freeLevels() {
+                let levels = tmp.ab.freeAbominations;
+
+                return levels;
+            },
+            effect(x = player.ab.buyables[this.id]) {
+                if (!x.plus(tmp.ab.buyables[this.id].freeLevels).gt(0) || !tmp.ab.buyables[this.id].unlocked) {
+                    return new Decimal(1);
+                }
+
+                let base = tmp.ab.abominationBaseEffects[this.id].times(tmp.ab.abominationBaseMult);
+                let pow = x.plus(tmp.ab.buyables[this.id].freeLevels).pow(0.6);
+
+                let eff = Decimal.pow(base.add(1), pow).max(1);
+                return eff;
+            },
+            display() {
+                let data = tmp.ab.buyables[this.id]
+                return "Cost: " + formatWhole(data.cost) + " Davzatium" + "\n\
+                    Level: " + formatWhole(player.ab.buyables[this.id]) + (data.freeLevels.gt(0) ? (" + " + formatWhole(data.freeLevels)) : "") + "\n\
+                   " + "Boosts the Planet effect base by " + format(data.effect) + "x" +
+                   "<br> <br> (Abomination by Mira The Cat)"
+            },
+            unlocked() {
+                return hasUpgrade("ab", 55);
+            },
+            canAfford() {
+                return player.ab.davzatium.gte(tmp.ab.buyables[this.id].cost);
+            },
+            buy() {
+                cost = tmp.ab.buyables[this.id].cost
+
+                if (!tmp.ab.abominationsCostNothing) {
+                    player.ab.davzatium = player.ab.davzatium.sub(cost)
+                }
+
+                player.ab.buyables[this.id] = player.ab.buyables[this.id].add(1)
+            },
+            style: {
+                'height': '100px'
+            },
+        },
+    },
+})
+
+addLayer("o", {
+    name: "Ocean", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "O", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: false,
+		points: new Decimal(0),
+        total: new Decimal(0),
+        best: new Decimal(0),
+        unspent: new Decimal(0),
+        auto: false,
+    }},
+    color: "#3b38ff",
+    requires() {
+        return (player.o.points.eq(0)) ? new Decimal("1e9000") : new Decimal("1e9250");
+    }, // Can be a function that takes requirement increases into account
+    roundUpCost: true,
+    resource: "knowledge of the ocean", // Name of prestige currency
+    baseResource: "peanuts", // Name of resource prestige is based on
+    branches: ["n", "l", "s", "b"],
+    baseAmount() {return player.points}, // Get the current amount of baseResource
+    type() {
+        return "static"
+    },
+    exponent: 1, // Prestige currency exponent
+    gainMult() {
+        let mult = new Decimal(1)
+        return mult;
+    },
+
+    automate() {},
+    resetsNothing() {
+        return false
+    },
+
+    autoPrestige() {
+        return false;
+    },
+
+    base() {
+        return new Decimal("1e900");
+    },
+    canBuyMax() {
+        return false;
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        let exp = new Decimal(0.5);
+
+        if (player.o.points.gte(10)) exp = exp.div(player.o.points.sub(9).times(0.05).add(1));
+        if (player.o.points.gte(14)) exp = exp.div(player.o.points.sub(12).times(0.05).add(1));
+        if (player.o.points.gte(20)) exp = exp.div(player.o.points.sub(18).times(0.05).add(1));
+        if (player.o.points.gte(24)) exp = exp.div(player.o.points.sub(20).times(0.08).add(1));
+
+        return exp;
+    },
+    row: 4, // Row the layer is in on the tree (0 is the first row)
+    hotkeys: [
+        {key: "o", description: "O: Perform an Ocean reset", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    layerShown() {
+        return hasUpgrade("p", 14);
+    },
+    effect() {
+        if (!player.o.points.gt(0)) {
+            return new Decimal(1);
+        }
+        
+        let base = new Decimal("1e20");
+
+        base = base.pow(tmp.n.clickables[52].effect);
+
+        let eff = base.pow(player.o.points.sqrt()).times("1e30");
+
+        return eff;
+    },
+    effectDescription() {
+        return "which is boosting Peanut Production by " + format(tmp.o.effect) + "x"
+    },
+
+    doReset(resettingLayer) {
+        let keep = [];
+        keep.push("auto");
+
+        if (resettingLayer == "o") {
+            player.o.unspent = player.o.unspent.add(1);
+        }
+
+        if (layers[resettingLayer].row > this.row)
+            layerDataReset("o", keep)
+    },
+
+    tabFormat: {
+        "Milestones": {
+            unlocked() {
+                return true
+            },
+            content: ["main-display", "prestige-button", ["display-text", function() {
+                return "You have " + formatWhole(player.points) + " peanuts "
+            }
+            , {}], "blank", ["display-text", function() {
+                return 'You have obtained a total of ' + formatWhole(player.o.total) + ' Knowledge of the Ocean <br> ' + formatWhole(player.o.unspent) + " of them have not yet been spent"
+            }
+            , {}], "blank", "milestones",],
+        },
+        "Ocean Exploration": {
+            unlocked() {
+                return hasMilestone("o", 0);
+            },
+            content: ["main-display", ["display-text", function() {
+                return 'You have obtained a total of ' + formatWhole(player.o.total) + ' Knowledge of the Ocean <br> ' + formatWhole(player.o.unspent) + " of them have not yet been spent"
+            }
+            , {}], "blank", ["infobox", "lore"], "blank", "upgrades",],
+        },
+    },
+
+    infoboxes: {
+        "lore": {
+            title: "Ocean Exploration",
+            body: "Ocean Exploration is the main feature of the Ocean layer. <br> <br>" +
+            "Here, you use your unspent Knowledge of the Ocean to buy different upgrades that will unlock " +
+            "more stuff in the earlier layers. <br> <br>" +
+            "You can choose the order of upgrades bought yourself, but you have to buy all upgrades in one row " +
+            "before you can buy any in the next row.",
+        }
+    },
+
+    milestones: {
+        0: {
+            requirementDescription: "1 Knowledge of the Ocean",
+            done() {
+                return player.o.best.gte(1)
+            },
+            effectDescription: "Unlock Ocean Exploration",
+        },
+        1: {
+            requirementDescription: "5 Knowledge of the Ocean",
+            done() {
+                return player.o.best.gte(5)
+            },
+            effectDescription: "Autobuy Lunar Colony buyables and Lunar Colony buyables cost nothing",
+            toggles: [["l", "autoBuyables"]],
+        },
+        2: {
+            requirementDescription: "10 Knowledge of the Ocean",
+            done() {
+                return player.o.best.gte(10)
+            },
+            effectDescription: "Unlock Row 4 in the Ocean",
+        },
+        3: {
+            requirementDescription: "15 Knowledge of the Ocean",
+            done() {
+                return player.o.best.gte(15)
+            },
+            toggles: [["l", "auto"]],
+            effectDescription: "Autobuy Lunar Colonies, Lunar Colonies reset nothing and keep Spaceships on all resets",
+        },
+    },
+
+    /* Upgrade Ideas:
+
+    - More upgrades for layers 1-3 - Done: C, F, SG
+    - Ocean boosts MSPaintium Hardcap - X
+    - More Zones - Asteroid Belt, Ocean Floor
+    - More Spells - ???
+    - Unlock more Lunar Colony buyables - Row 4?
+    - More Bots - THE DESTROYER - THE DESTRUCTOR upgrade later? - X
+    
+    Row 2: e11 200 -> e12 850 -> e14 000
+
+    */
+
+    upgrades: {
+        11: {
+            title: "Back to the Beginning",
+            description: "Unlock more Coin upgrades",
+            cost: new Decimal(1),
+
+            currencyDisplayName: "unspent knowledge of the ocean",
+            currencyInternalName: "unspent",
+            currencyLayer: "o",
+
+            unlocked() {
+                return hasMilestone("o", 0);
+            },
+
+            effect() {
+                return 0.5;
+            },
+            style: { margin: "10px" },
+        },
+
+        21: {
+            title: "Kelp Farms",
+            description: "Unlock more Farm upgrades",
+            cost: new Decimal(1),
+
+            currencyDisplayName: "unspent knowledge of the ocean",
+            currencyInternalName: "unspent",
+            currencyLayer: "o",
+
+            unlocked() {
+                return hasMilestone("o", 0);
+            },
+
+            canAfford() {
+                return hasUpgrade("o", 11);
+            },
+
+            effect() {
+                return 0.5;
+            },
+            branches() {
+                if (!hasUpgrade("o", 11)) return [[11, 2]];
+                
+                return [[11, 1]];
+            },
+            style: { margin: "10px" },
+        },
+        22: {
+            title: "Seagrass Generators",
+            description: "Unlock more Sapling Generator upgrades",
+            cost: new Decimal(1),
+
+            currencyDisplayName: "unspent knowledge of the ocean",
+            currencyInternalName: "unspent",
+            currencyLayer: "o",
+
+            unlocked() {
+                return hasMilestone("o", 0);
+            },
+
+            canAfford() {
+                return hasUpgrade("o", 11);
+            },
+
+            effect() {
+                return 0.5;
+            },
+            branches() {
+                if (!hasUpgrade("o", 11)) return [[11, 2]];
+                
+                return [[11, 1]];
+            },
+            style: { margin: "10px" },
+        },
+
+        31: {
+            title: "Sea Villages",
+            description: "Unlock more Town upgrades",
+            cost: new Decimal(1),
+
+            currencyDisplayName: "unspent knowledge of the ocean",
+            currencyInternalName: "unspent",
+            currencyLayer: "o",
+
+            unlocked() {
+                return hasAchievement("a", 114);
+            },
+
+            canAfford() {
+                return hasUpgrade("o", 21) && hasUpgrade("o", 22);
+            },
+
+            effect() {
+                return 0.5;
+            },
+            branches() {
+                if (!hasUpgrade("o", 21)) return [[21, 2]];
+                
+                return [[21, 1]];
+            },
+            style: { margin: "10px" },
+        },
+        32: {
+            title: "Sea Mines",
+            description: "Your Knowledge of the Ocean will also boost the MSPaintium Hardcap",
+            cost: new Decimal(1),
+
+            currencyDisplayName: "unspent knowledge of the ocean",
+            currencyInternalName: "unspent",
+            currencyLayer: "o",
+
+            unlocked() {
+                return hasAchievement("a", 114);
+            },
+
+            canAfford() {
+                return hasUpgrade("o", 21) && hasUpgrade("o", 22) && hasUpgrade("o", 31) && hasUpgrade("o", 33);
+            },
+
+            effect() {
+                return new Decimal(4).pow(player.o.points);
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
+
+            branches() {
+                let branches = [];
+
+                branches.push((hasUpgrade("o", 21)) ? [21, 1] : [21, 2]);
+                branches.push((hasUpgrade("o", 22)) ? [22, 1] : [22, 2]);
+                branches.push((hasUpgrade("o", 31)) ? [31, 1] : [31, 2]);
+                branches.push((hasUpgrade("o", 33)) ? [33, 1] : [33, 2]);
+                
+                return branches;
+            },
+            style: { margin: "10px" },
+        },
+        33: {
+            title: "Watermills",
+            description: "Unlock more Factory upgrades",
+            cost: new Decimal(1),
+
+            currencyDisplayName: "unspent knowledge of the ocean",
+            currencyInternalName: "unspent",
+            currencyLayer: "o",
+
+            unlocked() {
+                return hasAchievement("a", 114);
+            },
+
+            canAfford() {
+                return hasUpgrade("o", 21) && hasUpgrade("o", 22);
+            },
+
+            effect() {
+                return 0.5;
+            },
+            branches() {
+                if (!hasUpgrade("o", 22)) return [[22, 2]];
+                
+                return [[22, 1]];
+            },
+            style: { margin: "10px" },
+        },
+
+        41: {
+            title: "Research of the Ocean Floor",
+            description: "Unlock more Zones",
+            cost: new Decimal(2),
+
+            currencyDisplayName: "unspent knowledge of the ocean",
+            currencyInternalName: "unspent",
+            currencyLayer: "o",
+
+            unlocked() {
+                return hasMilestone("o", 2);
+            },
+
+            canAfford() {
+                return hasUpgrade("o", 31) && hasUpgrade("o", 32) && hasUpgrade("o", 33);
+            },
+
+            effect() {
+                return 0.5;
+            },
+            branches() {
+                let branches = [];
+
+                branches.push((hasUpgrade("o", 31)) ? [31, 1] : [31, 2]);
+                branches.push((hasUpgrade("o", 32)) ? [32, 1] : [32, 2]);
+                
+                return branches;
+            },
+            style: { margin: "10px" },
+        },
+        42: {
+            title: "Lunar Terraforming",
+            description: "Unlock more Lunar Colony buyables",
+            cost: new Decimal(3),
+
+            currencyDisplayName: "unspent knowledge of the ocean",
+            currencyInternalName: "unspent",
+            currencyLayer: "o",
+
+            unlocked() {
+                return hasMilestone("o", 2);
+            },
+
+            canAfford() {
+                return hasUpgrade("o", 41) && hasUpgrade("o", 44);
+            },
+
+            effect() {
+                return 0.5;
+            },
+            branches() {
+                let branches = [];
+
+                branches.push((hasUpgrade("o", 41)) ? [41, 1] : [41, 2]);
+                branches.push((hasUpgrade("o", 32)) ? [32, 1] : [32, 2]);
+                
+                return branches;
+            },
+            style: { margin: "10px" },
+        },
+        43: {
+            title: "Secret Ocean Recipes",
+            description: "Unlock more Spells",
+            cost: new Decimal(3),
+
+            currencyDisplayName: "unspent knowledge of the ocean",
+            currencyInternalName: "unspent",
+            currencyLayer: "o",
+
+            unlocked() {
+                return hasMilestone("o", 2);
+            },
+
+            canAfford() {
+                return hasUpgrade("o", 41) && hasUpgrade("o", 44);
+            },
+
+            effect() {
+                return 0.5;
+            },
+            branches() {
+                let branches = [];
+
+                branches.push((hasUpgrade("o", 44)) ? [44, 1] : [44, 2]);
+                branches.push((hasUpgrade("o", 32)) ? [32, 1] : [32, 2]);
+                
+                return branches;
+            },
+            style: { margin: "10px" },
+        },
+        44: {
+            title: "Water-Proof Bot Models",
+            description: "Unlock a new Bot",
+            cost: new Decimal(2),
+
+            currencyDisplayName: "unspent knowledge of the ocean",
+            currencyInternalName: "unspent",
+            currencyLayer: "o",
+
+            unlocked() {
+                return hasMilestone("o", 2);
+            },
+
+            canAfford() {
+                return hasUpgrade("o", 31) && hasUpgrade("o", 32) && hasUpgrade("o", 33);
+            },
+
+            effect() {
+                return 0.5;
+            },
+            branches() {
+                let branches = [];
+
+                branches.push((hasUpgrade("o", 33)) ? [33, 1] : [33, 2]);
+                branches.push((hasUpgrade("o", 32)) ? [32, 1] : [32, 2]);
+                
+                return branches;
+            },
+            style: { margin: "10px" },
+        },
+    },
+
+    buyables: {
+        
     },
 })
 
@@ -5580,8 +10025,6 @@ addLayer("a", {
         return ("Achievements")
     },
     achievements: {
-        rows: 8,
-        cols: 4,
         11: {
             name: "The Beginning of an Adventure",
             done() {
@@ -5871,7 +10314,7 @@ addLayer("a", {
                 return hasUpgrade("ms", 24);
             },
             unlocked() {
-                return hasUpgrade("b", 54);
+                return hasUpgrade("b", 54) || hasAchievement("a", 73);
             },
             tooltip: "Buy the Astral Star upgrade <br> Reward: Unlock more Nation upgrades!",
         },
@@ -5921,14 +10364,267 @@ addLayer("a", {
         },
 
         84: {
-            name: "Is this The End?",
+            name: "Lunar Factories",
             done() {
-                return player.points.gte("1e5400");
+                return player.l.buyables[11].gte(6);
             },
             unlocked() {
                 return hasAchievement("a", 81);
             },
-            tooltip: "Reach the current Endgame",
+            tooltip: "Get a level of at least 6 on the sixth Lunar Colony buyable <br> Reward: Unlock Row 5!",
+        },
+
+        91: {
+            name: "Far, far Down",
+            done() {
+                return player.p.unlocked || player.ab.unlocked;
+            },
+            unlocked() {
+                return hasAchievement("a", 84);
+            },
+            tooltip: "Perform a Row 5 reset <br> Reward: Boost researching speed by 10x, and keep the first Nation milestone & first two Bot Part milestones on all resets!",
+        },
+        92: {
+            name: "Abom-ination..?",
+            done() {
+                return player.ab.buyables[11].gte(1);
+            },
+            unlocked() {
+                return hasAchievement("a", 91);
+            },
+            tooltip: "Buy your first Abomination!",
+        },
+        93: {
+            name: "We must protecc",
+            done() {
+                return hasUpgrade("ab", 112);
+            },
+            unlocked() {
+                return hasAchievement("a", 92);
+            },
+            tooltip: "Boost Shnilli with the \"Tiny Armor\" upgrade <br> Reward: Unlock more Abominatium upgrades!",
+        },
+        94: {
+            name: "Actual Space Travel",
+            done() {
+                return hasMilestone("p", 1);
+            },
+            unlocked() {
+                return hasAchievement("a", 93);
+            },
+            tooltip: "Unlock the Solar System",
+        },
+
+        101: {
+            name: "Earth\'s Twin",
+            done() {
+                return player.p.planetsBought[21];
+            },
+            unlocked() {
+                return hasAchievement("a", 94);
+            },
+            tooltip: "Buy Venus <br> Reward: Researching speed is boosted by 10x again, and unlock more Abominatium upgrades!",
+        },
+        102: {
+            name: "Coffee Bean?",
+            done() {
+                return player.ab.buyables[21].gte(1);
+            },
+            unlocked() {
+                return hasAchievement("a", 101);
+            },
+            tooltip: "Buy The Bean",
+        },
+        103: {
+            name: "Automated Automation",
+            done() {
+                return player.ab.buyables[22].gte(1);
+            },
+            unlocked() {
+                return hasAchievement("a", 102);
+            },
+            tooltip: "Buy The Machine <br> Reward: Unlock Planet upgrades!",
+        },
+        104: {
+            name: "Into the Deep",
+            done() {
+                return player.o.unlocked;
+            },
+            unlocked() {
+                return hasAchievement("a", 103);
+            },
+            tooltip: "Unlock the Ocean <br> Reward: Divide the Town requirement by 1.17",
+        },
+
+        111: {
+            name: "The Red Planet",
+            done() {
+                return player.p.planetsBought[41];
+            },
+            unlocked() {
+                return hasAchievement("a", 104);
+            },
+            tooltip: "Unlock Mars",
+        },
+        112: {
+            name: "First Dive",
+            done() {
+                return hasUpgrade("f", 33) && hasUpgrade("sg", 33);
+            },
+            unlocked() {
+                return hasAchievement("a", 104);
+            },
+            tooltip: "Fully upgrade both Row 2 layers in the Ocean <br> Reward: Unlock more Abominatium upgrades!",
+        },
+
+        113: {
+            name: "Straight from the Hive!",
+            done() {
+                return player.ab.buyables[31].gte(1);
+            },
+            unlocked() {
+                return hasAchievement("a", 112);
+            },
+            tooltip: "Buy Honey",
+        },
+
+        114: {
+            name: "Popular Pizza Topping",
+            done() {
+                return player.ab.buyables[32].gte(1);
+            },
+            unlocked() {
+                return hasAchievement("a", 113);
+            },
+            tooltip: "Buy The Cheese <br> Reward: Unlock Row 3 layers in the Ocean!",
+        },
+
+        121: {
+            name: "Underwater Colonization",
+            done() {
+                return hasUpgrade("t", 34) && hasUpgrade("fa", 24);
+            },
+            unlocked() {
+                return hasAchievement("a", 114);
+            },
+            tooltip: "Fully upgrade both the Town and the Factory layers in the Ocean <br> Reward: Nations are now slightly cheaper!",
+        },
+
+        122: {
+            name: "Diving Trainee",
+            done() {
+                return hasUpgrade("o", 32);
+            },
+            unlocked() {
+                return hasAchievement("a", 121);
+            },
+            tooltip: "Upgrade all Row 3 layers in the Ocean <br> Reward: Unlock more Abominatium upgrades!",
+        },
+
+        123: {
+            name: "The True King of Peanuts",
+            done() {
+                return player.ab.buyables[41].gte(1);
+            },
+            unlocked() {
+                return hasAchievement("a", 122);
+            },
+            tooltip: "Buy Giant Humanoid Peanut <br> Reward: Unlock more Planet upgrades!",
+        },
+
+        124: {
+            name: "Intermediate Diver",
+            done() {
+                return hasUpgrade("o", 41) && hasUpgrade("o", 44);
+            },
+            unlocked() {
+                return hasAchievement("a", 123);
+            },
+            tooltip: "Upgrade both the Nation and Bot Part layers in the Ocean <br> Reward: Towns are slightly cheaper and unlock more Abominatium upgrades!",
+        },
+
+        131: {
+            name: "Twists and Turns",
+            done() {
+                return hasUpgrade("ab", 142);
+            },
+            unlocked() {
+                return hasAchievement("a", 124) && hasUpgrade("ab", 52);
+            },
+            tooltip: "Unlock The Twisted Pickle <br> Reward: Unlock two more Planet upgrades!",
+        },
+
+        132: {
+            name: "Diving Expertise",
+            done() {
+                return hasUpgrade("o", 42) && hasUpgrade("o", 43);
+            },
+            unlocked() {
+                return hasAchievement("a", 131);
+            },
+            tooltip: "Fully upgrade all Row 4 layers in the Ocean <br> Reward: Planets are now slightly cheaper!",
+        },
+
+        133: {
+            name: "The Bright Ice Giant",
+            done() {
+                return player.p.planetsBought[71];
+            },
+            unlocked() {
+                return hasAchievement("a", 132);
+            },
+            tooltip: "Unlock Uranus <br> Reward: Unlock more Abominatium upgrades!",
+        },
+        134: {
+            name: "Abomination Omniscience",
+            done() {
+                return player.ab.buyables[52].gte(1);
+            },
+            unlocked() {
+                return hasAchievement("a", 133);
+            },
+            tooltip: "Unlock The Spreadsheet <br> Reward: Divide the Nation cost base by 1.005!",
+        },
+
+        141: {
+            name: "The Windy Blue Planet",
+            done() {
+                return player.p.planetsBought[81];
+            },
+            unlocked() {
+                return hasAchievement("a", 134);
+            },
+            tooltip: "Unlock Neptune <br> Reward: Unlock more Abominatium upgrades and unlock a new Lunar Colony milestone!",
+        },
+        142: {
+            name: "The True Ninth Planet",
+            done() {
+                return player.ab.buyables[63].gte(1);
+            },
+            unlocked() {
+                return hasAchievement("a", 141);
+            },
+            tooltip: "Unlock The Planet <br> Reward: Unlock more Planet upgrades!",
+        },
+        143: {
+            name: "A Dwarf among Planets",
+            done() {
+                return player.p.planetsBought[91];
+            },
+            unlocked() {
+                return hasAchievement("a", 142);
+            },
+            tooltip: "Unlock Pluto",
+        },
+        144: {
+            name: "Expert of The Ocean",
+            done() {
+                return player.o.points.gte(25);
+            },
+            unlocked() {
+                return hasAchievement("a", 142);
+            },
+            tooltip: "Reach 25 Knowledge of the Ocean",
         },
        
     },
@@ -5937,3 +10633,19 @@ addLayer("a", {
     }
     ], "blank", "blank", "achievements", ],
 })
+
+/* Fusion:
+
+Hydrogen -> Helium -> Carbon -> Neon -> Oxygen -> Silicon -> Iron
+
+Progress (v0.4):
+
+Layers (x3): 3 / 3
+Upgrades: 55 / 65                   - 
+Main Items (x2): 23 / 23            - 
+
+Total Score: 120 / 120 - 100%
+
+Progress per Day: 8.5% - 5.1% - 9.3%
+Time until finished: 2-4 days of testing
+*/

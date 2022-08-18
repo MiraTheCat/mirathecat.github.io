@@ -8,28 +8,32 @@ let modInfo = {
 	discordName: "",
 	discordLink: "",
 	initialStartPoints: new Decimal(0), // Used for hard resets and new players
-	offlineLimit: 1,  // In hours
+	offlineLimit: 0.5,  // In hours
 }
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.3",
-	name: "Row 4 Update",
+	num: "0.4",
+	name: "Abnormal Space Travel",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
 <br>
-<h3>v0.3</h3><br>
+<h3>v0.4 - Abnormal Space Travel</h3><br><br>
+Added Row 5 with 3 new layers<br>
+Endgame: 1e223,000 peanuts<br>
+<br>
+<h3>v0.3 - Scientific Exploration</h3><br><br>
 Added Row 4 with 4 new layers<br>
 Made some changes to the earlier layers for balancing<br>
 Endgame: 1e5400 peanuts<br>
 <br>
-<h3>v0.2</h3><br>
+<h3>v0.2 - The Industrial Revolution</h3><br><br>
 Added Row 3 with 3 new layers<br>
 Added Achievements<br>
 Endgame: 1e415 peanuts<br>
 <br>
-<h3>v0.1</h3><br>
+<h3>v0.1 - A Humble Beginning</h3><br><br>
 Added Row 1 and 2, with 3 layers in total<br>
 Endgame: 1e26 peanuts<br>`
 
@@ -37,7 +41,7 @@ let winText = `Congratulations! You have reached the end and beaten this game, b
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
-var doNotCallTheseFunctionsEveryTick = ["blowUpEverything", "castAllSpells"]
+var doNotCallTheseFunctionsEveryTick = ["blowUpEverything", "castAllSpells", "buy10", "buy100"]
 
 function getStartPoints(){
     return new Decimal(modInfo.initialStartPoints)
@@ -67,12 +71,14 @@ function getPointGen() {
 	if (player.sg.unlocked) gain = gain.times(tmp.sg.saplingEff);
 	if (player.fa.unlocked) gain = gain.times(tmp.fa.workerEff);
 	if (player.ms.unlocked) gain = gain.times(tmp.ms.effect);
-	if (player.l.unlocked) gain = gain.times(tmp.l.effect.second);
+	if (player.o.unlocked) gain = gain.times(tmp.o.effect);
 
 	if (tmp.b.buyables[11].unlocked) gain = gain.times(tmp.b.buyables[11].effect);
 	if (player.s.unlocked) gain = gain.times(tmp.s.buyables[13].effect);
 	if (player.l.unlocked) gain = gain.times(tmp.l.buyables[11].effect);
 	if (player.n.unlocked) gain = gain.times(tmp.n.clickables[21].effect);
+	if (player.ab.unlocked) gain = gain.times(tmp.ab.buyables[41].effect);
+	if (player.ab.unlocked) gain = gain.times(tmp.ab.timeSpeed);
 
 	if (inChallenge("b", 11)) gain = gain.sqrt();
 
@@ -85,11 +91,12 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
+	"Current Endgame: 1e223,000 peanuts"
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("1e5400"))
+	return player.points.gte(new Decimal("e223000"));
 }
 
 
@@ -110,7 +117,6 @@ function maxTickLength() {
 // you can cap their current resources with this.
 function fixOldSave(oldVersion){
 	if (oldVersion == "0.2") {
-		
 		if (player.t.points.gte(20)) {
 			player.points = new Decimal("1e415");
 			player.c.points = new Decimal("1e345");

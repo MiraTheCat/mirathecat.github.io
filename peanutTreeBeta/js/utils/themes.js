@@ -1,5 +1,5 @@
 // ************ Themes ************
-var themes = ["default", "aqua", "abominatium", "mspaintium", "death"]
+var themes = ["default", "aqua"]
 
 var colors = {
 	default: {
@@ -21,36 +21,6 @@ var colors = {
 		locked: "#c4a7b3",
 		background: "#001f3f",
 		background_tooltip: "rgba(0, 15, 31, 0.75)",
-	},
-	abominatium: {
-		1: "#ffffff",//Branch color 1
-		2: "#bfbfbf",//Branch color 2
-		3: "#7f7f7f",//Branch color 3
-		color: "#13ab2a",
-		points: "#ffffff",
-		locked: "#299133",
-		background: "#0f0f0f",
-		background_tooltip: "rgba(0, 0, 0, 0.75)",
-	},
-	mspaintium: {
-		1: "#fffb00",//Branch color 1
-		2: "#ffa200",//Branch color 2
-		3: "#ff2929",//Branch color 3
-		color: "#8642fc",
-		points: "#3064ff",
-		locked: "#bf8f8f",
-		background: "#00fff7",
-		background_tooltip: "rgba(0, 0, 0, 0.75)",
-	},
-	death: {
-		1: "#000000",//Branch color 1
-		2: "#bfbfbf",//Branch color 2
-		3: "#7f7f7f",//Branch color 3
-		color: "#4a4a4a",
-		points: "#000000",
-		locked: "#bf8f8f",
-		background: "#ffffff",
-		background_tooltip: "rgba(0, 0, 0, 0.75)",
 	},
 }
 function changeTheme() {
@@ -74,6 +44,7 @@ function switchTheme() {
 	else {
 		index ++;
 		options.theme = themes[index];
+		options.theme = themes[1];
 	}
 	changeTheme();
 	resizeCanvas();
