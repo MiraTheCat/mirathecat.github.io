@@ -5412,7 +5412,7 @@ addLayer("s", {
         {key: "S", description: "Shift + S: Perform a Spell reset", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown() {
-        return hasAchievement("a", 64);
+        return hasUpgrade("b", 42);
     },
 
     update(diff) {
@@ -8827,7 +8827,7 @@ addLayer("ab", {
                 let data = tmp.ab.buyables[this.id]
                 return "Cost: " + formatWhole(data.cost) + " Davzatium" + "\n\
                     Level: " + formatWhole(player.ab.buyables[this.id]) + (data.freeLevels.gt(0) ? (" + " + formatWhole(data.freeLevels)) : "") + "\n\
-                   " + "Divides Abominatium cost by /" + format(data.effect) +
+                   " + "Divides Abominatium cost by /" + format(data.effect) + " (Doesn't work on first Abominatium)" +
                    "<br> <br> (Abomination by Davz)"
             },
             unlocked() {
