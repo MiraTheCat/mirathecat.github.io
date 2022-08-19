@@ -8036,25 +8036,25 @@ addLayer("ab", {
 
     milestones: {
         0: {
-            requirementDescription: "1 Abominatium",
+            requirementDescription: "1 Total Abominatium",
             done() {
-                return player.ab.points.gte(1)
+                return player.ab.total.gte(1)
             },
             effectDescription()  {
                 return "Keep +1 Bot Part milestone per Abominatium reset <br> Currently: " + player.ab.resets.min(3).add(2);
             },
         },
         1: {
-            requirementDescription: "2 Abominatium",
+            requirementDescription: "2 Total Abominatium",
             done() {
-                return player.ab.points.gte(2)
+                return player.ab.total.gte(2)
             },
             effectDescription: "Unlock Abominatium upgrades and Bots cost nothing",
         },
         2: {
-            requirementDescription: "10 Abominatium",
+            requirementDescription: "5 Total Abominatium",
             done() {
-                return player.ab.points.gte(10)
+                return player.ab.total.gte(5)
             },
             effectDescription: "Keep Spell milestones on all resets",
         },
@@ -8119,7 +8119,7 @@ addLayer("ab", {
                 let eff = player.ab.best.sqrt().add(1);
                 return eff;
             },
-            effectDisplay() { return + format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
         },
         13: {
             title: "Abnormal Spells",
@@ -10384,7 +10384,7 @@ addLayer("a", {
             unlocked() {
                 return hasAchievement("a", 84);
             },
-            tooltip: "Perform a Row 5 reset <br> Reward: Boost researching speed by 10x, and keep the first Nation milestone & first two Bot Part milestones on all resets!",
+            tooltip: "Perform a Row 5 reset <br> Reward: Boost researching speed by 10x, and keep the two first Nation & Bot Part milestones on all resets!",
         },
         92: {
             name: "Abom-ination..?",

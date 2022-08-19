@@ -212,6 +212,9 @@ function load() {
 	setupTemp();
 	updateTemp();
 	updateTemp();
+	
+	for (let i = 0; i < 40; i++) updateTemp();
+	
 	updateTabFormats()
 	loadVue();
 }
@@ -223,6 +226,7 @@ function loadOptions() {
 	else 
 		options = getStartOptions()
 	if (themes.indexOf(options.theme) < 0) theme = "default"
+	fixData(options, getStartOptions())
 
 }
 
