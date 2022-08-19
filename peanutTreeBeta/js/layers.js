@@ -5970,7 +5970,7 @@ addLayer("l", {
         {key: "l", description: "L: Perform a Lunar Colony reset", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown() {
-        return hasAchievement("a", 74);
+        return hasUpgrade("n", 24);
     },
     addToBase() {
         let base = new Decimal(0);
