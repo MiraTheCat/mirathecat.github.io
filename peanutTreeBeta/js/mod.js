@@ -35,7 +35,12 @@ Endgame: 1e415 peanuts<br>
 <br>
 <h3>v0.1 - A Humble Beginning</h3><br><br>
 Added Row 1 and 2, with 3 layers in total<br>
-Endgame: 1e26 peanuts<br>`
+Endgame: 1e26 peanuts<br>
+<br>
+<h1>Tips:</h1><br><br>
+If you have to click something a lot of times, try to instead just click it once and hold down enter.
+This will make the button be autoclicked so that you don't have to spam it<br>
+`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
