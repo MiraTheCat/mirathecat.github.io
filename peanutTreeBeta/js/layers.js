@@ -2743,16 +2743,6 @@ addLayer("n", {
         if (player.n.autoSpaceships && tmp.n.buyables[11].canAfford && hasMilestone("l", 2)) {
             tmp.n.buyables[11].buy();
         }
-
-        if (player.n.resetTime < 1.5 && player.n.points.gte(14)) {
-            console.log("Total: " + format(getPointGen()));
-            console.log("Higher Payment Coin Upgrade: " + format(upgradeEffect('c', 13)) + "x");
-            console.log("Massive Payment Coin Upgrade: " + "^" + format(upgradeEffect('c', 14)));
-            console.log("Farm Combo Upgrade: " + format(upgradeEffect("f", 11)) + "x");
-            console.log("Bot v4 Effect: " + format(tmp.b.buyables[21].effect) + "x");
-            console.log("Coins: " + format(player.c.points));
-            console.log("\n");
-        }
     },
 
     doReset(resettingLayer) {
@@ -10368,7 +10358,7 @@ addLayer("a", {
         84: {
             name: "Lunar Factories",
             done() {
-                return player.l.buyables[11].gte(6);
+                return player.l.buyables[23].gte(6);
             },
             unlocked() {
                 return hasAchievement("a", 81);
