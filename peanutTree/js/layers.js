@@ -10368,7 +10368,7 @@ addLayer("a", {
         84: {
             name: "Lunar Factories",
             done() {
-                return player.l.buyables[11].gte(6);
+                return player.l.buyables[23].gte(6);
             },
             unlocked() {
                 return hasAchievement("a", 81);
