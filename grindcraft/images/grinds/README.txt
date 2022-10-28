@@ -1,1 +1,0 @@
-Grind Background images should be 250x100 px!

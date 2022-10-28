@@ -1,455 +1,461 @@
 // Game Info
 
-let gameID = "grindcraftAges" // Should be unique for every game!
+let gameInfo = {
+    name: "Grindcraft Ages",                            // The name of your game!
+    icon: "/images/pfp.png",                    // Link or path to an icon image for your game!
+    ID: "grindcraftAges",                               // Your game's ID! Should be unique for every game!
+};
 
 // Pre-historic
 
 addResources({
     dirt: {
         amount: 0,
-        image: "/grindcraft/images/dirt.png",
+        image: "images/dirt.png",
     },
     stick: {
         amount: 0,
-        image: "/grindcraft/images/stick.png",
+        image: "images/stick.png",
     },
     rock: {
         amount: 0,
-        image: "/grindcraft/images/rock.png",
+        image: "images/rock.png",
     },
     "plant fiber": {
         amount: 0,
-        image: "/grindcraft/images/plantFiber.png",
+        image: "images/plantFiber.png",
     },
     flint: {
         amount: 0,
-        image: "/grindcraft/images/flint.png",
+        image: "images/flint.png",
     },
     water: {
         amount: 0,
-        image: "/grindcraft/images/water.png",
+        image: "images/water.png",
     },
     wood: {
         amount: 0,
-        image: "/grindcraft/images/wood.png",
+        image: "images/wood.png",
     },
     bark: {
         amount: 0,
-        image: "/grindcraft/images/bark.png",
+        image: "images/bark.png",
     },
     leaves: {
         amount: 0,
-        image: "/grindcraft/images/leaves.png",
+        image: "images/leaves.png",
     },
     "rock axe": {
         amount: 0,
-        image: "/grindcraft/images/rockAxe.png",
+        image: "images/rockAxe.png",
     },
     "rock spear": {
         amount: 0,
-        image: "/grindcraft/images/rockSpear.png",
+        image: "images/rockSpear.png",
     },
     "rock shovel": {
         amount: 0,
-        image: "/grindcraft/images/rockShovel.png",
+        image: "images/rockShovel.png",
     },
     "rock hoe": {
         amount: 0,
-        image: "/grindcraft/images/rockHoe.png",
+        image: "images/rockHoe.png",
     },
     "basket": {
         amount: 0,
-        image: "/grindcraft/images/basket.png",
+        image: "images/basket.png",
     },
     bowl: {
         amount: 0,
-        image: "/grindcraft/images/bowl.png"
+        image: "images/bowl.png"
     },
     fireplace: {
         amount: 0,
-        image: "/grindcraft/images/fireplace.png"
+        image: "images/fireplace.png"
     },
     feather: {
         amount: 0,
-        image: "/grindcraft/images/feather.png",
+        image: "images/feather.png",
     },
     wool: {
         amount: 0,
-        image: "/grindcraft/images/wool.png",
+        image: "images/wool.png",
     },
     leather: {
         amount: 0,
-        image: "/grindcraft/images/leather.png",
+        image: "images/leather.png",
     },
     pteranodon: {
         amount: 0,
-        image: "/grindcraft/images/pteranodon.png",
+        image: "images/pteranodon.png",
     },
     velociraptor: {
         amount: 0,
-        image: "/grindcraft/images/velociraptor.png",
+        image: "images/velociraptor.png",
     },
     "t-rex": {
         amount: 0,
-        image: "/grindcraft/images/t-rex.png",
+        image: "images/t-rex.png",
     },
     cobblestone: {
         amount: 0,
-        image: "/grindcraft/images/cobblestone.png",
+        image: "images/cobblestone.png",
     },
     seeds: {
         amount: 0,
-        image: "/grindcraft/images/seeds.png",
+        image: "images/seeds.png",
     },
     "cobblestone wall": {
         amount: 0,
-        image: "/grindcraft/images/cobblestoneWall.png",
+        image: "images/cobblestoneWall.png",
     },
     "farm plot": {
         amount: 0,
-        image: "/grindcraft/images/plot.png",
+        image: "images/plot.png",
     },
     field: {
         amount: 0,
-        image: "/grindcraft/images/field.png",
+        image: "images/field.png",
     },
     "cobblestone hut": {
         amount: 0,
-        image: "/grindcraft/images/cobblestoneHut.png",
+        image: "images/cobblestoneHut.png",
     },
     villager: {
         amount: 0,
-        image: "/grindcraft/images/villager.png",
+        image: "images/villager.png",
     },
     "raw porkchop": {
         amount: 0,
-        image: "/grindcraft/images/rawPorkchop.png",
+        image: "images/rawPorkchop.png",
     },
     "cooked porkchop": {
         amount: 0,
-        image: "/grindcraft/images/cookedPorkchop.png",
+        image: "images/cookedPorkchop.png",
     },
     digger: {
         amount: 0,
-        image: "/grindcraft/images/digger.png",
+        image: "images/digger.png",
     },
     woodsman: {
         amount: 0,
-        image: "/grindcraft/images/woodsman.png",
+        image: "images/woodsman.png",
     },
     hunter: {
         amount: 0,
-        image: "/grindcraft/images/hunter.png",
+        image: "images/hunter.png",
     },
     farmer: {
         amount: 0,
-        image: "/grindcraft/images/farmer.png",
+        image: "images/farmer.png",
     },
     wheat: {
         amount: 0,
-        image: "/grindcraft/images/wheat.png",
+        image: "images/wheat.png",
     },
     pumpkin: {
         amount: 0,
-        image: "/grindcraft/images/pumpkin.png",
+        image: "images/pumpkin.png",
     },
     grindstone: {
         amount: 0,
-        image: "/grindcraft/images/grindstone.png",
+        image: "images/grindstone.png",
     },
     "flaked flint": {
         amount: 0,
-        image: "/grindcraft/images/flakedFlint.png",
+        image: "images/flakedFlint.png",
     },
     bone: {
         amount: 0,
-        image: "/grindcraft/images/bone.png",
+        image: "images/bone.png",
     },
     string: {
         amount: 0,
-        image: "/grindcraft/images/string.png",
+        image: "images/string.png",
     },
     "flint axe": {
         amount: 0,
-        image: "/grindcraft/images/flintAxe.png",
+        image: "images/flintAxe.png",
     },
     "flint shovel": {
         amount: 0,
-        image: "/grindcraft/images/flintShovel.png",
+        image: "images/flintShovel.png",
     },
     "flint hoe": {
         amount: 0,
-        image: "/grindcraft/images/flintHoe.png",
+        image: "images/flintHoe.png",
     },
     "flint spear": {
         amount: 0,
-        image: "/grindcraft/images/flintSpear.png",
+        image: "images/flintSpear.png",
     },
     "flint worker": {
         amount: 0,
-        image: "/grindcraft/images/flintWorker.png",
+        image: "images/flintWorker.png",
     },
     "flint shears": {
         amount: 0,
-        image: "/grindcraft/images/flintShears.png",
+        image: "images/flintShears.png",
     },
     "hay bale": {
         amount: 0,
-        image: "/grindcraft/images/hayBale.png",
+        image: "images/hayBale.png",
     },
     "straw roof": {
         amount: 0,
-        image: "/grindcraft/images/strawRoof.png",
+        image: "images/strawRoof.png",
     },
     "cobblestone house": {
         amount: 0,
-        image: "/grindcraft/images/cobblestoneHouse.png",
+        image: "images/cobblestoneHouse.png",
     },
     "chief's house": {
         amount: 0,
-        image: "/grindcraft/images/chiefHouse.png",
+        image: "images/chiefHouse.png",
     },
     "leaf bed": {
         amount: 0,
-        image: "/grindcraft/images/leafBed.png",
+        image: "images/leafBed.png",
     },
     "tribe chief": {
         amount: 0,
-        image: "/grindcraft/images/tribeChief.png",
+        image: "images/tribeChief.png",
     },
     "wood worker": {
         amount: 0,
-        image: "/grindcraft/images/woodWorker.png",
+        image: "images/woodWorker.png",
     },
     "leather worker": {
         amount: 0,
-        image: "/grindcraft/images/leatherWorker.png",
+        image: "images/leatherWorker.png",
     },
     planks: {
         amount: 0,
-        image: "/grindcraft/images/planks.png",
+        image: "images/planks.png",
     },
     fence: {
         amount: 0,
-        image: "/grindcraft/images/fence.png",
+        image: "images/fence.png",
     },
     builder: {
         amount: 0,
-        image: "/grindcraft/images/builder.png",
+        image: "images/builder.png",
     },
     fletcher: {
         amount: 0,
-        image: "/grindcraft/images/fletcher.png",
+        image: "images/fletcher.png",
     },
     "leather helmet": {
         amount: 0,
-        image: "/grindcraft/images/leatherHelmet.png",
+        image: "images/leatherHelmet.png",
     },
     "leather chestplate": {
         amount: 0,
-        image: "/grindcraft/images/leatherChestplate.png",
+        image: "images/leatherChestplate.png",
     },
     "leather leggings": {
         amount: 0,
-        image: "/grindcraft/images/leatherLeggings.png",
+        image: "images/leatherLeggings.png",
     },
     "leather boots": {
         amount: 0,
-        image: "/grindcraft/images/leatherBoots.png",
+        image: "images/leatherBoots.png",
     },
     "leather armor": {
         amount: 0,
-        image: "/grindcraft/images/leatherArmor.png",
+        image: "images/leatherArmor.png",
     },
     bow: {
         amount: 0,
-        image: "/grindcraft/images/bow.png",
+        image: "images/bow.png",
     },
     arrow: {
         amount: 0,
-        image: "/grindcraft/images/arrow.png",
+        image: "images/arrow.png",
     },
     rope: {
         amount: 0,
-        image: "/grindcraft/images/rope.png",
+        image: "images/rope.png",
     },
     slab: {
         amount: 0,
-        image: "/grindcraft/images/woodSlab.png",
+        image: "images/woodSlab.png",
     },
     "bird trap": {
         amount: 0,
-        image: "/grindcraft/images/birdTrap.png",
+        image: "images/birdTrap.png",
     },
     "pteranodon saddle": {
         amount: 0,
-        image: "/grindcraft/images/pteranodonSaddle.png",
+        image: "images/pteranodonSaddle.png",
     },
     "pteranodon nest": {
         amount: 0,
-        image: "/grindcraft/images/pteranodonNest.png",
+        image: "images/pteranodonNest.png",
     },
     "velociraptor saddle": {
         amount: 0,
-        image: "/grindcraft/images/velociraptorSaddle.png",
+        image: "images/velociraptorSaddle.png",
     },
     "leather warrior": {
         amount: 0,
-        image: "/grindcraft/images/leatherWarrior.png",
+        image: "images/leatherWarrior.png",
     },
     archer: {
         amount: 0,
-        image: "/grindcraft/images/archer.png",
+        image: "images/archer.png",
     },
     stirrup: {
         amount: 0,
-        image: "/grindcraft/images/stirrup.png",
+        image: "images/stirrup.png",
     },
     "tamed pteranodon": {
         amount: 0,
-        image: "/grindcraft/images/tamedPteranodon.png",
+        image: "images/tamedPteranodon.png",
     },
     "flying archer": {
         amount: 0,
-        image: "/grindcraft/images/flyingArcher.png",
+        image: "images/flyingArcher.png",
     },
     tent: {
         amount: 0,
-        image: "/grindcraft/images/tent.png",
+        image: "images/tent.png",
     },
     stairs: {
         amount: 0,
-        image: "/grindcraft/images/stairs.png",
+        image: "images/stairs.png",
     },
     ladder: {
         amount: 0,
-        image: "/grindcraft/images/ladder.png",
+        image: "images/ladder.png",
     },
     "cobblestone tower": {
         amount: 0,
-        image: "/grindcraft/images/cobblestoneTower.png",
+        image: "images/cobblestoneTower.png",
     },
     "guard tower": {
         amount: 0,
-        image: "/grindcraft/images/guardTower.png",
+        image: "images/guardTower.png",
     },
     "pteranodon tower": {
         amount: 0,
-        image: "/grindcraft/images/pteranodonTower.png",
+        image: "images/pteranodonTower.png",
     },
     tribe: {
         amount: 0,
-        image: "/grindcraft/images/tribe.png",
+        image: "images/tribe.png",
     },
     "spear thrower": {
         amount: 0,
-        image: "/grindcraft/images/spearThrower.png",
+        image: "images/spearThrower.png",
     },
     "animal tamer": {
         amount: 0,
-        image: "/grindcraft/images/animalTamer.png",
+        image: "images/animalTamer.png",
     },
     "trapping pit": {
         amount: 0,
-        image: "/grindcraft/images/trappingPit.png",
+        image: "images/trappingPit.png",
     },
     "tamed velociraptor": {
         amount: 0,
-        image: "/grindcraft/images/tamedVelociraptor.png",
+        image: "images/tamedVelociraptor.png",
     },
     "velociraptor warrior": {
         amount: 0,
-        image: "/grindcraft/images/velociraptorWarrior.png",
+        image: "images/velociraptorWarrior.png",
     },
     "pumpkin pie": {
         amount: 0,
-        image: "/grindcraft/images/pumpkinPie.png",
+        image: "images/pumpkinPie.png",
     },
     "village chef": {
         amount: 0,
-        image: "/grindcraft/images/villageChef.png",
+        image: "images/villageChef.png",
     },
     egg: {
         amount: 0,
-        image: "/grindcraft/images/egg.png",
+        image: "images/egg.png",
     },
     "big cobblestone hut": {
         amount: 0,
-        image: "/grindcraft/images/bigCobblestoneHut.png",
+        image: "images/bigCobblestoneHut.png",
     },
     "guard post": {
         amount: 0,
-        image: "/grindcraft/images/guardPost.png",
+        image: "images/guardPost.png",
     },
     "velociraptor guard post": {
         amount: 0,
-        image: "/grindcraft/images/velociraptorGuardPost.png",
+        image: "images/velociraptorGuardPost.png",
     },
     "fence gate": {
         amount: 0,
-        image: "/grindcraft/images/fenceGate.png",
+        image: "images/fenceGate.png",
     },
     "leader's house": {
         amount: 0,
-        image: "/grindcraft/images/leaderHouse.png",
+        image: "images/leaderHouse.png",
     },
     "village leader": {
         amount: 0,
-        image: "/grindcraft/images/villageLeader.png",
+        image: "images/villageLeader.png",
     },
     "big rock": {
         amount: 0,
-        image: "/grindcraft/images/bigRock.png",
+        image: "images/bigRock.png",
     },
     "t-rex trap": {
         amount: 0,
-        image: "/grindcraft/images/t-rexTrap.png",
+        image: "images/t-rexTrap.png",
     },
     "t-rex saddle": {
         amount: 0,
-        image: "/grindcraft/images/t-rexSaddle.png",
+        image: "images/t-rexSaddle.png",
     },
     "tamed t-rex": {
         amount: 0,
-        image: "/grindcraft/images/tamedT-rex.png",
+        image: "images/tamedT-rex.png",
     },
     "t-rex guard": {
         amount: 0,
-        image: "/grindcraft/images/t-rexGuard.png",
+        image: "images/t-rexGuard.png",
     },
     "wood wall": {
-        image: "/grindcraft/images/woodWall.png",
+        image: "images/woodWall.png",
     },
     "stripped wood": {
-        image: "/grindcraft/images/strippedWood.png",
+        image: "images/strippedWood.png",
     },
     "wood pole": {
-        image: "/grindcraft/images/woodPole.png",
+        image: "images/woodPole.png",
     },
     "stripped wood pole": {
-        image: "/grindcraft/images/strippedWoodPole.png",
+        image: "images/strippedWoodPole.png",
     },
     "wood roof": {
-        image: "/grindcraft/images/woodRoof.png",
+        image: "images/woodRoof.png",
     },
     "t-rex barracks": {
-        image: "/grindcraft/images/t-rexBarracks.png",
+        image: "images/t-rexBarracks.png",
     },
     "stone age village": {
-        image: "/grindcraft/images/stoneAgeVillage.png",
+        image: "images/stoneAgeVillage.png",
     },
 });
 
 addArea("p", {
-    name: "Pre-historic",
+    name: "pre-historic age",
+    image: "images/areas/pre-historic.png",
     unlocked: true,
+    updateWhileUnactive: true,
 
     grinds: [
         {
             name: "surface",
             unlocked: true,
             auto: ["digger"], // List of items that will auto-grind this grind
-            background: "/grindcraft/images/grinds/overworld.png",
+            background: "images/grinds/overworld.png",
             resources: [
                 {
                     id: "stick",
@@ -474,7 +480,7 @@ addArea("p", {
                 {
                     id: "seeds",
                     time: [["flint shears", 0.3], ["", 0.6]],
-                    image: "/grindcraft/images/grass.png",
+                    image: "images/grass.png",
                     probability: 10,
                 },
                 {
@@ -486,7 +492,7 @@ addArea("p", {
                 {
                     id: "flint",
                     time: [["flint shovel", 0.4], ["digger", 0.75], ["rock shovel", 0.75]],
-                    image: "/grindcraft/images/gravel.png",
+                    image: "images/gravel.png",
                     probability: 5,
                 },
                 {
@@ -508,7 +514,7 @@ addArea("p", {
             name: "forest",
             unlocked: false,
             auto: ["woodsman"],
-            background: "/grindcraft/images/grinds/forest.png",
+            background: "images/grinds/forest.png",
             resources: [
                 {
                     id: "wood",
@@ -535,38 +541,38 @@ addArea("p", {
             name: "animals",
             unlocked: false,
             auto: ["hunter"],
-            background: "/grindcraft/images/grinds/animals.png",
+            background: "images/grinds/animals.png",
             resources: [
                 {
                     id: "feather",
                     time: [["velociraptor", 0.2], ["pteranodon", 0.3], ["flint spear", 0.5], ["hunter", 1], ["rock spear", 1]],
-                    image: "/grindcraft/images/chicken.png",
+                    image: "images/chicken.png",
                     probability: 23,
                 },
                 {
                     id: "egg",
                     time: [["velociraptor", 0.2], ["pteranodon", 0.3], ["flint spear", 0.5], ["hunter", 1], ["rock spear", 1]],
-                    image: "/grindcraft/images/chicken.png",
+                    image: "images/chicken.png",
                     probability: 2,
                 },
                 {
                     id: "wool",
                     time: [["velociraptor", 0.3], ["pteranodon", 0.5], ["flint spear", 0.75], ["hunter", 1.25], ["rock spear", 1.25]],
-                    image: "/grindcraft/images/sheep.png",
+                    image: "images/sheep.png",
                     mults: [["pteranodon", 1, 2]], 
                     probability: 20,
                 },
                 {
                     id: "leather",
                     time: [["velociraptor", 0.5], ["pteranodon", 0.75], ["flint spear", 1], ["hunter", 1.5], ["rock spear", 1.5]],
-                    image: "/grindcraft/images/cow.png",
+                    image: "images/cow.png",
                     mults: [["pteranodon", 1, 2]], 
                     probability: 25,
                 },
                 {
                     id: "raw porkchop",
                     time: [["velociraptor", 0.4], ["pteranodon", 0.55], ["flint spear", 0.75], ["hunter", 1.25], ["rock spear", 1.25]],
-                    image: "/grindcraft/images/pig.png",
+                    image: "images/pig.png",
                     probability: 20,
                 },
                 {
@@ -595,7 +601,7 @@ addArea("p", {
             name: "farm",
             unlocked: false,
             auto: ["farmer"],
-            background: "/grindcraft/images/grinds/farm.png",
+            background: "images/grinds/farm.png",
             resources: [
                 {
                     id: "wheat",
@@ -616,10 +622,10 @@ addArea("p", {
     /* Properties to add:
     
      - displayName - string - X
-     - displayImage - string (link/name)
-     - unlockAreas - array of ids
-     - autoCraft - string (name)
-     - runFunction - function name
+     - displayImage - string (link/name) - X
+     - unlockAreas - array of ids - X
+     - autoCraft - array of arrays ["name", <time between buys (ms)>] - X
+     - runFunction - array ["name", args] - X
     */
 
     // Add that negative numbers in cost will make materials not be used when crafted, but they will instead just be a requirement
@@ -1373,10 +1379,10 @@ addArea("p", {
         },
         {
             name: "stone age village",
-            desc: "Required to beat the pre-historic age and to beat the game (for now)",
+            desc: "Required to beat the pre-historic age",
             type: "craft",
             unlockAreas: ["i"],
-            message: "You beat the game!",
+            message: "You beat the pre-historic age!",
             cost: [["village leader", 0], ["tribe", 1], ["leader's house", 1], ["t-rex barracks", 2], ["cobblestone house", 2], ["wood wall", 17]],
         },
     ],
@@ -1385,3 +1391,63 @@ addArea("p", {
 
     },
 });
+
+addArea("i", {
+    name: "ice age",
+    image: "images/areas/ice-age.png",
+    unlocked: false,
+    updateWhileUnactive: true,
+
+    grinds: [
+        {
+            name: "surface",
+            unlocked: true,
+            auto: ["digger"],
+            background: "images/grinds/overworld.png",
+            resources: [
+                {
+                    id: "stick",
+                    time: [["basket", 0.2], ["", 0.5]],
+                    image: "stick",
+                    probability: 20,
+                },
+                {
+                    id: "rock",
+                    time: [["basket", 0.3, 2], ["", 0.6]],
+                    image: "rock",
+                    mults: [["digger", 1, 2], ["tribe chief", 1, 2]],
+                    probability: 25,
+                },
+            ],
+        },
+    ],
+
+    crafts: [
+        {
+            name: "stick",
+            desc: "Used to craft tools",
+            type: "display",
+            cost: [["basket", 0]],
+        },
+        {
+            name: "rock",
+            desc: "Used to craft rock tools",
+            type: "display",
+            cost: [["basket", 0]],
+        },
+        {
+            name: "plant fiber",
+            desc: "Used to craft rock tools",
+            type: "display",
+            cost: [["flint shears", 0]],
+        },
+    ],
+
+    update(diff) { // diff is the time in milliseconds since last time the update function was run
+
+    },
+});
+
+function test() {
+    console.log("e");
+}

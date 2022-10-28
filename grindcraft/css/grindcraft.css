@@ -18,6 +18,10 @@ h3 {
     font-weight: 50;
 }
 
+a {
+    color: rgb(0, 66, 120);
+}
+
 .top-div {
     position: absolute;
     width: 100%;
@@ -32,6 +36,11 @@ h3 {
 .top-div > h1 {
     margin: 10px 0 0 20px;
     font-weight: 1;
+}
+
+.left-div > h1 {
+    font-weight: 1;
+    margin: 0 0 10px 0;
 }
 
 .main-div {
@@ -52,8 +61,13 @@ h3 {
     overflow-x: hidden;
 }
 
-.left-div {
+.left-top-div {
     padding-top: 10px;
+    overflow-x: hidden;
+    max-height: 440px;
+}
+
+.left-bottom-div {
     overflow-x: hidden;
 }
 
@@ -180,6 +194,25 @@ h3 {
     right: 4px;
     margin: 0;
     text-align: right;
+}
+
+/* Areas */
+
+.area-div {
+    height: 45px;
+    width: 250px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.area-div:hover {
+    filter: brightness(80%);
+}
+
+.area-div > h3 {
+    padding: 12.5px;
+    margin: 0;
 }
 
 /* Recipe */
