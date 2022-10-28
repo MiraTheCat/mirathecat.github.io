@@ -14,12 +14,12 @@ let modInfo = {
 // Set your version in num and name
 let VERSION = {
 	num: "1.0",
-	name: "Game Rebirth",
+	name: "Game Rewrite",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
 <br>
-<h3>v1.0 - Game Rebirth</h3><br><br>
+<h3>v1.0 - Game Rewrite</h3><br><br>
 Added Farms, Workers and Prestiges<br>
 Endgame: 1e52 coins<br>
 `
