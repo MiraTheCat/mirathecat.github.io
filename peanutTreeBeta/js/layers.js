@@ -10628,7 +10628,9 @@ addLayer("a", {
 
 /* Fusion:
 
-Hydrogen -> Helium -> Carbon -> Neon -> Oxygen -> Silicon -> Iron
+1. Helium -> Carbon -> Neon -> Oxygen -> Silicon -> Iron
+
+2. He -> C -> N -> O -> Ne -> Mg -> Si -> S -> Ar -> Fe (-> Co -> Cu -> Zn -> Rb -> Ag -> Au -> U)
 
 Progress (v0.4):
 

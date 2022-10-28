@@ -40,6 +40,9 @@ Endgame: 1e26 peanuts<br>
 <h1>Tips:</h1><br><br>
 If you have to click something a lot of times, try to instead just click it once and hold down enter.
 This will make the button be autoclicked so that you don't have to spam it<br>
+<br><br>
+When grinding for 50 million mspaintium dust milestone, always spend 50% of your mspaintium on spells.
+It might seem like a high cost at first, but it'll help you gain back the costs and reach the milestone a lot quicker!
 `
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
