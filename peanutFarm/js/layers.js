@@ -333,6 +333,8 @@ addLayer("c", {
         keep.push("nextFarm");
         keep.push("nextWorker");
 
+        if (!hasMilestone("c", 0)) player.c.milestones.push("0");
+
         if (hasMilestone("p", 2)) keep.push("milestones");
         if (hasMilestone("p", 6)) keep.push("upgrades");
         
