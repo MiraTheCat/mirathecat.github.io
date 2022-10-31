@@ -333,8 +333,6 @@ addLayer("c", {
         keep.push("nextFarm");
         keep.push("nextWorker");
 
-        if (!hasMilestone("c", 0)) player.c.milestones.push("0");
-
         if (hasMilestone("p", 2)) keep.push("milestones");
         if (hasMilestone("p", 6)) keep.push("upgrades");
         
@@ -347,6 +345,8 @@ addLayer("c", {
             } else {
                 player.points = new Decimal(1).times(new Decimal(10).div(tmp.c.peanutSellMult));
             }
+
+            if (!hasMilestone("c", 0)) player.c.milestones.push("0");
         }
     },
 
