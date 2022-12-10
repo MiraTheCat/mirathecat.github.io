@@ -146,7 +146,7 @@ addLayer("c", {
             72: new Decimal(7.2e35),
             73: new Decimal(7.2e38),
             74: new Decimal(1e42),
-            81: new Decimal(1e50),
+            81: new Decimal(7e49),
         };
     },
 
@@ -228,7 +228,7 @@ addLayer("c", {
             162: new Decimal(1.8e35),
             163: new Decimal(2.5e38),
             164: new Decimal(4.6e41),
-            171: new Decimal(8e49),
+            171: new Decimal(4e49),
         };
     },
 
@@ -896,7 +896,7 @@ addLayer("c", {
 
         71: {
             title: "I'm running out of Upgrade Names",
-            description: "Boosts the peanut production of the peanut megaverses",
+            description: "Boosts the peanut production of the peanut gigaverses",
             cost() {
                 return tmp.c.farmBaseCosts[this.id].times(100);
             },
@@ -970,7 +970,7 @@ addLayer("c", {
             title: "Darkness",
             description: "The Void gets filled by darkness",
             cost() {
-                return new Decimal(1e51);
+                return tmp.c.farmBaseCosts[this.id].times(2);
             },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
@@ -1498,7 +1498,7 @@ addLayer("c", {
             title: "Light of Creation",
             description: "An immense light surrounds The Inception",
             cost() {
-                return new Decimal(8e50);
+                return tmp.c.workerBaseCosts[this.id].times(2);
             },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
@@ -6071,12 +6071,7 @@ addLayer("p", {
     },
 
     update(diff) {
-        if (hasMilestone("p", 8) && tmp.p.canReset) player.p.autoResetTime += diff;
-
-        if (player.p.autoResetTime >= 1) {
-            player.p.resets = player.p.resets.add(1);
-            player.p.autoResetTime = 0;
-        }
+        
     },
 
     tabFormat: {
@@ -6126,6 +6121,8 @@ addLayer("p", {
                 return new Decimal(120);
             },
             effect() {
+                if (!hasUpgrade("p", this.id)) return new Decimal(1);
+                if (hasUpgrade("p", 15)) return new Decimal(100);
                 let eff = new Decimal(10);
                 return eff;
             },
@@ -6176,7 +6173,7 @@ addLayer("p", {
                 
             },
             effectDisplay() {
-                return format(upgradeEffect(this.layer, this.id)) + "s";
+                return format(tmp.p.prestigeCooldown) + "s";
             },
         },
         15: {
@@ -6186,6 +6183,7 @@ addLayer("p", {
                 return new Decimal(600);
             },
             effect() {
+                if (!hasUpgrade("p", this.id)) return new Decimal(10);
                 let eff = new Decimal(100);
                 return eff;
             },
@@ -6303,7 +6301,7 @@ addLayer("p", {
             unlocked() {
                 return hasMilestone("p", this.id - 1);
             },
-            effectDescription: "Gain 10% of prestige points per second and the prestige cooldown is now 2.00s instead of 5.00",
+            effectDescription: "Gain 10% of prestige point gain per second and the prestige cooldown is now 2.00s instead of 5.00",
         },
     },
 
@@ -6314,11 +6312,9 @@ addLayer("p", {
                 let base = new Decimal(1);
 
                 let linExp = new Decimal(1.2).pow(x);
-                let quadExp = new Decimal(1.005).pow(x).pow(2);
+                let quadExp = new Decimal(1.005).pow(x.pow(2));
 
                 let cost = base.times(linExp).times(quadExp).floor();
-
-                if (x.gte(26)) cost = cost.times(x.sub(24).pow(1.2));
 
                 return cost;
             },
@@ -6337,14 +6333,14 @@ addLayer("p", {
                 let data = tmp.p.buyables[this.id];
                 let x = player.p.buyables[this.id];
                 return `Cost: ${formatWhole(data.cost)} prestige points
-                    Level: ${formatWhole(x)} ${(data.freeLevels.gt(0) ? (" + " + formatWhole(data.freeLevels)) : "")} / ${data.maxLvl}
+                    Level: ${formatWhole(x)} ${(data.freeLevels.gt(0) ? (" + " + formatWhole(data.freeLevels)) : "")}
                     Boosts peanut value by ${format(data.effect)}x`
             },
             unlocked() {
                 return hasMilestone("p", 0);
             },
             maxLvl() {
-                return new Decimal(35);
+                return new Decimal(1e300);
             },
             canAfford() {
                 let data = tmp.p.buyables[this.id];
@@ -6366,11 +6362,9 @@ addLayer("p", {
                 let base = new Decimal(1);
 
                 let linExp = new Decimal(1.2).pow(x);
-                let quadExp = new Decimal(1.005).pow(x).pow(2);
+                let quadExp = new Decimal(1.005).pow(x.pow(2));
 
                 let cost = base.times(linExp).times(quadExp).floor();
-
-                if (x.gte(26)) cost = cost.times(x.sub(24).pow(1.2));
                 
                 return cost;
             },
@@ -6389,14 +6383,14 @@ addLayer("p", {
                 let data = tmp.p.buyables[this.id];
                 let x = player.p.buyables[this.id];
                 return `Cost: ${formatWhole(data.cost)} prestige points
-                    Level: ${formatWhole(x)} ${(data.freeLevels.gt(0) ? (" + " + formatWhole(data.freeLevels)) : "")} / ${data.maxLvl}
+                    Level: ${formatWhole(x)} ${(data.freeLevels.gt(0) ? (" + " + formatWhole(data.freeLevels)) : "")}
                     Boosts peanut production by ${format(data.effect)}x`
             },
             unlocked() {
                 return hasMilestone("p", 0);
             },
             maxLvl() {
-                return new Decimal(35);
+                return new Decimal(1e300);
             },
             canAfford() {
                 let data = tmp.p.buyables[this.id];
@@ -6418,11 +6412,9 @@ addLayer("p", {
                 let base = new Decimal(1);
 
                 let linExp = new Decimal(1.2).pow(x);
-                let quadExp = new Decimal(1.002).pow(x).pow(2);
+                let quadExp = new Decimal(1.004).pow(x.pow(2));
 
                 let cost = base.times(linExp).times(quadExp).floor();
-
-                if (x.gte(20)) cost = cost.times(x.sub(18).pow(1.2));
 
                 return cost;
             },
@@ -6477,11 +6469,9 @@ addLayer("p", {
                 let base = new Decimal(1);
 
                 let linExp = new Decimal(1.5).pow(x);
-                let quadExp = new Decimal(1.01).pow(x).pow(2);
+                let quadExp = new Decimal(1.01).pow(x.pow(2));
 
                 let cost = base.times(linExp).times(quadExp).floor();
-
-                if (x.gte(17)) cost = cost.times(x.sub(15).pow(1.2));
 
                 return cost;
             },
@@ -6500,14 +6490,14 @@ addLayer("p", {
                 let data = tmp.p.buyables[this.id];
                 let x = player.p.buyables[this.id];
                 return `Cost: ${formatWhole(data.cost)} prestige points
-                    Level: ${formatWhole(x)} ${(data.freeLevels.gt(0) ? (" + " + formatWhole(data.freeLevels)) : "")} / ${data.maxLvl}
+                    Level: ${formatWhole(x)} ${(data.freeLevels.gt(0) ? (" + " + formatWhole(data.freeLevels)) : "")}
                     Boosts prestige point gain by ${format(data.effect)}x`
             },
             unlocked() {
                 return hasMilestone("p", 3);
             },
             maxLvl() {
-                return new Decimal(20);
+                return new Decimal(1e300);
             },
             canAfford() {
                 let data = tmp.p.buyables[this.id];
@@ -6529,11 +6519,9 @@ addLayer("p", {
                 let base = new Decimal(3);
 
                 let linExp = new Decimal(1.8).pow(x);
-                let quadExp = new Decimal(1.05).pow(x).pow(2);
+                let quadExp = new Decimal(1.05).pow(x.pow(2));
 
                 let cost = base.times(linExp).times(quadExp).floor();
-
-                if (x.gte(9)) cost = cost.times(x.sub(7).pow(1.2));
 
                 return cost;
             },

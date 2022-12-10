@@ -8,7 +8,7 @@ let modInfo = {
 	discordName: "",
 	discordLink: "",
 	initialStartPoints: new Decimal(10), // Used for hard resets and new players
-	offlineLimit: 0,  // In hours
+	offlineLimit: 0.1,  // In hours
 }
 
 // Set your version in num and name
@@ -21,7 +21,7 @@ let changelog = `<h1>Changelog:</h1><br>
 <br>
 <h3>v1.0 - Game Rewrite</h3><br><br>
 Added Farms, Workers and Prestiges<br>
-Endgame: 1e52 coins<br>
+Endgame: 1e51 coins<br>
 `
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
@@ -61,12 +61,12 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
-	"Current Endgame: 1e52 coins"
+	"Current Endgame: 1e51 coins"
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.c.points.gte(new Decimal(1e52));
+	return player.c.points.gte(new Decimal(1e51));
 }
 
 
