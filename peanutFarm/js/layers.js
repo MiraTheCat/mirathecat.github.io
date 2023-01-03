@@ -456,6 +456,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.farmBaseCosts[this.id].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -472,6 +475,9 @@ addLayer("c", {
             description: "The saplings grow faster, boosting their peanut production",
             cost() {
                 return tmp.c.farmBaseCosts[this.id].times(100);
+            },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
             },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
@@ -490,6 +496,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.farmBaseCosts[this.id].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -506,6 +515,9 @@ addLayer("c", {
             description: "You buy new land, increasing the size of the fields and boosting their peanut production",
             cost() {
                 return tmp.c.farmBaseCosts[this.id].times(100);
+            },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
             },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
@@ -525,6 +537,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.farmBaseCosts[this.id].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -541,6 +556,9 @@ addLayer("c", {
             description: "The peanut factories improve their machines, boosting their peanut production",
             cost() {
                 return tmp.c.farmBaseCosts[this.id].times(100);
+            },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
             },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
@@ -562,6 +580,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.farmBaseCosts[this.id].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -578,6 +599,9 @@ addLayer("c", {
             description: "The peanut generator facilities boost their generation speed, which also boosts their peanut production",
             cost() {
                 return tmp.c.farmBaseCosts[this.id].times(100);
+            },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
             },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
@@ -600,6 +624,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.farmBaseCosts[this.id].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -619,6 +646,9 @@ addLayer("c", {
             description: "The peanut forests strengthen their branches, which also boosts their peanut production",
             cost() {
                 return tmp.c.farmBaseCosts[this.id].times(100);
+            },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
             },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
@@ -640,6 +670,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.farmBaseCosts[this.id].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -660,6 +693,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.farmBaseCosts[this.id].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -678,6 +714,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.farmBaseCosts[this.id].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -694,6 +733,9 @@ addLayer("c", {
             description: "The peanut asteroids get a more stable orbit, boosting their peanut production",
             cost() {
                 return tmp.c.farmBaseCosts[this.id].times(100);
+            },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
             },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
@@ -712,6 +754,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.farmBaseCosts[this.id].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -728,6 +773,9 @@ addLayer("c", {
             description: "The soil of the peanut planets is improved, boosting their peanut production",
             cost() {
                 return tmp.c.farmBaseCosts[this.id].times(100);
+            },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
             },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
@@ -747,6 +795,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.farmBaseCosts[this.id].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -763,6 +814,9 @@ addLayer("c", {
             description: "The peanut constellations build faster-than-light spaceships for interstellar transportation, boosting their peanut production",
             cost() {
                 return tmp.c.farmBaseCosts[this.id].times(100);
+            },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
             },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
@@ -784,6 +838,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.farmBaseCosts[this.id].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -800,6 +857,9 @@ addLayer("c", {
             description: "Inter-galactic trade is now established between the galaxies in the galaxy clusters, boosting their peanut production",
             cost() {
                 return tmp.c.farmBaseCosts[this.id].times(100);
+            },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
             },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
@@ -822,6 +882,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.farmBaseCosts[this.id].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -838,6 +901,9 @@ addLayer("c", {
             description: "Breach the borderes of the universe, boosting its peanut production and allowing for multiversal travel",
             cost() {
                 return tmp.c.farmBaseCosts[this.id].times(100);
+            },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
             },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
@@ -859,6 +925,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.farmBaseCosts[this.id].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -878,6 +947,9 @@ addLayer("c", {
             description: "The peanut megaverses allow for inter-multiversal travel, boosting their peanut production",
             cost() {
                 return tmp.c.farmBaseCosts[this.id].times(100);
+            },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
             },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
@@ -900,6 +972,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.farmBaseCosts[this.id].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -917,6 +992,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.farmBaseCosts[this.id].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -933,6 +1011,9 @@ addLayer("c", {
             description: "The peanuts produced in the peanut omniverses are now omnipotent, boosting their peanut production",
             cost() {
                 return tmp.c.farmBaseCosts[this.id].times(100);
+            },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
             },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
@@ -954,6 +1035,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.farmBaseCosts[this.id].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -971,6 +1055,9 @@ addLayer("c", {
             description: "The Void gets filled by darkness",
             cost() {
                 return tmp.c.farmBaseCosts[this.id].times(2);
+            },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
             },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
@@ -991,6 +1078,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.workerBaseCosts[this.id].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -1007,6 +1097,9 @@ addLayer("c", {
             description: "Shnilli transforms into Divine Shnilli, boosting his peanut production further",
             cost() {
                 return tmp.c.workerBaseCosts[this.id - 1].times(100000);
+            },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
             },
             effect() {
                 let eff = player.c.buyables[this.id - 1].times(0.2).add(1);
@@ -1025,6 +1118,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.workerBaseCosts[this.id - 1].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id - 1].times(0.15).add(1);
                 return eff;
@@ -1042,6 +1138,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.workerBaseCosts[this.id - 1].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id - 1].times(0.15).add(1);
                 return eff;
@@ -1058,6 +1157,9 @@ addLayer("c", {
             description: "Honey uses his stickbot suit to boost his peanut production",
             cost() {
                 return tmp.c.workerBaseCosts[this.id - 1].times(100);
+            },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
             },
             effect() {
                 let eff = player.c.buyables[this.id - 1].times(0.15).add(1);
@@ -1077,6 +1179,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.workerBaseCosts[this.id].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -1093,6 +1198,9 @@ addLayer("c", {
             description: "The AbominationBot gets upgraded to its V2 form, boosting its peanut production",
             cost() {
                 return tmp.c.workerBaseCosts[this.id].times(100);
+            },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
             },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
@@ -1111,6 +1219,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.workerBaseCosts[this.id].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -1127,6 +1238,9 @@ addLayer("c", {
             description: "The sapling generators are improved, boosting their peanut production",
             cost() {
                 return tmp.c.workerBaseCosts[this.id].times(100);
+            },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
             },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
@@ -1146,6 +1260,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.workerBaseCosts[this.id].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -1162,6 +1279,9 @@ addLayer("c", {
             description: "Clawzit sharpens its claws, boosting its peanut production",
             cost() {
                 return tmp.c.workerBaseCosts[this.id].times(100);
+            },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
             },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
@@ -1180,6 +1300,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.workerBaseCosts[this.id].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -1196,6 +1319,9 @@ addLayer("c", {
             description: "The abomination overseer learns farming magic, boosting his peanut production",
             cost() {
                 return tmp.c.workerBaseCosts[this.id].times(100);
+            },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
             },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
@@ -1215,6 +1341,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.workerBaseCosts[this.id].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -1232,6 +1361,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.workerBaseCosts[this.id].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -1248,6 +1380,9 @@ addLayer("c", {
             description: "The Abomination commands other abominations to help farm peanuts, boosting his peanut production",
             cost() {
                 return tmp.c.workerBaseCosts[this.id].times(100);
+            },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
             },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
@@ -1269,6 +1404,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.workerBaseCosts[this.id].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -1287,6 +1425,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.workerBaseCosts[this.id].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -1303,6 +1444,9 @@ addLayer("c", {
             description: "The Macrophage produces more mitochondria, boosting its peanut production",
             cost() {
                 return tmp.c.workerBaseCosts[this.id].times(100);
+            },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
             },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
@@ -1321,6 +1465,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.workerBaseCosts[this.id].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -1337,6 +1484,9 @@ addLayer("c", {
             description: "The Star Observer closely observe your peanut stars, somehow boosting its peanut production",
             cost() {
                 return tmp.c.workerBaseCosts[this.id].times(100);
+            },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
             },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
@@ -1356,6 +1506,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.workerBaseCosts[this.id].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -1372,6 +1525,9 @@ addLayer("c", {
             description: "The Universal Dismantler dismantles and rebuilds the universe, boosting its peanut production",
             cost() {
                 return tmp.c.workerBaseCosts[this.id].times(100);
+            },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
             },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
@@ -1393,6 +1549,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.workerBaseCosts[this.id].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -1413,6 +1572,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.workerBaseCosts[this.id].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -1431,6 +1593,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.workerBaseCosts[this.id].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -1447,6 +1612,9 @@ addLayer("c", {
             description: "The Maggot somehow duplicates into 2 maggots, boosting their peanut production",
             cost() {
                 return tmp.c.workerBaseCosts[this.id].times(100);
+            },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
             },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
@@ -1465,6 +1633,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.workerBaseCosts[this.id].times(100);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -1481,6 +1652,9 @@ addLayer("c", {
             description: "Abominodas transforms into THE ABOMINODAS, boosting his peanut production",
             cost() {
                 return tmp.c.workerBaseCosts[this.id].times(100);
+            },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
             },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
@@ -1500,6 +1674,9 @@ addLayer("c", {
             cost() {
                 return tmp.c.workerBaseCosts[this.id].times(2);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.buyables[this.id].times(0.15).add(1);
                 return eff;
@@ -1518,6 +1695,9 @@ addLayer("c", {
             description: "Boosts peanut production by the best amount of coins",
             cost() {
                 return new Decimal(5e7);
+            },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
             },
             effect() {
                 let eff = player.c.best.add(1).log10().add(1).root(1.5);
@@ -1540,6 +1720,9 @@ addLayer("c", {
             },
             cost() {
                 return new Decimal(4e10);
+            },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
             },
             effect() {
                 if (hasMilestone("c", 3) && player.c.autoSell) {
@@ -1567,6 +1750,9 @@ addLayer("c", {
             cost() {
                 return new Decimal(5e13);
             },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
+            },
             effect() {
                 let eff = player.c.points.add(1).log10().add(1).root(1.8);
                 return eff;
@@ -1586,6 +1772,9 @@ addLayer("c", {
             description: "Peanut production is boosted by the amount of peanut seeds",
             cost() {
                 return new Decimal(5e15);
+            },
+            canAfford() {
+                return layers.c.peanutClickGain().gt(0) || getPointGen().gt(0);
             },
             effect() {
                 let eff = player.c.buyables[11].root(2.5).add(1);
@@ -5766,7 +5955,7 @@ addLayer("c", {
                 return hasMilestone("c", 1) || player.c.buyableUnlocks.indexOf(this.id) !== -1;
             },
             canAfford() {
-                return player.c.points.gte(tmp.c.buyables[this.id].cost);
+                return player.c.points.gte(tmp.c.buyables[this.id].cost) && (layers.c.peanutClickGain().gt(0) || getPointGen().gt(0));
             },
             buy() {
                 let cost = tmp.c.buyables[this.id].cost;
@@ -5823,7 +6012,7 @@ addLayer("c", {
                 return hasMilestone("c", 1) || player.c.buyableUnlocks.indexOf(this.id) !== -1;
             },
             canAfford() {
-                return player.c.points.gte(tmp.c.buyables[this.id].cost);
+                return player.c.points.gte(tmp.c.buyables[this.id].cost) && (layers.c.peanutClickGain().gt(0) || getPointGen().gt(0));
             },
             buy() {
                 let cost = tmp.c.buyables[this.id].cost;
