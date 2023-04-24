@@ -2773,8 +2773,10 @@ addLayer("n", {
 
         player.n.milestonePopups = false;
 
-        player.n.milestones.push("0");
-        player.n.milestones.push("1");
+        if (hasAchievement("a", 91)) {
+            player.n.milestones.push("0");
+            player.n.milestones.push("1");
+        }
 
         if (player.p.resets.gte(1)) {
             player.n.milestones.push("2");
@@ -4276,8 +4278,10 @@ addLayer("b", {
             
         player.b.milestonePopups = false;
 
-        player.b.milestones.push("0");
-        player.b.milestones.push("1");
+        if (hasAchievement("a", 91)) {
+            player.b.milestones.push("0");
+            player.b.milestones.push("1");
+        }
 
         if (player.ab.resets.gte(1)) {
             player.b.milestones.push("2");
