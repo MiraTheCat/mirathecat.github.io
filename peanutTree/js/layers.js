@@ -2773,7 +2773,7 @@ addLayer("n", {
 
         player.n.milestonePopups = false;
 
-        if (hasAchievement("a", 91)) {
+        if (layers[resettingLayer].row > this.row || hasAchievement("a", 91)) {
             player.n.milestones.push("0");
             player.n.milestones.push("1");
         }
@@ -4278,7 +4278,7 @@ addLayer("b", {
             
         player.b.milestonePopups = false;
 
-        if (hasAchievement("a", 91)) {
+        if (layers[resettingLayer].row > this.row || hasAchievement("a", 91)) {
             player.b.milestones.push("0");
             player.b.milestones.push("1");
         }
@@ -10647,8 +10647,8 @@ Hydrogen -> Helium -> Carbon -> Neon -> Oxygen -> Silicon -> Iron
 Progress (v0.4):
 
 Layers (x3): 3 / 3
-Upgrades: 55 / 65                   - 
-Main Items (x2): 23 / 23            - 
+Upgrades: 55 / 65
+Main Items (x2): 23 / 23
 
 Total Score: 120 / 120 - 100%
 
