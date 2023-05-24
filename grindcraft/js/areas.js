@@ -1,424 +1,322 @@
 // Game Info
 
-let gameInfo = {
-    name: "Grindcraft Ages",                            // The name of your game!
+setGameInfo({
+    name: "Grindcraft Ages",                    // The name of your game!
+    version: "0.2",                             // The current version of your game!
     icon: "/images/pfp.png",                    // Link or path to an icon image for your game!
-    ID: "grindcraftAges",                               // Your game's ID! Should be unique for every game!
-};
+    ID: "grindcraftAges",                       // Your game's ID! Should be unique for every game!
+});
 
-// Pre-historic
+// Pre-historic Age
 
 addResources({
     dirt: {
-        amount: 0,
         image: "images/dirt.png",
     },
     stick: {
-        amount: 0,
         image: "images/stick.png",
     },
     rock: {
-        amount: 0,
         image: "images/rock.png",
     },
     "plant fiber": {
-        amount: 0,
         image: "images/plantFiber.png",
     },
     flint: {
-        amount: 0,
         image: "images/flint.png",
     },
     water: {
-        amount: 0,
         image: "images/water.png",
     },
     wood: {
-        amount: 0,
         image: "images/wood.png",
     },
     bark: {
-        amount: 0,
         image: "images/bark.png",
     },
     leaves: {
-        amount: 0,
         image: "images/leaves.png",
     },
     "rock axe": {
-        amount: 0,
         image: "images/rockAxe.png",
     },
     "rock spear": {
-        amount: 0,
         image: "images/rockSpear.png",
     },
     "rock shovel": {
-        amount: 0,
         image: "images/rockShovel.png",
     },
     "rock hoe": {
-        amount: 0,
         image: "images/rockHoe.png",
     },
     "basket": {
-        amount: 0,
         image: "images/basket.png",
     },
     bowl: {
-        amount: 0,
         image: "images/bowl.png"
     },
     fireplace: {
-        amount: 0,
         image: "images/fireplace.png"
     },
     feather: {
-        amount: 0,
         image: "images/feather.png",
     },
     wool: {
-        amount: 0,
         image: "images/wool.png",
     },
     leather: {
-        amount: 0,
         image: "images/leather.png",
     },
     pteranodon: {
-        amount: 0,
         image: "images/pteranodon.png",
     },
     velociraptor: {
-        amount: 0,
         image: "images/velociraptor.png",
     },
     "t-rex": {
-        amount: 0,
         image: "images/t-rex.png",
     },
     cobblestone: {
-        amount: 0,
         image: "images/cobblestone.png",
     },
     seeds: {
-        amount: 0,
         image: "images/seeds.png",
     },
     "cobblestone wall": {
-        amount: 0,
         image: "images/cobblestoneWall.png",
     },
     "farm plot": {
-        amount: 0,
         image: "images/plot.png",
     },
     field: {
-        amount: 0,
         image: "images/field.png",
     },
     "cobblestone hut": {
-        amount: 0,
         image: "images/cobblestoneHut.png",
     },
     villager: {
-        amount: 0,
         image: "images/villager.png",
     },
     "raw porkchop": {
-        amount: 0,
         image: "images/rawPorkchop.png",
     },
     "cooked porkchop": {
-        amount: 0,
         image: "images/cookedPorkchop.png",
     },
     digger: {
-        amount: 0,
         image: "images/digger.png",
     },
     woodsman: {
-        amount: 0,
         image: "images/woodsman.png",
     },
     hunter: {
-        amount: 0,
         image: "images/hunter.png",
     },
     farmer: {
-        amount: 0,
         image: "images/farmer.png",
     },
     wheat: {
-        amount: 0,
         image: "images/wheat.png",
     },
     pumpkin: {
-        amount: 0,
         image: "images/pumpkin.png",
     },
     grindstone: {
-        amount: 0,
         image: "images/grindstone.png",
     },
     "flaked flint": {
-        amount: 0,
         image: "images/flakedFlint.png",
     },
     bone: {
-        amount: 0,
         image: "images/bone.png",
     },
     string: {
-        amount: 0,
         image: "images/string.png",
     },
     "flint axe": {
-        amount: 0,
         image: "images/flintAxe.png",
     },
     "flint shovel": {
-        amount: 0,
         image: "images/flintShovel.png",
     },
     "flint hoe": {
-        amount: 0,
         image: "images/flintHoe.png",
     },
     "flint spear": {
-        amount: 0,
         image: "images/flintSpear.png",
     },
     "flint worker": {
-        amount: 0,
         image: "images/flintWorker.png",
     },
     "flint shears": {
-        amount: 0,
         image: "images/flintShears.png",
     },
     "hay bale": {
-        amount: 0,
         image: "images/hayBale.png",
     },
     "straw roof": {
-        amount: 0,
         image: "images/strawRoof.png",
     },
     "cobblestone house": {
-        amount: 0,
         image: "images/cobblestoneHouse.png",
     },
     "chief's house": {
-        amount: 0,
         image: "images/chiefHouse.png",
     },
     "leaf bed": {
-        amount: 0,
         image: "images/leafBed.png",
     },
     "tribe chief": {
-        amount: 0,
         image: "images/tribeChief.png",
     },
     "wood worker": {
-        amount: 0,
         image: "images/woodWorker.png",
     },
     "leather worker": {
-        amount: 0,
         image: "images/leatherWorker.png",
     },
     planks: {
-        amount: 0,
         image: "images/planks.png",
     },
     fence: {
-        amount: 0,
         image: "images/fence.png",
     },
     builder: {
-        amount: 0,
         image: "images/builder.png",
     },
     fletcher: {
-        amount: 0,
         image: "images/fletcher.png",
     },
     "leather helmet": {
-        amount: 0,
         image: "images/leatherHelmet.png",
     },
     "leather chestplate": {
-        amount: 0,
         image: "images/leatherChestplate.png",
     },
     "leather leggings": {
-        amount: 0,
         image: "images/leatherLeggings.png",
     },
     "leather boots": {
-        amount: 0,
         image: "images/leatherBoots.png",
     },
     "leather armor": {
-        amount: 0,
         image: "images/leatherArmor.png",
     },
     bow: {
-        amount: 0,
         image: "images/bow.png",
     },
     arrow: {
-        amount: 0,
         image: "images/arrow.png",
     },
     rope: {
-        amount: 0,
         image: "images/rope.png",
     },
     slab: {
-        amount: 0,
         image: "images/woodSlab.png",
     },
     "bird trap": {
-        amount: 0,
         image: "images/birdTrap.png",
     },
     "pteranodon saddle": {
-        amount: 0,
         image: "images/pteranodonSaddle.png",
     },
     "pteranodon nest": {
-        amount: 0,
         image: "images/pteranodonNest.png",
     },
     "velociraptor saddle": {
-        amount: 0,
         image: "images/velociraptorSaddle.png",
     },
     "leather warrior": {
-        amount: 0,
         image: "images/leatherWarrior.png",
     },
     archer: {
-        amount: 0,
         image: "images/archer.png",
     },
     stirrup: {
-        amount: 0,
         image: "images/stirrup.png",
     },
     "tamed pteranodon": {
-        amount: 0,
         image: "images/tamedPteranodon.png",
     },
     "flying archer": {
-        amount: 0,
         image: "images/flyingArcher.png",
     },
     tent: {
-        amount: 0,
         image: "images/tent.png",
     },
     stairs: {
-        amount: 0,
         image: "images/stairs.png",
     },
     ladder: {
-        amount: 0,
         image: "images/ladder.png",
     },
     "cobblestone tower": {
-        amount: 0,
         image: "images/cobblestoneTower.png",
     },
     "guard tower": {
-        amount: 0,
         image: "images/guardTower.png",
     },
     "pteranodon tower": {
-        amount: 0,
         image: "images/pteranodonTower.png",
     },
     tribe: {
-        amount: 0,
         image: "images/tribe.png",
     },
     "spear thrower": {
-        amount: 0,
         image: "images/spearThrower.png",
     },
     "animal tamer": {
-        amount: 0,
         image: "images/animalTamer.png",
     },
     "trapping pit": {
-        amount: 0,
         image: "images/trappingPit.png",
     },
     "tamed velociraptor": {
-        amount: 0,
         image: "images/tamedVelociraptor.png",
     },
     "velociraptor warrior": {
-        amount: 0,
         image: "images/velociraptorWarrior.png",
     },
     "pumpkin pie": {
-        amount: 0,
         image: "images/pumpkinPie.png",
     },
     "village chef": {
-        amount: 0,
         image: "images/villageChef.png",
     },
     egg: {
-        amount: 0,
         image: "images/egg.png",
     },
     "big cobblestone hut": {
-        amount: 0,
         image: "images/bigCobblestoneHut.png",
     },
     "guard post": {
-        amount: 0,
         image: "images/guardPost.png",
     },
     "velociraptor guard post": {
-        amount: 0,
         image: "images/velociraptorGuardPost.png",
     },
     "fence gate": {
-        amount: 0,
         image: "images/fenceGate.png",
     },
     "leader's house": {
-        amount: 0,
         image: "images/leaderHouse.png",
     },
     "village leader": {
-        amount: 0,
         image: "images/villageLeader.png",
     },
     "big rock": {
-        amount: 0,
         image: "images/bigRock.png",
     },
     "t-rex trap": {
-        amount: 0,
         image: "images/t-rexTrap.png",
     },
     "t-rex saddle": {
-        amount: 0,
         image: "images/t-rexSaddle.png",
     },
     "tamed t-rex": {
-        amount: 0,
         image: "images/tamedT-rex.png",
     },
     "t-rex guard": {
-        amount: 0,
         image: "images/t-rexGuard.png",
     },
     "wood wall": {
@@ -459,51 +357,51 @@ addArea("p", {
             resources: [
                 {
                     id: "stick",
-                    time: [["basket", 0.2], ["", 0.5]],
+                    time: [["basket", 0.3], ["", 0.75]],
                     image: "stick",
                     probability: 20,
                 },
                 {
                     id: "rock",
-                    time: [["basket", 0.3, 2], ["", 0.6]], // Time to grind in seconds and amount of resource received with different tools. "" means hand
+                    time: [["basket", 0.45, 2], ["", 0.9]], // Time to grind in seconds and amount of resource received with different tools. "" means hand
                     image: "rock", // The image to be shown for this item. Can be a resource name or a link
                     mults: [["digger", 1, 2], ["tribe chief", 1, 2]], // Speed mult & resource mult from resource multipliers
                     probability: 25,
                 },
                 {
                     id: "plant fiber",
-                    time: [["flint shears", 0.3], ["", 0.6]],
+                    time: [["flint shears", 0.45], ["", 0.9]],
                     image: "plant fiber",
                     mults: [["digger", 1, 2]],
                     probability: 20,
                 },
                 {
                     id: "seeds",
-                    time: [["flint shears", 0.3], ["", 0.6]],
+                    time: [["flint shears", 0.45], ["", 0.9]],
                     image: "images/grass.png",
-                    probability: 10,
+                    probability: 12,
                 },
                 {
                     id: "dirt",
-                    time: [["flint shovel", 0.3], ["digger", 0.6], ["rock shovel", 0.6]],
+                    time: [["flint shovel", 0.45], ["digger", 0.9], ["rock shovel", 0.9]],
                     image: "dirt",
-                    probability: 15,
+                    probability: 13,
                 },
                 {
                     id: "flint",
-                    time: [["flint shovel", 0.4], ["digger", 0.75], ["rock shovel", 0.75]],
+                    time: [["flint shovel", 0.6], ["digger", 1.1], ["rock shovel", 1.1]],
                     image: "images/gravel.png",
                     probability: 5,
                 },
                 {
                     id: "bone",
-                    time: [["flint shovel", 0.4], ["digger", 0.75], ["rock shovel", 0.75]],
+                    time: [["flint shovel", 0.6], ["digger", 1.1], ["rock shovel", 1.1]],
                     image: "bone",
                     probability: 3,
                 },
                 {
                     id: "water",
-                    time: [["bowl", 0.5]],
+                    time: [["bowl", 0.75]],
                     image: "water",
                     probability: 2,
                 },
@@ -518,19 +416,19 @@ addArea("p", {
             resources: [
                 {
                     id: "wood",
-                    time: [["flint axe", 0.3], ["woodsman", 0.5], ["rock axe", 0.5]],
+                    time: [["flint axe", 0.45], ["woodsman", 0.75], ["rock axe", 0.75]],
                     image: "wood",
                     probability: 70,
                 },
                 {
                     id: "bark",
-                    time: [["flint axe", 0.3], ["woodsman", 0.5], ["rock axe", 0.5]],
+                    time: [["flint axe", 0.45], ["woodsman", 0.75], ["rock axe", 0.75]],
                     image: "bark",
                     probability: 20,
                 },
                 {
                     id: "leaves",
-                    time: [["flint shears", 0.1]],
+                    time: [["flint shears", 0.15]],
                     image: "leaves",
                     probability: 10,
                 },
@@ -545,51 +443,51 @@ addArea("p", {
             resources: [
                 {
                     id: "feather",
-                    time: [["velociraptor", 0.2], ["pteranodon", 0.3], ["flint spear", 0.5], ["hunter", 1], ["rock spear", 1]],
+                    time: [["velociraptor", 0.3], ["pteranodon", 0.45], ["flint spear", 0.75], ["hunter", 1.5], ["rock spear", 1.5]],
                     image: "images/chicken.png",
                     probability: 23,
                 },
                 {
                     id: "egg",
-                    time: [["velociraptor", 0.2], ["pteranodon", 0.3], ["flint spear", 0.5], ["hunter", 1], ["rock spear", 1]],
+                    time: [["velociraptor", 0.3], ["pteranodon", 0.45], ["flint spear", 0.75], ["hunter", 1.5], ["rock spear", 1.5]],
                     image: "images/chicken.png",
                     probability: 2,
                 },
                 {
                     id: "wool",
-                    time: [["velociraptor", 0.3], ["pteranodon", 0.5], ["flint spear", 0.75], ["hunter", 1.25], ["rock spear", 1.25]],
+                    time: [["velociraptor", 0.45], ["pteranodon", 0.75], ["flint spear", 1.1], ["hunter", 1.8], ["rock spear", 1.8]],
                     image: "images/sheep.png",
                     mults: [["pteranodon", 1, 2]], 
                     probability: 20,
                 },
                 {
                     id: "leather",
-                    time: [["velociraptor", 0.5], ["pteranodon", 0.75], ["flint spear", 1], ["hunter", 1.5], ["rock spear", 1.5]],
+                    time: [["velociraptor", 0.75], ["pteranodon", 1.1], ["flint spear", 1.5], ["hunter", 2.2], ["rock spear", 2.2]],
                     image: "images/cow.png",
                     mults: [["pteranodon", 1, 2]], 
                     probability: 25,
                 },
                 {
                     id: "raw porkchop",
-                    time: [["velociraptor", 0.4], ["pteranodon", 0.55], ["flint spear", 0.75], ["hunter", 1.25], ["rock spear", 1.25]],
+                    time: [["velociraptor", 0.6], ["pteranodon", 0.8], ["flint spear", 1.1], ["hunter", 1.8], ["rock spear", 1.8]],
                     image: "images/pig.png",
                     probability: 20,
                 },
                 {
                     id: "pteranodon",
-                    time: [["bird trap", 1.5]],
+                    time: [["bird trap", 2.2]],
                     image: "pteranodon",
                     probability: 4,
                 },
                 {
                     id: "velociraptor",
-                    time: [["trapping pit", 2]],
+                    time: [["trapping pit", 3]],
                     image: "velociraptor",
                     probability: 4,
                 },
                 {
                     id: "t-rex",
-                    time: [["t-rex trap", 3]],
+                    time: [["t-rex trap", 4.5]],
                     image: "t-rex",
                     probability: 2,
                 },
@@ -605,13 +503,13 @@ addArea("p", {
             resources: [
                 {
                     id: "wheat",
-                    time: [["flint hoe", 0.3], ["farmer", 0.5], ["rock hoe", 0.5]],
+                    time: [["flint hoe", 0.45], ["farmer", 0.75], ["rock hoe", 0.75]],
                     image: "wheat",
                     probability: 90,
                 },
                 {
                     id: "pumpkin",
-                    time: [["flint axe", 0.3]],
+                    time: [["flint axe", 0.45]],
                     image: "pumpkin",
                     probability: 10,
                 },
@@ -684,7 +582,7 @@ addArea("p", {
         },
         {
             name: "wood",
-            desc: "Used to make sticks",
+            desc: "Used to make planks",
             type: "display",
             cost: [["rock axe", 0]],
         },
@@ -909,7 +807,7 @@ addArea("p", {
         },
         {
             name: "tribe chief",
-            desc: "Makes different workers",
+            desc: "Required to train different workers",
             type: "craft",
             cost: [["chief's house", 0], ["villager", 1], ["leaves", 1]],
         },
@@ -934,12 +832,6 @@ addArea("p", {
             cost: [["wood worker", 0], ["planks", 2]],
         },
         {
-            name: "builder",
-            desc: "Builds more advanced buildings",
-            type: "craft",
-            cost: [["tribe chief", 0], ["villager", 1], ["cobblestone house", 1]],
-        },
-        {
             name: "villager",
             desc: "Fires a digger",
             type: "craft",
@@ -962,6 +854,12 @@ addArea("p", {
             desc: "Fires a hunter",
             type: "craft",
             cost: [["tribe chief", 0], ["hunter", 1]],
+        },
+        {
+            name: "builder",
+            desc: "Builds more advanced buildings",
+            type: "craft",
+            cost: [["tribe chief", 0], ["villager", 1], ["cobblestone house", 1]],
         },
         {
             name: "cobblestone hut",
@@ -1103,7 +1001,7 @@ addArea("p", {
             name: "stirrup",
             desc: "Required to make a saddle",
             type: "craft",
-            cost: [["leather worker", 0], ["string", 1], ["rock", 1]],
+            cost: [["leather worker", 0], ["string", 2], ["rock", 1]],
         },
         {
             name: "pteranodon saddle",
@@ -1392,6 +1290,323 @@ addArea("p", {
     },
 });
 
+// Ice Age
+
+addResources({
+    snow: {
+        image: "images/snowBlock.png",
+    },
+    grass: {
+        image: "images/grass.png",
+    },
+    "spruce wood": {
+        image: "images/spruceLog.png",
+    },
+    "spruce slab": {
+        image: "images/spruceSlab.png",
+    },
+    fossil: {
+        image: "images/fossil.png",
+    },
+    "raw cod": {
+        image: "images/rawCod.png",
+    },
+    "raw salmon": {
+        image: "images/rawSalmon.png",
+    },
+    seagrass: {
+        image: "images/seagrass.png",
+    },
+    "fishing rod": {
+        image: "images/fishingRod.png",
+    },
+    "ice block": {
+        image: "images/iceBlock.png",
+    },
+    "coal ore": {
+        image: "images/coalOre.png",
+    },
+    coal: {
+        image: "images/coal.png",
+    },
+    "granite rock": {
+        image: "images/graniteRock.png",
+    },
+    "obsidian shard": {
+        image: "images/obsidianShard.png",
+    },
+    "flint pickaxe": {
+        image: "images/flintPickaxe.png",
+    },
+    "dodo feather": {
+        image: "images/dodoFeather.png",
+    },
+    "polar bear fur": {
+        image: "images/polarBearFur.png",
+    },
+    "granite pickaxe": {
+        image: "images/granitePickaxe.png",
+    },
+    "granite shovel": {
+        image: "images/graniteShovel.png",
+    },
+    "granite axe": {
+        image: "images/graniteAxe.png",
+    },
+    torch: {
+        image: "images/torch.png",
+    },
+    "ink sac": {
+        image: "images/inkSac.png",
+    },
+    "spruce stick": {
+        image: "images/spruceSticks.png",
+    },
+    "spruce planks": {
+        image: "images/sprucePlanks.png",
+    },
+    "crafting table": {
+        image: "images/craftingTable.png",
+    },
+    "obsidian spear": {
+        image: "images/obsidianSpear.png",
+    },
+    "obsidian shears": {
+        image: "images/obsidianShears.png",
+    },
+    igloo: {
+        image: "images/igloo.png",
+    },
+    "snow wall": {
+        image: "images/snowWall.png",
+    },
+    "snow wall with window": {
+        image: "images/snowWindowWall.png",
+    },
+    "snow villager": {
+        image: "images/snowVillager.png",
+    },
+    "snow digger": {
+        image: "images/snowDigger.png",
+    },
+    "snow hunter": {
+        image: "images/snowHunter.png",
+    },
+    "snow miner": {
+        image: "images/snowMiner.png",
+    },
+    campfire: {
+        image: "images/fireplace.png",
+    },
+    "packed ice": {
+        image: "images/packedIce.png",
+    },
+    "blue ice": {
+        image: "images/blueIce.png",
+    },
+    "cooked cod": {
+        image: "images/cookedCod.png",
+    },
+    "cooked salmon": {
+        image: "images/cookedSalmon.png",
+    },
+    granite: {
+        image: "images/granite.png",
+    },
+    "rock worker": {
+        image: "images/rockWorker.png",
+    },
+    "big igloo": {
+        image: "images/bigIgloo.png",
+    },
+    "large igloo": {
+        image: "images/largeIgloo.png",
+    },
+    "snow layer": {
+        image: "images/snowLayer.png",
+    },
+    sabertooth: {
+        image: "images/sabertooth.png",
+    },
+    "snow chief": {
+        image: "images/snowChief.png",
+    },
+    "snow builder": {
+        image: "images/snowBuilder.png",
+    },
+    "black fur": {
+        image: "images/blackFur.png",
+    },
+    "fisherman": {
+        image: "images/fisherman.png",
+    },
+    "fur worker": {
+        image: "images/furWorker.png",
+    },
+    "polar bear helmet": {
+        image: "images/polarBearHelmet.png",
+    },
+    "polar bear chestplate": {
+        image: "images/polarBearChestplate.png",
+    },
+    "polar bear leggings": {
+        image: "images/polarBearLeggings.png",
+    },
+    "polar bear boots": {
+        image: "images/polarBearBoots.png",
+    },
+    "polar bear armor": {
+        image: "images/polarBearArmor.png",
+    },
+    "black fur helmet": {
+        image: "images/blackFurHelmet.png",
+    },
+    "black fur chestplate": {
+        image: "images/blackFurChestplate.png",
+    },
+    "black fur leggings": {
+        image: "images/blackFurLeggings.png",
+    },
+    "black fur boots": {
+        image: "images/blackFurBoots.png",
+    },
+    "black fur armor": {
+        image: "images/blackFurArmor.png",
+    },
+    "snow tamer": {
+        image: "images/snowTamer.png",
+    },
+    "snow fletcher": {
+        image: "images/snowFletcher.png",
+    },
+    "snow wood worker": {
+        image: "images/snowWoodWorker.png",
+    },
+    "penguin": {
+        image: "images/penguin.png",
+    },
+    "tamed penguin": {
+        image: "images/tamedPenguin.png",
+    },
+    "cooking station": {
+        image: "images/cookingStation.png",
+    },
+    "water hole": {
+        image: "images/waterHole.png",
+    },
+    "fisherman's igloo": {
+        image: "images/fishermanIgloo.png",
+    },
+    "obsidian arrow": {
+        image: "images/obsidianArrow.png",
+    },
+    "snow warrior": {
+        image: "images/snowWarrior.png",
+    },
+    "snow archer": {
+        image: "images/snowArcher.png",
+    },
+    "snow spear thrower": {
+        image: "images/snowSpearThrower.png",
+    },
+    "spruce fence": {
+        image: "images/spruceFence.png",
+    },
+    "spruce fence gate": {
+        image: "images/spruceFenceGate.png",
+    },
+    "penguin trap": {
+        image: "images/penguinTrap.png",
+    },
+    "penguin scout": {
+        image: "images/penguinScout.png",
+    },
+    "snow tower": {
+        image: "images/snowTower.png",
+    },
+    "scout tower": {
+        image: "images/scoutTower.png",
+    },
+    "scout water hole": {
+        image: "images/scoutWaterHole.png",
+    },
+    "scout camp": {
+        image: "images/scoutCamp.png",
+    },
+    "snow painter": {
+        image: "images/snowPainter.png",
+    },
+    "elite warrior": {
+        image: "images/eliteWarrior.png",
+    },
+    "elite archer": {
+        image: "images/eliteArcher.png",
+    },
+    "elite spear thrower": {
+        image: "images/eliteSpearThrower.png",
+    },
+    "seal trap": {
+        image: "images/sealTrap.png",
+    },
+    "seal": {
+        image: "images/seal.png",
+    },
+    "granite stirrup": {
+        image: "images/graniteStirrup.png",
+    },
+    "seal saddle": {
+        image: "images/snowSaddle.png",
+    },
+    "tamed seal": {
+        image: "images/tamedSeal.png",
+    },
+    "seal warrior": {
+        image: "images/sealWarrior.png",
+    },
+    "snow guard post": {
+        image: "images/snowGuardPost.png",
+    },
+    "seal guard post": {
+        image: "images/sealGuardPost.png",
+    },
+    "tooth necklace": {
+        image: "images/toothNecklace.png",
+    },
+    "snow leader": {
+        image: "images/snowLeader.png",
+    },
+    "mammoth trap": {
+        image: "images/mammothTrap.png",
+    },
+    "mammoth": {
+        image: "images/mammoth.png",
+    },
+    "mammoth saddle": {
+        image: "images/mammothSaddle.png",
+    },
+    "tamed mammoth": {
+        image: "images/tamedMammoth.png",
+    },
+    "mammoth riders": {
+        image: "images/mammothRiders.png",
+    },
+    "mammoth guard post": {
+        image: "images/mammothGuardPost.png",
+    },
+    "spruce boat": {
+        image: "images/spruceBoat.png",
+    },
+    "ice boat track": {
+        image: "images/iceBoatTrack.png",
+    },
+    "ice boat highway": {
+        image: "images/iceBoatHighway.png",
+    },
+    "ice age village": {
+        image: "images/iceAgeVillage.png",
+    },
+});
+
 addArea("i", {
     name: "ice age",
     image: "images/areas/ice-age.png",
@@ -1402,21 +1617,128 @@ addArea("i", {
         {
             name: "surface",
             unlocked: true,
-            auto: ["digger"],
-            background: "images/grinds/overworld.png",
+            auto: ["snow digger"],
+            background: "images/grinds/tundra.png",
             resources: [
                 {
-                    id: "stick",
-                    time: [["basket", 0.2], ["", 0.5]],
-                    image: "stick",
+                    id: "grass",
+                    time: [["obsidian shears", 0.2], ["flint shears", 0.4]],
+                    probability: 10,
+                },
+                {
+                    id: "snow",
+                    time: [["granite shovel", 0.3], ["snow digger", 0.5], ["flint shovel", 0.5]],
+                    probability: 65,
+                },
+                {
+                    id: "fossil",
+                    time: [["granite shovel", 0.4], ["snow digger", 0.6], ["flint shovel", 0.6]],
+                    probability: 5,
+                },
+                {
+                    id: "spruce wood",
+                    time: [["granite axe", 0.5], ["flint axe", 0.8]],
+                    probability: 20,
+                },
+            ],
+        },
+        {
+            name: "water",
+            unlocked: true,
+            auto: ["fisherman"],
+            background: "images/grinds/frozenOcean.png",
+            resources: [
+                {
+                    id: "seagrass",
+                    time: [["obsidian shears", 0.2], ["flint shears", 0.4]],
                     probability: 20,
                 },
                 {
-                    id: "rock",
-                    time: [["basket", 0.3, 2], ["", 0.6]],
-                    image: "rock",
-                    mults: [["digger", 1, 2], ["tribe chief", 1, 2]],
-                    probability: 25,
+                    id: "raw cod",
+                    time: [["seal", 0.6], ["penguin", 0.75], ["fisherman", 1], ["obsidian spear", 1.2], ["flint spear", 1.5]],
+                    probability: 30,
+                },
+                {
+                    id: "raw salmon",
+                    time: [["seal", 0.6], ["penguin", 0.75], ["fisherman", 1], ["obsidian spear", 1.2], ["flint spear", 1.5]],
+                    probability: 30,
+                },
+                {
+                    id: "ink sac",
+                    time: [["obsidian spear", 1.2]],
+                    image: "images/squid.png",
+                    probability: 10,
+                },
+                {
+                    id: "penguin",
+                    time: [["seal", 1.5], ["penguin trap", 2.5]],
+                    probability: 6,
+                },
+                {
+                    id: "seal",
+                    time: [["seal trap", 3]],
+                    probability: 4,
+                },
+            ],
+        },
+        {
+            name: "cave",
+            unlocked: false,
+            auto: ["snow miner"],
+            background: "images/grinds/iceCave.png",
+            resources: [
+                {
+                    id: "ice block",
+                    time: [["granite pickaxe", 0.3], ["snow miner", 0.6], ["flint pickaxe", 0.7]],
+                    probability: 75,
+                },
+                {
+                    id: "coal",
+                    time: [["granite pickaxe", 0.5], ["snow miner", 0.8], ["flint pickaxe", 1]],
+                    probability: 8,
+                },
+                {
+                    id: "granite rock",
+                    time: [["granite pickaxe", 0.6], ["snow miner", 1], ["flint pickaxe", 1.2]],
+                    image: "images/granite.png",
+                    probability: 12,
+                },
+                {
+                    id: "obsidian shard",
+                    time: [["granite pickaxe", 1.2]],
+                    image: "images/obsidian.png",
+                    probability: 5,
+                },
+            ],
+        },
+        {
+            name: "animals",
+            unlocked: true,
+            auto: ["snow hunter"],
+            background: "images/grinds/iceAgeAnimals.png",
+            resources: [
+                {
+                    id: "dodo feather",
+                    time: [["obsidian spear", 0.75], ["snow hunter", 1.2], ["flint spear", 1.2]],
+                    image: "images/dodoBird.png",
+                    probability: 75,
+                },
+                {
+                    id: "polar bear fur",
+                    time: [["obsidian spear", 1.25], ["snow hunter", 1.75], ["flint spear", 1.75]],
+                    image: "images/polarBear.png",
+                    probability: 15,
+                },
+                {
+                    id: "sabertooth",
+                    time: [["obsidian spear", 1.6]],
+                    image: "images/sabertoothTiger.png",
+                    probability: 6,
+                },
+                {
+                    id: "mammoth",
+                    time: [["mammoth trap", 4.5]],
+                    probability: 4,
                 },
             ],
         },
@@ -1424,22 +1746,751 @@ addArea("i", {
 
     crafts: [
         {
-            name: "stick",
+            name: "flint axe",
+            desc: "Cuts down trees",
+            type: "craft",
+            cost: [["flint worker", 0], ["flaked flint", 3], ["bone", 1], ["string", 2]],
+        },
+        {
+            name: "flint shovel",
+            desc: "Digs snow",
+            type: "craft",
+            cost: [["flint worker", 0], ["flaked flint", 1], ["bone", 1], ["string", 2]],
+        },
+        {
+            name: "flint spear",
+            desc: "Kills animals",
+            type: "craft",
+            cost: [["flint worker", 0], ["flaked flint", 1], ["stick", 2], ["string", 2]],
+        },
+        {
+            name: "flint shears",
+            desc: "Cuts grass",
+            unlockGrinds: ["forest"],
+            type: "craft",
+            cost: [["flint worker", 0], ["flaked flint", 2], ["string", 1]],
+        },
+        {
+            name: "spruce wood",
+            desc: "Used to make planks",
+            type: "display",
+            cost: [["flint axe", 0]],
+        },
+        {
+            name: "crafting table",
             desc: "Used to craft tools",
-            type: "display",
-            cost: [["basket", 0]],
+            type: "craft",
+            cost: [["flint axe", 0], ["spruce wood", 1]],
         },
         {
-            name: "rock",
-            desc: "Used to craft rock tools",
-            type: "display",
-            cost: [["basket", 0]],
+            name: "spruce planks",
+            desc: "Used to make sticks",
+            type: "craft",
+            cost: [["crafting table", 0], ["spruce wood", 1]],
+            amount: 4,
         },
         {
-            name: "plant fiber",
-            desc: "Used to craft rock tools",
+            name: "spruce stick",
+            desc: "Used to make tools",
+            type: "craft",
+            cost: [["crafting table", 0], ["spruce planks", 2]],
+            amount: 4,
+        },
+        {
+            name: "fossil",
+            desc: "A remnant of the past",
+            type: "display",
+            cost: [["flint shovel", 0]],
+        },
+        {
+            name: "wool",
+            desc: "Used to make string",
+            type: "display",
+            cost: [["flint spear", 0]],
+        },
+        {
+            name: "string",
+            desc: "Used to craft flint tools",
+            amount: 4,
+            type: "craft",
+            cost: [["wool", 1]],
+        },
+        {
+            name: "flint pickaxe",
+            desc: "Mines ice and stone",
+            unlockGrinds: ["cave"],
+            type: "craft",
+            cost: [["flint worker", 0], ["flaked flint", 3], ["fossil", 1], ["string", 2]],
+        },
+        {
+            name: "coal",
+            desc: "Used to make torches",
+            type: "display",
+            cost: [["flint pickaxe", 0]],
+        },
+        {
+            name: "torch",
+            desc: "Used to light up dark areas",
+            type: "craft",
+            cost: [["coal", 1], ["stick", 1]],
+            amount: 4,
+        },
+        {
+            name: "granite rock",
+            desc: "Used to make granite tools",
+            type: "display",
+            cost: [["flint pickaxe", 0]],
+        },
+        {
+            name: "campfire",
+            desc: "Used to cook food and keep the villagers warm",
+            type: "craft",
+            cost: [["spruce stick", 12], ["granite rock", 6], ["coal", 3], ["torch", 1]],
+        },
+        {
+            name: "snow",
+            desc: "Used to build walls and buildings",
+            type: "display",
+            cost: [["flint shovel", 0]],
+        },
+        {
+            name: "ice block",
+            desc: "Used to make igloos",
+            type: "display",
+            cost: [["flint pickaxe", 0]],
+        },
+        {
+            name: "polar bear fur",
+            desc: "Warm and thick",
+            type: "display",
+            cost: [["flint spear", 0]],
+        },
+        {
+            name: "snow wall",
+            desc: "Used to make igloos",
+            type: "craft",
+            cost: [["snow", 9]],
+        },
+        {
+            name: "snow wall with window",
+            desc: "Used to make igloos",
+            type: "craft",
+            cost: [["snow", 8], ["ice block", 1]],
+        },
+        {
+            name: "igloo",
+            desc: "A place for the villagers to sleep",
+            type: "craft",
+            cost: [["snow", 61], ["snow wall", 1], ["snow wall with window", 3], ["polar bear fur", 2], ["campfire", 1]],
+        },
+        {
+            name: "raw cod",
+            desc: "Can be cooked",
+            type: "display",
+            cost: [["fishing rod", 0]],
+        },
+        {
+            name: "raw salmon",
+            desc: "Can be cooked",
+            type: "display",
+            cost: [["fishing rod", 0]],
+        },
+        {
+            name: "cooked cod",
+            desc: "Used as food",
+            type: "craft",
+            cost: [["campfire", 0], ["raw cod", 1]],
+        },
+        {
+            name: "cooked salmon",
+            desc: "Used as food",
+            type: "craft",
+            cost: [["campfire", 0], ["raw salmon", 1]],
+        },
+        {
+            name: "snow villager",
+            displayName: "villager",
+            desc: "Can automate your grinds",
+            type: "craft",
+            cost: [["igloo", 1], ["cooked cod", 5], ["cooked salmon", 5]],
+        },
+        {
+            name: "snow digger",
+            displayName: "digger",
+            desc: "Automates surface grind",
+            type: "craft",
+            cost: [["snow villager", 1], ["flint shovel", 1]],
+        },
+        {
+            name: "snow hunter",
+            displayName: "hunter",
+            desc: "Automates animals and water grind",
+            type: "craft",
+            cost: [["snow villager", 1], ["flint spear", 1]],
+        },
+        {
+            name: "snow miner",
+            displayName: "miner",
+            desc: "Automates cave grind",
+            unlockGrinds: ["cave"],
+            type: "craft",
+            cost: [["snow villager", 1], ["flint pickaxe", 1]],
+        },
+        {
+            name: "granite",
+            displayName: "granite block",
+            desc: "A block of granite",
+            type: "craft",
+            cost: [["granite rock", 4]],
+        },
+        {
+            name: "rock worker",
+            desc: "Makes tools our of rock",
+            type: "craft",
+            cost: [["snow villager", 1], ["granite", 1]],
+        },
+        {
+            name: "granite pickaxe",
+            desc: "Mines ice and stone",
+            type: "craft",
+            cost: [["rock worker", 0], ["granite rock", 3], ["spruce stick", 2], ["string", 2]],
+        },
+        {
+            name: "granite axe",
+            desc: "Cuts down trees",
+            type: "craft",
+            cost: [["rock worker", 0], ["granite rock", 3], ["spruce stick", 2], ["string", 2]],
+        },
+        {
+            name: "granite shovel",
+            desc: "Digs snow",
+            type: "craft",
+            cost: [["rock worker", 0], ["granite rock", 1], ["spruce stick", 2], ["string", 2]],
+        },
+        {
+            name: "obsidian shard",
+            desc: "Used to make obsidian tools",
+            type: "display",
+            cost: [["granite pickaxe", 0]],
+        },
+        {
+            name: "obsidian spear",
+            desc: "Kills animals",
+            type: "craft",
+            cost: [["rock worker", 0], ["obsidian shard", 1], ["spruce stick", 3], ["string", 2]],
+        },
+        {
+            name: "obsidian shears",
+            desc: "Cuts grass",
+            type: "craft",
+            cost: [["rock worker", 0], ["obsidian shard", 2], ["string", 2]],
+        },
+        {
+            name: "snow layer",
+            desc: "A thin layer of snow",
+            type: "craft",
+            cost: [["granite shovel", 0], ["snow", 1]],
+            amount: 8,
+        },
+        {
+            name: "big igloo",
+            displayName: "chief's igloo",
+            desc: "The home of the tribe chief",
+            type: "craft",
+            cost: [
+                ["snow", 95], ["spruce planks", 46], ["snow wall with window", 3], ["snow layer", 263], ["polar bear fur", 4], ["campfire", 1]
+            ],
+        },
+        {
+            name: "sabertooth",
+            desc: "A really sharp tooth",
+            type: "display",
+            cost: [["obsidian spear", 0]],
+        },
+        {
+            name: "snow chief",
+            displayName: "tribe chief",
+            desc: "Required to train different workers",
+            type: "craft",
+            cost: [["big igloo", 0], ["snow villager", 1], ["polar bear fur", 5], ["sabertooth", 2]],
+        },
+        {
+            name: "snow villager",
+            displayName: "villager",
+            desc: "Fires a digger",
+            type: "craft",
+            cost: [["snow chief", 0], ["snow digger", 1]],
+        },
+        {
+            name: "snow villager",
+            displayName: "villager",
+            desc: "Fires a hunter",
+            type: "craft",
+            cost: [["snow chief", 0], ["snow hunter", 1]],
+        },
+        {
+            name: "snow villager",
+            displayName: "villager",
+            desc: "Fires a miner",
+            type: "craft",
+            cost: [["snow chief", 0], ["snow miner", 1]],
+        },
+        {
+            name: "snow builder",
+            displayName: "builder",
+            desc: "Required to build more advanced buildings",
+            type: "craft",
+            cost: [["snow chief", 0], ["snow villager", 1], ["igloo", 1]],
+        },
+        {
+            name: "igloo",
+            desc: "A place for the villagers to sleep",
+            type: "craft",
+            cost: [["snow builder", 0], ["snow", 61], ["ice block", 3], ["polar bear fur", 2], ["campfire", 1]],
+        },
+        {
+            name: "snow wood worker",
+            displayName: "wood worker",
+            desc: "Crafts items out of wood",
+            type: "craft",
+            cost: [["snow chief", 0], ["snow villager", 1], ["granite axe", 1]],
+        },
+        {
+            name: "campfire",
+            desc: "Used to cook food and keep the villagers warm",
+            type: "craft",
+            cost: [["snow wood worker", 0], ["spruce wood", 2], ["granite rock", 6], ["coal", 4]],
+        },
+        {
+            name: "spruce slab",
+            desc: "Used to make buildings and traps",
+            type: "craft",
+            amount: 2,
+            cost: [["snow wood worker", 0], ["spruce planks", 1]],
+        },
+        {
+            name: "cooking station",
+            desc: "Auto-cooks fish",
+            type: "craft",
+            autoCraft: [["cooked cod", 2000], ["cooked salmon", 2000]],
+            cost: [["snow builder", 0], ["snow", 33], ["spruce slab", 4], ["campfire", 1]],
+        },
+        {
+            name: "campfire",
+            displayName: "destroy cooking station",
+            displayImage: "images/destroyCookingStation.png",
+            desc: "Stops the cooking station from cooking all your fish",
+            type: "craft",
+            cost: [["cooking station", 1]],
+        },
+        {
+            name: "water hole",
+            desc: "A big hole in the ice",
+            type: "craft",
+            cost: [["snow builder", 0], ["granite pickaxe", 0]],
+        },
+        {
+            name: "fisherman's igloo",
+            desc: "Required to make a fisherman",
+            type: "craft",
+            cost: [["snow builder", 0], ["cooking station", 1], ["water hole", 1], ["snow", 21], ["snow layer", 88], ["spruce slab", 14], ["cooked cod", 20], ["cooked salmon", 20]],
+        },
+        {
+            name: "fishing rod",
+            desc: "Required to make a fisherman",
+            type: "craft",
+            cost: [["crafting table", 0], ["spruce stick", 3], ["string", 2], ["sabertooth", 1]],
+        },
+        {
+            name: "fisherman",
+            desc: "Required to make water traps and automates water grind",
+            type: "craft",
+            cost: [["snow chief", 0], ["fisherman's igloo", 1], ["snow villager", 1], ["fishing rod", 1]],
+        },
+        {
+            name: "dodo feather",
+            desc: "Used to craft arrows",
+            type: "display",
+            cost: [["flint spear", 0]],
+        },
+        {
+            name: "snow fletcher",
+            displayName: "fletcher",
+            desc: "Crafts bows and arrows",
+            type: "craft",
+            cost: [["snow chief", 0], ["snow villager", 1], ["dodo feather", 1]],
+        },
+        {
+            name: "bow",
+            desc: "Required to train archers",
+            type: "craft",
+            cost: [["snow fletcher", 0], ["spruce stick", 3], ["string", 3]],
+        },
+        {
+            name: "obsidian arrow",
+            desc: "Required to train archers",
+            type: "craft",
+            amount: 4,
+            cost: [["snow fletcher", 0], ["obsidian shard", 1], ["spruce stick", 1], ["dodo feather", 1]],
+        },
+        {
+            name: "fur worker",
+            desc: "Required to make things out of fur",
+            type: "craft",
+            cost: [["snow chief", 0], ["snow villager", 1], ["polar bear fur", 1]],
+        },
+        {
+            name: "polar bear helmet",
+            desc: "Required to train fighters",
+            type: "craft",
+            cost: [["fur worker", 0], ["polar bear fur", 1]],
+        },
+        {
+            name: "polar bear chestplate",
+            desc: "Required to train fighters",
+            type: "craft",
+            cost: [["fur worker", 0], ["polar bear fur", 3]],
+        },
+        {
+            name: "polar bear leggings",
+            desc: "Required to train fighters",
+            type: "craft",
+            cost: [["fur worker", 0], ["polar bear fur", 2]],
+        },
+        {
+            name: "polar bear boots",
+            desc: "Required to train fighters",
+            type: "craft",
+            cost: [["fur worker", 0], ["polar bear fur", 1]],
+        },
+        {
+            name: "polar bear armor",
+            desc: "Required to train fighters",
+            type: "craft",
+            cost: [["polar bear helmet", 1], ["polar bear chestplate", 1], ["polar bear leggings", 1], ["polar bear boots", 1]],
+        },
+        {
+            name: "snow warrior",
+            displayName: "warrior",
+            desc: "Can specialize with different weapons",
+            type: "craft",
+            cost: [["snow villager", 1], ["polar bear armor", 1]],
+        },
+        {
+            name: "snow archer",
+            displayName: "archer",
+            desc: "Defends the tribe",
+            type: "craft",
+            cost: [["snow warrior", 1], ["bow", 1], ["obsidian arrow", 8]],
+        },
+        {
+            name: "snow spear thrower",
+            displayName: "spear thrower",
+            desc: "Defends the tribe",
+            type: "craft",
+            cost: [["snow warrior", 1], ["obsidian spear", 1]],
+        },
+        {
+            name: "spruce fence",
+            desc: "Required to make buildings and traps",
+            type: "craft",
+            amount: 3,
+            cost: [["snow wood worker", 0], ["spruce planks", 4], ["spruce stick", 2]],
+        },
+        {
+            name: "spruce fence gate",
+            desc: "Required to make buildings and traps",
+            type: "craft",
+            cost: [["snow wood worker", 0], ["spruce planks", 2], ["spruce stick", 4]],
+        },
+
+        {
+            name: "penguin trap",
+            desc: "Required to catch penguins",
+            type: "craft",
+            cost: [["fisherman", 0], ["water hole", 1], ["spruce fence", 15], ["spruce fence gate", 1], ["raw cod", 5], ["raw salmon", 5]],
+        },
+        {
+            name: "penguin",
+            desc: "Required to tame a penguin",
+            type: "display",
+            cost: [["penguin trap", 0]],
+        },
+        {
+            name: "seagrass",
+            desc: "Grass but in the ocean",
             type: "display",
             cost: [["flint shears", 0]],
+        },
+        {
+            name: "rope",
+            desc: "Required to tame animals",
+            type: "craft",
+            cost: [["string", 4], ["seagrass", 2]],
+        },
+        {
+            name: "snow tamer",
+            displayName: "tamer",
+            desc: "Required to tame animals",
+            type: "craft",
+            cost: [["snow chief", 0], ["snow villager", 1], ["rope", 1]],
+        },
+        {
+            name: "tamed penguin",
+            desc: "Required to train penguin scouts",
+            type: "craft",
+            cost: [["snow tamer", 0], ["penguin", 1], ["rope", 1]],
+        },
+        {
+            name: "penguin scout",
+            desc: "Watches for intruders",
+            type: "craft",
+            cost: [["tamed penguin", 1], ["polar bear helmet", 1], ["obsidian spear", 1]],
+        },
+
+        {
+            name: "snow tower",
+            desc: "Required to make a scout tower",
+            type: "craft",
+            cost: [["snow builder", 0], ["snow wall", 3], ["snow wall with window", 4], ["snow", 33], ["snow layer", 107], ["polar bear fur", 4], ["campfire", 1]],
+        },
+        {
+            name: "scout tower",
+            desc: "Required to make a scout camp",
+            type: "craft",
+            cost: [["snow tower", 1], ["snow spear thrower", 2], ["snow archer", 2]],
+        },
+        {
+            name: "scout water hole",
+            desc: "Required to make a scout camp",
+            type: "craft",
+            cost: [["water hole", 1], ["penguin scout", 4]],
+        },
+        {
+            name: "scout camp",
+            desc: "Protects the village",
+            type: "craft",
+            cost: [["snow builder", 0], ["scout tower", 4], ["scout water hole", 2]],
+        },
+
+        {
+            name: "snow painter",
+            displayName: "painter",
+            desc: "Required to paint fur",
+            type: "craft",
+            cost: [["scout camp", 0], ["snow villager", 1], ["ink sac", 1]],
+        },
+        {
+            name: "ink sac",
+            desc: "Required to dye fur",
+            type: "display",
+            cost: [["obsidian spear", 0]],
+        },
+        {
+            name: "black fur",
+            desc: "Required to make black fur armor",
+            type: "craft",
+            cost: [["snow painter", 0], ["polar bear fur", 1], ["ink sac", 1]],
+        },
+        {
+            name: "black fur helmet",
+            desc: "Required to train fighters",
+            type: "craft",
+            cost: [["fur worker", 0], ["black fur", 1]],
+        },
+        {
+            name: "black fur chestplate",
+            desc: "Required to train fighters",
+            type: "craft",
+            cost: [["fur worker", 0], ["black fur", 3]],
+        },
+        {
+            name: "black fur leggings",
+            desc: "Required to train fighters",
+            type: "craft",
+            cost: [["fur worker", 0], ["black fur", 2]],
+        },
+        {
+            name: "black fur boots",
+            desc: "Required to train fighters",
+            type: "craft",
+            cost: [["fur worker", 0], ["black fur", 1]],
+        },
+        {
+            name: "black fur armor",
+            desc: "Required to train fighters",
+            type: "craft",
+            cost: [["black fur helmet", 1], ["black fur chestplate", 1], ["black fur leggings", 1], ["black fur boots", 1]],
+        },
+        {
+            name: "elite warrior",
+            desc: "Can specialize with different weapons",
+            type: "craft",
+            cost: [["snow villager", 1], ["black fur armor", 1]],
+        },
+        {
+            name: "elite archer",
+            desc: "Defends the tribe",
+            type: "craft",
+            cost: [["elite warrior", 1], ["bow", 1], ["obsidian arrow", 16]],
+        },
+        {
+            name: "elite spear thrower",
+            desc: "Defends the tribe",
+            type: "craft",
+            cost: [["elite warrior", 1], ["obsidian spear", 2]],
+        },
+        
+        {
+            name: "seal trap",
+            desc: "Required to catch seals",
+            type: "craft",
+            cost: [["scout camp", 0], ["fisherman", 0], ["snow", 57], ["snow layer", 37], ["spruce fence", 7], ["ice block", 2], ["raw cod", 15], ["raw salmon", 15]],
+        },
+        {
+            name: "seal",
+            desc: "Required to tame a seal",
+            type: "display",
+            cost: [["seal trap", 0]],
+        },
+        {
+            name: "granite stirrup",
+            desc: "Required to make a saddle",
+            type: "craft",
+            cost: [["snow fletcher", 0], ["granite rock", 1], ["string", 2]],
+        },
+        {
+            name: "seal saddle",
+            desc: "Required to tame a seal",
+            type: "craft",
+            cost: [["fur worker", 0], ["polar bear fur", 1], ["granite stirrup", 2]],
+        },
+        {
+            name: "tamed seal",
+            desc: "Required to train seal warriors",
+            type: "craft",
+            cost: [["snow tamer", 0], ["seal", 1], ["seal saddle", 1], ["rope", 1]],
+        },
+        {
+            name: "seal warrior",
+            desc: "Required to build guard posts",
+            type: "craft",
+            cost: [["elite spear thrower", 1], ["tamed seal", 1]],
+        },
+        {
+            name: "snow guard post",
+            displayName: "guard post",
+            desc: "Required to build specialized guard posts",
+            type: "craft",
+            cost: [["snow builder", 0], ["igloo", 1], ["campfire", 1], ["snow spear thrower", 2]],
+        },
+        {
+            name: "seal guard post",
+            desc: "Guards the village and its leader",
+            type: "craft",
+            cost: [["snow builder", 0], ["snow guard post", 1], ["seal warrior", 2]],
+        },
+
+        {
+            name: "large igloo",
+            displayName: "leader's igloo",
+            desc: "The home of the village leader",
+            type: "craft",
+            cost: [["snow builder", 0], ["seal guard post", 2], ["snow", 232], ["snow layer", 110], ["ice block", 33], ["spruce slab", 201], ["polar bear fur", 6], ["campfire", 2]],
+        },
+        {
+            name: "tooth necklace",
+            desc: "Required to make a village",
+            type: "craft",
+            cost: [["snow fletcher", 0], ["seagrass", 4], ["string", 2], ["sabertooth", 4]],
+        },
+        {
+            name: "snow leader",
+            displayName: "village leader",
+            desc: "Required to make a village",
+            type: "craft",
+            cost: [["large igloo", 0], ["snow villager", 1], ["black fur", 5], ["tooth necklace", 1]],
+        },
+
+        {
+            name: "grass",
+            desc: "Grass but actually just grass",
+            type: "display",
+            cost: [["flint shears", 0]],
+        },
+        {
+            name: "mammoth trap",
+            desc: "Required to catch mammoths",
+            type: "craft",
+            cost: [["snow leader", 0], ["snow", 126], ["spruce fence", 8], ["spruce fence gate", 8], ["grass", 400]],
+        },
+        {
+            name: "mammoth",
+            desc: "Required to tame a mammoth",
+            type: "display",
+            cost: [["mammoth trap", 0]],
+        },
+        {
+            name: "mammoth saddle",
+            desc: "Required to tame a mammoth",
+            type: "craft",
+            cost: [["fur worker", 0], ["polar bear fur", 4], ["granite stirrup", 6], ["rope", 4]],
+        },
+        {
+            name: "tamed mammoth",
+            desc: "Required to train mammoth riders",
+            type: "craft",
+            cost: [["snow tamer", 0], ["mammoth", 1], ["mammoth saddle", 1], ["rope", 2]],
+        },
+        {
+            name: "mammoth riders",
+            desc: "Defends the tribe",
+            type: "craft",
+            cost: [["tamed mammoth", 1], ["elite spear thrower", 1], ["elite archer", 2]],
+        },
+        {
+            name: "mammoth guard post",
+            desc: "Guards the village and its leader",
+            type: "craft",
+            cost: [["snow builder", 0], ["snow guard post", 1], ["spruce fence", 56], ["spruce fence gate", 4], ["mammoth riders", 2]],
+        },
+
+        {
+            name: "spruce boat",
+            desc: "Required to build an ice boat highway",
+            type: "craft",
+            cost: [["snow wood worker", 0], ["spruce planks", 5], ["granite shovel", 2]],
+        },
+        {
+            name: "packed ice",
+            desc: "A thicker block of ice",
+            type: "craft",
+            cost: [["snow leader", 0], ["ice block", 9]],
+        },
+        {
+            name: "blue ice",
+            desc: "An even thicker block of ice",
+            type: "craft",
+            cost: [["snow leader", 0], ["packed ice", 9]],
+        },
+        {
+            name: "ice boat track",
+            desc: "Required to build an ice boat highway",
+            type: "craft",
+            cost: [["snow builder", 0], ["ice block", 10], ["packed ice", 10], ["blue ice", 5]],
+        },
+        {
+            name: "ice boat highway",
+            desc: "Required to make an ice age village",
+            type: "craft",
+            cost: [["snow builder", 0], ["ice boat track", 10], ["spruce boat", 10]],
+        },
+        {
+            name: "ice age village",
+            desc: "Required to beat the ice age, and the game (for now)",
+            type: "craft",
+            cost: [["snow leader", 0], ["scout camp", 1], ["ice boat highway", 1], ["large igloo", 1], ["mammoth guard post", 2]],
+            message: "You beat the ice age, and the game (for now)!",
         },
     ],
 
@@ -1448,6 +2499,8 @@ addArea("i", {
     },
 });
 
-function test() {
-    console.log("e");
+function onLoad(oldversion) {
+    
 }
+
+// https://gist.github.com/Hyvi/1350603/b65c127802dbc6949c181044416adbb4b7aed534

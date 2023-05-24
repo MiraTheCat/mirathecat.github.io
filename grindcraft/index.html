@@ -118,10 +118,10 @@
             <button id="resetSaveButton">Reset Save</button>
         </div>
     </div>
-    <br>
-    <!--
-    <p class="setting-text">Made with the <a href="https://github.com/MiraTheCat/Grindcraft-Game-Maker">Grindcraft Game Maker</a> tool!</p>
-    -->
+
+    <p class="setting-text">Made with the <a href="https://github.com/MiraTheCat/Grindcraft-Game-Maker" target="_blank">Grindcraft Game Maker</a> tool!</p>
+    <p id="toolVersion" class="setting-text">(Version X)</p>
+
     <button class="settings-button">Ok</button>
 </div>
 
@@ -129,7 +129,17 @@
 <script src="js/areas.js"></script>
 
 <script>
+    // Set up game
     setupGame();
+
+    // Check if there is a saved game version and tool version
+    if (player.savedGameVersion === undefined) player.savedGameVersion = player.gameInfo.gameVersion;
+    if (player.savedToolVersion === undefined) player.savedToolVersion = player.toolVersion;
+
+    // Fix things that have been changed between updates
+    onLoad(player.savedGameVersion);
+
+    // Start the screen update function
     screenUpdate(Date.now() - player.lastScreenUpdate);
 </script>
 
