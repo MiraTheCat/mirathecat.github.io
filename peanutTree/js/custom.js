@@ -25,5 +25,8 @@ function challengeCompletions(layer) {
     if (hasChallenge(layer, 21)) count += 1;
     if (hasChallenge(layer, 22)) count += 1;
 
+    if (hasChallenge(layer, 31)) count += 1;
+    if (hasChallenge(layer, 32)) count += 1;
+
     return count;
 }

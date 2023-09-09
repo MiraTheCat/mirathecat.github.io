@@ -1,6 +1,7 @@
 var tmp = {}
 var temp = tmp // Proxy for tmp
 var funcs = {}
+var funcs2 = {}
 var NaNalert = false;
 
 // Tmp will not call these
@@ -24,12 +25,16 @@ var traversableClasses = []
 
 function setupTemp() {
 	tmp = {}
+	tmp.loreTab = NaN;
+    tmp.loreData = {};
+	tmp.lore = {};
 	tmp.pointGen = {}
 	tmp.backgroundStyle = {}
 	tmp.displayThings = []
 	tmp.scrolled = 0
 	tmp.gameEnded = false
 	funcs = {}
+	funcs2 = {}
 	
 	setupTempData(layers, tmp, funcs)
 	for (layer in layers){
@@ -43,6 +48,8 @@ function setupTemp() {
 		setupBuyables(layer)
 		tmp[layer].trueGlowColor = []
 	}
+	if (typeof lore_data != "undefined")
+        setupTempData(lore_data, tmp.loreData, funcs2);
 
 	tmp.other = {
 		lastPoints: player.points || decimalZero,
@@ -114,11 +121,14 @@ function updateTemp() {
 	tmp.backgroundStyle = readData(backgroundStyle)
 
 	tmp.displayThings = []
-	for (thing in displayThings){
-		let text = displayThings[thing]
+	for (thing in displayThings()){
+		let text = displayThings()[thing]
 		if (isFunction(text)) text = text()
 		tmp.displayThings.push(text) 
 	}
+	if (typeof lore_data != "undefined" && player.tab == 'lore') {
+        updateTempData(lore_data, tmp.loreData, funcs2, false);
+    }
 }
 
 function updateTempData(layerData, tmpData, funcsData, useThis) {

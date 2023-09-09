@@ -154,7 +154,6 @@ function showTab(name, prev) {
 	updateTabFormats()
 	needCanvasUpdate = true
 	document.activeElement.blur()
-
 }
 
 function showNavTab(name, prev) {

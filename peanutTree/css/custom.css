@@ -1,0 +1,19 @@
+.fu.reset.can, .treeNode.fu.can {
+    background: radial-gradient(#ffc012, #cf9800);
+}
+
+.d.reset.can, .treeNode.d.can {
+    background: radial-gradient(#9f0000, #740000);
+}
+
+.te.reset.can, .treeNode.te.can {
+    background: radial-gradient(#ef4a44, #e93326);
+}
+
+.si.reset.can, .treeNode.si.can {
+    background: radial-gradient(#2a2a2a, #191919);
+}
+
+.si.reset.can {
+    color: white;
+}

@@ -2,14 +2,14 @@
 
 <head>
 	<meta property="og:site_name" content="Mira The Cat's Website">
-	<meta property="og:title" content="The Peanut Tree v0.4">
+	<meta property="og:title" content="The Peanut Tree v0.5">
 	<meta property="og:description" content="A Prestige Tree-type Game">
-        <meta property='og:image' content='/images/pfp.png'>
-        <meta property="og:type" content="website">
-        <meta name="theme-color" content="#60ff52">
+	<meta property='og:image' content='/images/pfp.png'>
+	<meta property="og:type" content="website">
+	<meta name="theme-color" content="#60ff52">
 
-		<title>Mira The Cat - The Peanut Tree</title>
-        <link rel="icon" href="/images/pfp.png">
+	<title>Mira The Cat - The Peanut Tree</title>
+	<link rel="icon" href="/images/pfp.png">
 
 	<link rel="stylesheet" type="text/css" href="css/system-style.css" />
 	<link rel="stylesheet" type="text/css" href="css/bars.css" />
@@ -19,6 +19,7 @@
 	<link rel="stylesheet" type="text/css" href="css/other-tabs.css" />
 	<link rel="stylesheet" type="text/css" href="css/popup.css" />
 	<link rel="stylesheet" type="text/css" href="css/tree-node.css" />
+	<link rel="stylesheet" type="text/css" href="css/custom.css" />
 
 	<link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
 
@@ -32,6 +33,7 @@
 	<script src="js/technical/temp.js"></script>
 	<script src="js/technical/displays.js"></script>
 	
+	<script src="js/lore.js"></script>
 	<script src="js/game.js"></script>
 	<script src="js/utils.js"></script>
 	<script src="js/utils/easyAccess.js"></script>
@@ -75,6 +77,27 @@
 			<br><br>
 		</div>
 
+		<div v-if="player.tab=='lore' && (typeof lore_data != 'undefined')" class="col right">
+			<div v-if="typeof tmp.loreTab == 'number'">
+				<button class="back overlayThing" onclick="showTab('none')">←</button><br>
+				<div v-if="player.a.achievements.length==0">
+					Why are you even here? You haven't started yet!<br>
+					Begin farming peanuts, then return here afterwards.
+				</div>
+				<ul v-else><br><h2>Game lore and tips</h2>
+					<br><br><br>
+					<li v-for="data in tmp.loreData">
+						<a v-if="data.unlocked" class="link overlayThing" v-on:click="() => {tmp.loreTab = data.id}" style="position: relative; width: 50%;" v-html="data.title"></a><br>
+					</li>
+				</ul>
+			</div>
+			<div v-else>
+				<button class="back overlayThing" onclick="tmp.loreTab = NaN">←</button><br>
+				<br><h2 v-html="tmp.loreData[tmp.loreTab].title"></h2><br><br>
+				<div v-html="tmp.loreData[tmp.loreTab].text" style="padding: 10px;"></div>
+			</div>
+		</div>
+
 		<div id="treeOverlay" v-if="!(tmp.gameEnded && !player.keepGoing) && (player.tab === 'none' || tmp.other.splitScreen || !readData(layoutInfo.showTree))" class="treeOverlay" onscroll="resizeCanvas()"
 			v-bind:class="{ 
 			fullWidth: (player.tab == 'none' || player.navTab == 'none'), 
@@ -88,6 +111,7 @@
 			<img id="optionWheel" class="overlayThing" v-if="player.tab!='options-tab'" src="options_wheel.png"
 				onclick="showTab('options-tab')"></img>
 			<div id="info" v-if="player.tab!='info-tab'" class="overlayThing" onclick="showTab('info-tab')"><br>i</div>
+			<div id="lore" v-if="player.tab!='lore' && (typeof lore_data != 'undefined')"  class="overlayThing" onclick="showTab('lore')"><br>?</div>
 			<div id="discord" class="overlayThing">
 				<img onclick="window.open((modInfo.discordLink ? modInfo.discordLink : 'https://discord.gg/F3xveHV'),'mywindow')"
 					src="discord.png" target="_blank"></img>

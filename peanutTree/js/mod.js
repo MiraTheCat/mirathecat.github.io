@@ -13,20 +13,26 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.4",
-	name: "Abnormal Space Travel",
+	num: "0.5",
+	name: "Diplomatic Advancements",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
 <br>
+<h3>v0.5 - Diplomatic Advancements</h3><br><br>
+Added Row 6 with 4 new layers<br>
+Added lore<br>
+Rebalanced Row 5 slightly<br>
+Endgame: e35,000,000 peanuts<br>
+<br>
 <h3>v0.4 - Abnormal Space Travel</h3><br><br>
 Added Row 5 with 3 new layers<br>
-Endgame: 1e223,000 peanuts<br>
+Endgame: 1e200,000 peanuts<br>
 <br>
 <h3>v0.3 - Scientific Exploration</h3><br><br>
 Added Row 4 with 4 new layers<br>
 Made some changes to the earlier layers for balancing<br>
-Endgame: 1e5400 peanuts<br>
+Endgame: 1e5,400 peanuts<br>
 <br>
 <h3>v0.2 - The Industrial Revolution</h3><br><br>
 Added Row 3 with 3 new layers<br>
@@ -36,17 +42,13 @@ Endgame: 1e415 peanuts<br>
 <h3>v0.1 - A Humble Beginning</h3><br><br>
 Added Row 1 and 2, with 3 layers in total<br>
 Endgame: 1e26 peanuts<br>
-<br>
-<h1>Tips:</h1><br><br>
-If you have to click something a lot of times, try to instead just click it once and hold down enter.
-This will make the button be autoclicked so that you don't have to spam it<br>
 `
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
-var doNotCallTheseFunctionsEveryTick = ["blowUpEverything", "castAllSpells", "buy10", "buy100"]
+var doNotCallTheseFunctionsEveryTick = ["blowUpEverything", "castAllSpells", "buy10", "buy100", "buy1000", "buyMultiple", "checkNextRow", "maxGain", "getReq"];
 
 function getStartPoints(){
     return new Decimal(modInfo.initialStartPoints)
@@ -71,6 +73,7 @@ function getPointGen() {
 	if (hasUpgrade('c', 31)) gain = gain.times(upgradeEffect('c', 31));
 	if (hasUpgrade("sg", 11)) gain = gain.times(upgradeEffect("sg", 11));
 	if (hasUpgrade("fa", 23)) gain = gain.times(upgradeEffect("fa", 23));
+	if (hasUpgrade("fu", 34)) gain = gain.times(upgradeEffect("fu", 34));
 
 	if (player.f.unlocked) gain = gain.times(tmp.f.effect);
 	if (player.sg.unlocked) gain = gain.times(tmp.sg.saplingEff);
@@ -85,7 +88,19 @@ function getPointGen() {
 	if (player.ab.unlocked) gain = gain.times(tmp.ab.buyables[41].effect);
 	if (player.ab.unlocked) gain = gain.times(tmp.ab.timeSpeed);
 
+	if (player.si.upgradesBought[12]) gain = gain.times(tmp.si.clickables[12].effect);
+	if (player.si.upgradesBought[31]) gain = gain.times(tmp.si.clickables[31].effect);
+	if (player.si.upgradesBought[51]) gain = gain.times(tmp.si.clickables[51].effect);
+	if (player.si.upgradesBought[91]) gain = gain.times(tmp.si.clickables[91].effect);
+
+	if (player.si.upgradesBought[63] && !player.si.upgradesBought[72]) gain = gain.times(tmp.si.peanutEff);
+
+	if (player.d.activeLeaders[11]) gain = gain.pow(tmp.d.clickables[11].effect);
+	if (hasUpgrade("fu", 33)) gain = gain.pow(upgradeEffect("fu", 33));
+
 	if (inChallenge("b", 11)) gain = gain.sqrt();
+
+	gain = gain.times(tmp.ab.timeSpeed);
 
 	return gain;
 }
@@ -94,17 +109,20 @@ function getPointGen() {
 function addedPlayerData() { return {
 }}
 
+let endgameCap = new Decimal("e3.5e7");
+
 // Display extra things at the top of the page
-var displayThings = [
-	"Current Endgame: 1e223,000 peanuts"
-]
+let displayThings = () => {
+	let endgamePow = (player.si.upgradesBought[93] && !player.si.upgradesBought[101]) ? tmp.si.endgameEff : new Decimal(1);
+	let desc = `Current Endgame: ${formatWhole(endgameCap.pow(endgamePow))} peanuts`;
+
+	return [ desc ];
+}
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("e223000"));
+	return player.points.gte(new Decimal(endgameCap));
 }
-
-
 
 // Less important things beyond this point!
 
@@ -115,7 +133,7 @@ var backgroundStyle = {
 
 // You can change this if you have things that can be messed up by long tick lengths
 function maxTickLength() {
-	return(3600) // Default is 1 hour which is just arbitrarily large
+	return(1) // Time in seconds
 }
 
 // Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
@@ -267,7 +285,6 @@ function fixOldSave(oldVersion){
 			player.f.points = new Decimal(20);
 			player.sg.points = new Decimal(20);
 			player.sg.saplings = new Decimal(1e10);
-			
 		}
 	}
 }
