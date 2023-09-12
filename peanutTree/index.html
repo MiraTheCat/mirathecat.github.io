@@ -77,7 +77,7 @@
 			<br><br>
 		</div>
 
-		<div v-if="player.tab=='lore' && (typeof lore_data != 'undefined')" class="col right">
+		<div v-if="player.tab=='lore' && (typeof lore_data != 'undefined')" class="col right" style="z-index: 10;">
 			<div v-if="typeof tmp.loreTab == 'number'">
 				<button class="back overlayThing" onclick="showTab('none')">←</button><br>
 				<div v-if="player.a.achievements.length==0">
