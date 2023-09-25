@@ -31,17 +31,17 @@ Endgame: 1e200,000 peanuts<br>
 <br>
 <h3>v0.3 - Scientific Exploration</h3><br><br>
 Added Row 4 with 4 new layers<br>
-Made some changes to the earlier layers for balancing<br>
+Rebalanced Row 1 to 3<br>
 Endgame: 1e5,400 peanuts<br>
 <br>
 <h3>v0.2 - The Industrial Revolution</h3><br><br>
 Added Row 3 with 3 new layers<br>
-Added Achievements<br>
-Endgame: 1e415 peanuts<br>
+Added achievements<br>
+Endgame: 1e415 peanuts (Old: 1e3,650)<br>
 <br>
 <h3>v0.1 - A Humble Beginning</h3><br><br>
 Added Row 1 and 2, with 3 layers in total<br>
-Endgame: 1e26 peanuts<br>
+Endgame: 1e26 peanuts (Old: 1e30)<br>
 `
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`

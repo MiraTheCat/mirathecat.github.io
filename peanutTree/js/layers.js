@@ -208,7 +208,7 @@ addLayer("c", {
 
                 if (hasUpgrade("c", 15)) cap = cap.times(upgradeEffect("c", 15));
                 
-                if (player.d.activeLeaders[22]) cap = cap.pow(tmp.d.clickables[22].effect.second);
+                if (player.d.activeLeaders[22]) cap = new Decimal("e5.5e6");
 
                 if (hasUpgrade("sg", 11)) eff = eff.times(upgradeEffect("sg", 11));
                 if (hasUpgrade("n", 13)) eff = eff.times(player.points.pow(0.05));
@@ -222,7 +222,7 @@ addLayer("c", {
 
                 if (hasUpgrade("c", 15)) cap = cap.times(upgradeEffect("c", 15));
 
-                if (player.d.activeLeaders[22]) cap = cap.pow(tmp.d.clickables[22].effect.second);
+                if (player.d.activeLeaders[22]) cap = new Decimal("e5.5e6");
 
                 return format(upgradeEffect(this.layer, this.id))+"x" + ((player.points.gte(cap)) ? " (softcapped)" : "")
             }, // Add formatting to the effect
